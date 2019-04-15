@@ -2,12 +2,11 @@ package io.cosmosoftware.kite.pages;
 
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import org.apache.log4j.Logger;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
@@ -160,4 +159,38 @@ public abstract class BasePage {
   protected void processInteractionException(String interactionName, Exception e) throws KiteInteractionException {
     throw new KiteInteractionException(e.getClass().getName() + " while performing " + interactionName, e.getCause());
   }
+
+
+
+  /**
+   * Wait until the webElement elem is visible up to timeoutInSecond.
+   *
+   * @param elem             the WebElement
+   * @param timeoutInSeconds the timeout duration in seconds
+   * @throws KiteInteractionException when timeoutInSecond is reached
+   */
+  public void waitUntilVisibilityOf(WebElement elem, int timeoutInSeconds) throws KiteInteractionException {
+    try {
+      new WebDriverWait(this.webDriver, timeoutInSeconds).until(ExpectedConditions.visibilityOf(elem));
+    } catch (Exception e) {
+      throw new KiteInteractionException("The web element " + elem + " is not visible after " + timeoutInSeconds + "s", e);
+    }
+  }
+
+  /**
+   * Wait until the webElement found by the locator is visible up to timeoutInSecond.
+   *
+   * @param locator          to locate the element
+   * @param timeoutInSeconds the timeout duration in seconds
+   * @throws KiteInteractionException if an Exception occurs during method execution or fail.
+   */
+  public void waitUntilVisibilityOf(By locator, int timeoutInSeconds) throws KiteInteractionException {
+    try {
+      new WebDriverWait(this.webDriver, timeoutInSeconds).until(ExpectedConditions.visibilityOfElementLocated(locator));
+    } catch (Exception e) {
+      throw new KiteInteractionException("The web element " + locator.toString() + " is not visible after " + timeoutInSeconds + "s", e);
+    }
+  }
+
+
 }

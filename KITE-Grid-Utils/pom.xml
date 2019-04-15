@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>kite-base</artifactId>
-    <groupId>org.webrtc.kite</groupId>
-    <version>2.0.2</version>
+    <artifactId>kite-extras-base</artifactId>
+    <groupId>io.cosmosoftware.kite</groupId>
+    <version>0.1.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
