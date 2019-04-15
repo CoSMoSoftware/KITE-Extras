@@ -12,7 +12,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <kite.extras.version>0.1.2</kite.extras.version>
     <kite.log4j.version>1.2.17</kite.log4j.version>
     <!-- Core dependencies -->
     <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
@@ -20,12 +19,6 @@
     <kite.guava.version>25.1-jre</kite.guava.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- maven plugin versions, shouldn't need be changed very often -->
-    <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
-
-    <!--Compilation dependencies-->
-    <kite.proguard-mvn.version>2.0.14</kite.proguard-mvn.version>
-    <kite.proguard-base.version>6.0.3</kite.proguard-base.version>
-    <kite.maven-shade.version>3.2.1</kite.maven-shade.version>
 
     <!-- Report related dependencies -->
     <kite.json.version>1.1.2</kite.json.version>
@@ -61,11 +54,6 @@
     <!-- Test framework dependencies -->
     <kite.junit.version>4.12</kite.junit.version>
     <kite.junit-jupiter-api.version>5.0.0</kite.junit-jupiter-api.version>
-
-
-    <!-- Node and NPM  -->
-    <kite.node.version>v8.11.3</kite.node.version>
-    <kite.npm.version>6.9.0</kite.npm.version>
 
   </properties>
 
