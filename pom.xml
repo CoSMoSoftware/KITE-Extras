@@ -19,7 +19,7 @@
     <kite.guava.version>25.1-jre</kite.guava.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- maven plugin versions, shouldn't need be changed very often -->
-
+    <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <!-- Report related dependencies -->
     <kite.json.version>1.1.2</kite.json.version>
     <kite.org.json.version>20180130</kite.org.json.version>
