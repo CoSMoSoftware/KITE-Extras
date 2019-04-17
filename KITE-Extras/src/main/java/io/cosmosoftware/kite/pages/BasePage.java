@@ -12,7 +12,7 @@ import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
 
 public abstract class BasePage {
-  protected final Logger logger = Logger.getLogger(this.getClass().getName());
+  protected Logger logger = Logger.getLogger(this.getClass().getName());
   protected final WebDriver webDriver;
   
   
@@ -192,5 +192,6 @@ public abstract class BasePage {
     }
   }
 
+  public void setLogger(Logger logger) { this.logger = logger; }
 
 }

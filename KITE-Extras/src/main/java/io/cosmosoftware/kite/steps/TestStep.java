@@ -13,7 +13,7 @@ import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 public abstract class TestStep {
 
 
-  protected final Logger logger = Logger.getLogger(this.getClass().getName());
+  protected Logger logger = Logger.getLogger(this.getClass().getName());
 
   protected final WebDriver webDriver;
   protected AllureStepReport report;
@@ -55,4 +55,7 @@ public abstract class TestStep {
   public abstract String stepDescription();
   
   protected abstract void step() throws KiteTestException;
+
+  public void setLogger(Logger logger) { this.logger = logger; }
+
 }

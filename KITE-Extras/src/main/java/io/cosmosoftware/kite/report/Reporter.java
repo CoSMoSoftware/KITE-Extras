@@ -15,7 +15,7 @@ import static io.cosmosoftware.kite.util.TestUtils.*;
 
 public class Reporter {
 
-  protected final Logger logger = Logger.getLogger(this.getClass().getName());
+  protected Logger logger = Logger.getLogger(this.getClass().getName());
 
   public static Reporter getInstance() {
     return instance;
@@ -143,5 +143,6 @@ public class Reporter {
     report.setDetails(details);
   }
   
-  
+  public void setLogger(Logger logger) { this.logger = logger; }
+
 }
