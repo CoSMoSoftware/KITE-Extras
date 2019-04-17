@@ -6,7 +6,7 @@
 
   <groupId>io.cosmosoftware.kite</groupId>
   <artifactId>kite-extras-base</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
   <name>kite-extras-base</name>
   <packaging>pom</packaging>
 
