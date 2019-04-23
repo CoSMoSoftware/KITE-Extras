@@ -13,7 +13,7 @@ import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 public abstract class TestStep {
 
 
-  protected Logger logger = Logger.getLogger(this.getClass().getName());
+  protected Logger logger = null;
 
   protected final WebDriver webDriver;
   protected AllureStepReport report;
@@ -21,7 +21,6 @@ public abstract class TestStep {
   
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
-    MDC.put("prefix", getLogHeader(this.webDriver));
   }
     
   public void execute() {

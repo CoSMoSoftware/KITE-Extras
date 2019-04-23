@@ -9,6 +9,7 @@ import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import org.apache.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -21,8 +22,8 @@ import static io.cosmosoftware.kite.util.WebDriverUtils.getWindowSize;
 
 public class MobilePage extends BasePage {
   
-  protected MobilePage(WebDriver webDriver) {
-    super(webDriver);
+  protected MobilePage(WebDriver webDriver, Logger logger) {
+    super(webDriver, logger);
     if (!(webDriver instanceof MobileDriver)) {
       logger.warn("This webdriver is not suitable to be used for this page. " +
         "Some of the interactions will now perform properly. " +

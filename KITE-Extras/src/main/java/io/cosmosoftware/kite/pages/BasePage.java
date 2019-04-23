@@ -12,12 +12,13 @@ import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
 
 public abstract class BasePage {
-  protected Logger logger = Logger.getLogger(this.getClass().getName());
+  protected final Logger logger;
   protected final WebDriver webDriver;
   
   
-  protected BasePage(WebDriver webDriver) {
+  protected BasePage(WebDriver webDriver, Logger logger) {
     this.webDriver = webDriver;
+    this.logger = logger;
     PageFactory.initElements(webDriver, this);
   }
   
@@ -191,7 +192,5 @@ public abstract class BasePage {
       throw new KiteInteractionException("The web element " + locator.toString() + " is not visible after " + timeoutInSeconds + "s", e);
     }
   }
-
-  public void setLogger(Logger logger) { this.logger = logger; }
 
 }
