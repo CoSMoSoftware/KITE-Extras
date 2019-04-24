@@ -9,9 +9,9 @@ import javax.json.JsonObject;
 
 
 /**
- * Parent class for Client and Gateway containing common methods and variables.
+ * Parent abstract class for Client and Gateway containing common methods and variables.
  */
-public class InstanceBase {
+public abstract class InstanceBase {
   
   
   /**
