@@ -48,7 +48,7 @@ public class AudioRecorder extends HttpServlet {
 
       String audioDriver = "";
       String audioDevice = "";
-
+	  String inputParam = "-d";
       // Entertain mac and windows only
       String osName = System.getProperty("os.name").toLowerCase();
       if (osName.indexOf("win") >= 0) {
@@ -56,6 +56,7 @@ public class AudioRecorder extends HttpServlet {
       } else if (osName.indexOf("mac") >= 0) {
         audioDriver = MAC_AUDIO_DRIVER;
         audioDevice = System.getProperty("audio.device");
+		inputParam = "";
         if (audioDevice == null) {
           response.sendError(HttpServletResponse.SC_BAD_REQUEST, "audio.device is not found");
           return;
@@ -87,6 +88,7 @@ public class AudioRecorder extends HttpServlet {
         "1",
         "-b",
         "16",
+		inputParam,
         OUTPUT_FILE,
         "trim",
         "0",
