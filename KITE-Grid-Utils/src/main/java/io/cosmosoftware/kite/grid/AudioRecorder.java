@@ -18,17 +18,9 @@ public class AudioRecorder extends HttpServlet {
 
   private static final long serialVersionUID = 1L;
 
-  private static final String OUTPUT_FILE = "record.wav";
-
   private static final String LOG_FILE = "record.log";
 
-  private static final String MAC_SOX_INSTALLATION_PATH = "/usr/local/bin/sox";
-
-  private static final String WIN_SOX_INSTALLATION_PATH = "C:\\\\Program Files\\sox\\sox.exe";
-
-  private static final String MAC_SOUND_DEVICE_NAME = "Soundflower (2ch)";
-
-  private static final String WIN_SOUND_DEVICE_NAME = "VAC";
+  private static final String OUTPUT_FILE = "record.wav";
 
   private static final String MAC_AUDIO_DRIVER = "coreaudio";
 
@@ -41,6 +33,10 @@ public class AudioRecorder extends HttpServlet {
   }
 
   /** @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response) */
+  /**
+   * In case of recording, the servlet will use sox.path property to get the sox installation path
+   * and audio.device property to get the name of the sound device for mac.
+   */
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     String record = request.getParameter("record");
@@ -50,13 +46,41 @@ public class AudioRecorder extends HttpServlet {
 
     if (record != null) {
 
+      String audioDriver = "";
+      String audioDevice = "";
+
+      // Entertain mac and windows only
+      String osName = System.getProperty("os.name").toLowerCase();
+      if (osName.indexOf("win") >= 0) {
+        audioDriver = WIN_AUDIO_DRIVER;
+      } else if (osName.indexOf("mac") >= 0) {
+        audioDriver = MAC_AUDIO_DRIVER;
+        audioDevice = System.getProperty("audio.device");
+        if (audioDevice == null) {
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, "audio.device is not found");
+          return;
+        }
+      } else {
+        response.sendError(
+            HttpServletResponse.SC_BAD_REQUEST,
+            "Only Windows and Mac OS X are supported for recording");
+        return;
+      }
+
+      // Sox command line path
+      String soxPath = System.getProperty("sox.path");
+      if (soxPath == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "sox.path is not found");
+        return;
+      }
+
       // Command to record audio of specified duration trimming silence at the
       // beginning
       String[] command = {
-        MAC_SOX_INSTALLATION_PATH,
+        soxPath,
         "-t",
-        MAC_AUDIO_DRIVER,
-        MAC_SOUND_DEVICE_NAME,
+        audioDriver,
+        audioDevice,
         "-r",
         "8000",
         "-c",
@@ -73,7 +97,9 @@ public class AudioRecorder extends HttpServlet {
         "1%"
       };
       System.out.print("Executing: ");
-      for (String component : command) { System.out.print(component + " "); }
+      for (String component : command) {
+        System.out.print(component + " ");
+      }
       System.out.println("");
 
       ProcessBuilder pb = new ProcessBuilder(command);
@@ -93,7 +119,9 @@ public class AudioRecorder extends HttpServlet {
               FileSystems.getDefault().getPath(downloadFile.getAbsolutePath(), ""));
 
       // modifies response
-      if (mimeType != null) { response.setContentType(mimeType); }
+      if (mimeType != null) {
+        response.setContentType(mimeType);
+      }
       response.setContentLength((int) downloadFile.length());
 
       // forces download
