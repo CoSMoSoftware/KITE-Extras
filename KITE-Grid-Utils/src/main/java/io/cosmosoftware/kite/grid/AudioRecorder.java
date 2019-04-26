@@ -180,9 +180,6 @@ public class AudioRecorder extends HttpServlet {
       };
       String[] recordCommandMac = {
         soxPath,
-        "-t",
-        audioDriver,
-        audioDevice,
         "-r",
         "8000",
         "-c",
