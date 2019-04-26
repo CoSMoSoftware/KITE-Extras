@@ -228,8 +228,8 @@ public class AudioRecorder extends HttpServlet {
           return;
         }
 
-        // Trim the silence from both ends
-        String[] trimCommand = {
+        // Trim the silence from both ends of the recorded file
+        String[] trimRecordingCommand = {
           soxPath,
           RECORDED_FILE,
           TRIMMED_FILE,
@@ -244,7 +244,7 @@ public class AudioRecorder extends HttpServlet {
           "1%",
           "reverse"
         };
-        executeCommand(trimCommand, false, true);
+        executeCommand(trimRecordingCommand, false, true);
 
         // Split the trimmed file w.r.t. silence
         String[] splitCommand = {
@@ -282,10 +282,28 @@ public class AudioRecorder extends HttpServlet {
           }
         }
 
+        // Trim the silence from both ends of the original media
+        String[] trimMediaCommand = {
+          soxPath,
+          media,
+          TRIMMED_FILE,
+          "silence",
+          "1",
+          "0.1",
+          "1%",
+          "reverse",
+          "silence",
+          "1",
+          "0.1",
+          "1%",
+          "reverse"
+        };
+        executeCommand(trimMediaCommand, false, true);
+
         // File lengths were different
         long difference =
             Math.abs(
-                Math.round(getDurationOfWavInSeconds(new File(media)))
+                Math.round(getDurationOfWavInSeconds(new File(TRIMMED_FILE)))
                     - Math.round(getDurationOfWavInSeconds(new File(outputFile))));
         if (difference > LENGTH_DIFFERENCE) {
           removeFiles(listOutput);
@@ -302,7 +320,7 @@ public class AudioRecorder extends HttpServlet {
         }
 
         // Compute PESQ score
-        String[] pesqCommand = {pesqPath, "+8000", media, outputFile};
+        String[] pesqCommand = {pesqPath, "+8000", TRIMMED_FILE, outputFile};
         String pesqScore = executeCommand(pesqCommand, false, true);
         removeFiles(listOutput);
         response.getWriter().append(pesqScore);
@@ -491,5 +509,4 @@ public class AudioRecorder extends HttpServlet {
   private static void removeFiles(List<String> fileList) {
     for (String filename : fileList) new File(filename).delete();
   }
-  
 }
