@@ -5,6 +5,7 @@
 package io.cosmosoftware.kite.manager;
 
 import com.jcraft.jsch.*;
+import io.cosmosoftware.kite.util.TestUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
@@ -61,7 +62,7 @@ public class SSHManager implements Callable<SSHManager> {
    * @param commandLine  the command line
    */
   public SSHManager(String keyFilePath, String username, String hostIpOrName, String commandLine) {
-    this.keyFilePath = keyFilePath;
+    this.keyFilePath = TestUtils.filePath(keyFilePath);
     this.username = username;
     this.hostIpOrName = hostIpOrName;
     this.commandLine = commandLine;
@@ -80,7 +81,7 @@ public class SSHManager implements Callable<SSHManager> {
    */
   public SSHManager(String keyFilePath, String username, String password, String hostIpOrName,
                     String commandLine, int index, int count) {
-    this.keyFilePath = keyFilePath;
+    this.keyFilePath = TestUtils.filePath(keyFilePath);
     this.username = username;
     this.password = password;
     this.hostIpOrName = hostIpOrName;
@@ -105,6 +106,7 @@ public class SSHManager implements Callable<SSHManager> {
     InputStream inputStream = null;
     try {
       JSch jsch = new JSch();
+      logger.info("keyFilePath = " + keyFilePath);
       jsch.addIdentity(this.keyFilePath);
       if (this.hostIpOrName.contains(":")) {
         StringTokenizer st = new StringTokenizer(this.hostIpOrName, ":");

@@ -17,7 +17,9 @@ public abstract class TestStep {
 
   protected final WebDriver webDriver;
   protected AllureStepReport report;
-  
+  private boolean stepCompleted = false;
+
+  private String name = getClassName();
   
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
@@ -30,17 +32,23 @@ public abstract class TestStep {
     } catch (Exception e) {
       Reporter.getInstance().processException(this.report, e);
     }
+    stepCompleted = true;
   }
   
   public void skip() {
     logger.warn("Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
+    stepCompleted = true;
   }
   
   public void init(){
     this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
     this.report.setDescription(stepDescription());
     this.report.setStartTimestamp();
+  }
+
+  public boolean stepCompleted() {
+    return this.stepCompleted;
   }
   
   public void finish(){
@@ -56,5 +64,21 @@ public abstract class TestStep {
   protected abstract void step() throws KiteTestException;
 
   public void setLogger(Logger logger) { this.logger = logger; }
+
+  private String getClassName() {
+    String s = this.getClass().getName();
+    if (s.contains(".")) {
+      s = s.substring(s.lastIndexOf(".") + 1);
+    }
+    return s;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
 }

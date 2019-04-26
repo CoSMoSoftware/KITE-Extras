@@ -20,6 +20,18 @@ import javax.json.JsonObject;
 
 /**
  * The type Instance: represents a selenium node or a gateway for network instrumentation.
+ *     {
+ *       "_id": "gw1",
+ * 	  "type": "gateway",
+ *       "name": "Alice Gateway",
+ *       "ipAddress": "11.222.33.238",
+ *       "username": "gw-user",
+ *       "password": "optional",
+ *       "keyFilePath": "file://path/to/privatekey.pem",
+ * 	  "nit0": "eth0",
+ * 	  "nit1": "eth1",
+ * 	  "nit2": "eth2",
+ *     },
  */
 public class Instance {
 
@@ -32,6 +44,16 @@ public class Instance {
   private String ipAddress;
 
   private String keyFilePath;
+
+  private String type;
+
+  private String password;
+
+  private String nit0;
+
+  private String nit1;
+
+  private String nit2;
 
   /**
    * Instantiates a new Instance.
@@ -51,6 +73,11 @@ public class Instance {
     this.username = jsonObject.getString("username");
     this.name = jsonObject.getString("name");
     this.keyFilePath = jsonObject.getString("keyFilePath");
+    this.type = jsonObject.getString("type");
+    this.password = jsonObject.getString("password");
+    this.nit0 = jsonObject.getString("nit0");
+    this.nit1 = jsonObject.getString("nit1");
+    this.nit2 = jsonObject.getString("nit2");
   }
 
   /**
@@ -132,6 +159,96 @@ public class Instance {
    */
   public void setKeyFilePath(String keyFilePath) {
     this.keyFilePath = keyFilePath;
+  }
+
+  /**
+   * Gets type.
+   *
+   * @return the type
+   */
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Sets type.
+   *
+   * @param type the type
+   */
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  /**
+   * Gets password.
+   *
+   * @return the password
+   */
+  public String getPassword() {
+    return password;
+  }
+
+  /**
+   * Sets password.
+   *
+   * @param password the password
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  /**
+   * Gets nit0.
+   *
+   * @return the nit0
+   */
+  public String getNit0() {
+    return nit0;
+  }
+
+  /**
+   * Sets nit0.
+   *
+   * @param nit0 the nit0
+   */
+  public void setNit0(String nit0) {
+    this.nit0 = nit0;
+  }
+
+  /**
+   * Gets nit1.
+   *
+   * @return the nit1
+   */
+  public String getNit1() {
+    return nit1;
+  }
+
+  /**
+   * Sets nit1.
+   *
+   * @param nit1 the nit1
+   */
+  public void setNit1(String nit1) {
+    this.nit1 = nit1;
+  }
+
+  /**
+   * Gets nit2.
+   *
+   * @return the nit2
+   */
+  public String getNit2() {
+    return nit2;
+  }
+
+  /**
+   * Sets nit2.
+   *
+   * @param nit2 the nit2
+   */
+  public void setNit2(String nit2) {
+    this.nit2 = nit2;
   }
 
 }
