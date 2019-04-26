@@ -68,7 +68,7 @@ public class AudioRecorder extends HttpServlet {
   /**
    * Instantiates a new audio recorder.
    *
-   * @see HttpServlet#HttpServlet()
+   * @see HttpServlet#HttpServlet() HttpServlet#HttpServlet()
    */
   public AudioRecorder() {
     super();
@@ -96,7 +96,9 @@ public class AudioRecorder extends HttpServlet {
     // Entertain mac and windows only
     boolean isWindows = true;
     String osName = System.getProperty("os.name").toLowerCase();
-    if (osName.indexOf("mac") >= 0) {
+    if (osName.indexOf("win") >= 0) {
+      // Do Nothing
+    } else if (osName.indexOf("mac") >= 0) {
       isWindows = false;
     } else {
       response.sendError(
@@ -127,6 +129,8 @@ public class AudioRecorder extends HttpServlet {
     // Sox command line path
     String soxPath = System.getProperty(PROP_SOX_PATH);
     System.out.println(PROP_SOX_PATH + ": " + soxPath);
+
+    List<String> listOutput = new ArrayList<String>();
 
     if (record != null) { // record=1
 
@@ -267,7 +271,7 @@ public class AudioRecorder extends HttpServlet {
 
         // List all the split files and choose the longest duration for score
         String[] listCommand = {dirCommand};
-        List<String> listOutput = executeCommand(listCommand, false, true, SPLITTED_FILE);
+        listOutput = executeCommand(listCommand, false, true, SPLITTED_FILE);
         double longestDuration = 0;
         String outputFile = listOutput.get(0);
         for (String output : listOutput) {
@@ -284,6 +288,7 @@ public class AudioRecorder extends HttpServlet {
                 Math.round(getDurationOfWavInSeconds(new File(media)))
                     - Math.round(getDurationOfWavInSeconds(new File(outputFile))));
         if (difference > LENGTH_DIFFERENCE) {
+          removeFiles(listOutput);
           response.getWriter().append(difference + "");
           return;
         }
@@ -291,16 +296,20 @@ public class AudioRecorder extends HttpServlet {
         String pesqPath = System.getProperty(PROP_PESQ_PATH);
         System.out.println(PROP_PESQ_PATH + ": " + pesqPath);
         if (pesqPath == null) {
+          removeFiles(listOutput);
           response.sendError(HttpServletResponse.SC_BAD_REQUEST, PROP_PESQ_PATH + " is not found");
           return;
         }
 
         // Compute PESQ score
         String[] pesqCommand = {pesqPath, "+8000", media, outputFile};
-        response.getWriter().append(executeCommand(pesqCommand, false, true));
+        String pesqScore = executeCommand(pesqCommand, false, true);
+        removeFiles(listOutput);
+        response.getWriter().append(pesqScore);
 
       } catch (UnsupportedAudioFileException | InterruptedException e) {
         e.printStackTrace();
+        removeFiles(listOutput);
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         return;
       }
@@ -478,4 +487,9 @@ public class AudioRecorder extends HttpServlet {
       }
     }
   }
+
+  private static void removeFiles(List<String> fileList) {
+    for (String filename : fileList) new File(filename).delete();
+  }
+  
 }
