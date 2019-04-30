@@ -8,6 +8,9 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 import org.openqa.selenium.WebDriver;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 
 public abstract class TestStep {
@@ -56,5 +59,23 @@ public abstract class TestStep {
   protected abstract void step() throws KiteTestException;
 
   public void setLogger(Logger logger) { this.logger = logger; }
-
+  
+  protected String getClassName() {
+    
+    String name = this.getClass().getSimpleName();
+    Set<String> upperLetters = new HashSet<>();
+    
+    for (char letter: name.toCharArray()) {
+      String letterString = Character.toString(letter);
+      if (letterString.matches("[A-Z]") || letterString.matches("[0-9]")) {
+        upperLetters.add(letterString);
+      }
+    }
+    
+    for (String letterString: upperLetters) {
+      name = name.replaceAll(letterString, " " + letterString.toLowerCase());
+    }
+    
+    return name;
+  }
 }

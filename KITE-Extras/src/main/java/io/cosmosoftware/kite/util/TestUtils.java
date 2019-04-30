@@ -3,10 +3,11 @@
  */
 
 package io.cosmosoftware.kite.util;
-
 import io.cosmosoftware.kite.action.JSActionScript;
 import io.cosmosoftware.kite.entities.Timeouts;
+import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.steps.TestStep;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -31,9 +32,9 @@ import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
 /** The type Test utils. */
 public class TestUtils {
-
+  
   static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
-
+  
   private static final Logger logger = Logger.getLogger(TestUtils.class.getName());
   
   /**
@@ -82,7 +83,8 @@ public class TestUtils {
   public static String idToString(int id) {
     return "" + (id < 10 ? "00" + id : (id < 100 ? "0" + id : "" + id));
   }
-
+  
+  
   /**
    * Create a directory if not existing
    * @param dirName directory name
@@ -237,7 +239,7 @@ public class TestUtils {
    * @return the check sum
    * @throws InterruptedException the interrupted exception
    */
-  public static JsonObject videoCheckSum(WebDriver webDriver, int index) {
+  public static JsonObject videoCheckSum(WebDriver webDriver, int index) throws KiteTestException {
     String result = "blank";
     JsonObjectBuilder resultObject = Json.createObjectBuilder();
     long canvasData1 =
@@ -252,7 +254,7 @@ public class TestUtils {
         result = "video";
       } else {
         waitAround(Timeouts.ONE_SECOND_INTERVAL);
-  
+        
         canvasData3 = (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumByIndexScript(index));
         result = Math.abs(canvasData3 - canvasData1) != 0 ? "video" : "still";
       }
@@ -265,7 +267,7 @@ public class TestUtils {
       .add("result", result);
     return resultObject.build();
   }
-
+  
   /**
    * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
    * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
@@ -277,7 +279,7 @@ public class TestUtils {
    * @return "blank" or "still" or "video"
    * @throws InterruptedException the interrupted exception
    */
-  public static String videoCheck(WebDriver webDriver, int index) {
+  public static String videoCheck(WebDriver webDriver, int index) throws KiteTestException {
     return videoCheckSum(webDriver, index).getString("result");
   }
   
@@ -331,8 +333,14 @@ public class TestUtils {
    *
    * @return the result of the script execution
    */
-  public static Object executeJsScript(WebDriver webDriver, String scriptString) {
-    return ((JavascriptExecutor) webDriver).executeScript(scriptString);
+  public static Object executeJsScript(WebDriver webDriver, String scriptString) throws KiteTestException {
+    try {
+      return ((JavascriptExecutor) webDriver).executeScript(scriptString);
+    } catch (Exception e) {
+      throw new KiteTestException("Unable to execute JavaScript code '"
+        + scriptString.substring(0,scriptString.length()/3) + "...' :"
+        + e.getLocalizedMessage(), Status.BROKEN);
+    }
   }
   
   /**
@@ -372,7 +380,7 @@ public class TestUtils {
         }
     }
   }
-
+  
   /**
    * Gets node url.
    *
@@ -382,23 +390,23 @@ public class TestUtils {
    */
   public static String getNode(String hubUrl, String sessionId) {
     String node = null;
-
+    
     String protocolAuthorityFormat = "%s://%s";
-
+    
     CloseableHttpClient client = null;
     CloseableHttpResponse response = null;
     InputStream stream = null;
     JsonReader reader = null;
-
+    
     try {
       URL url = new URL(hubUrl);
       client = HttpClients.createDefault();
       response =
-          client.execute(
-              new HttpGet(
-                  String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority())
-                      + "/grid/api/testsession?session="
-                      + sessionId));
+        client.execute(
+          new HttpGet(
+            String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority())
+              + "/grid/api/testsession?session="
+              + sessionId));
       stream = response.getEntity().getContent();
       reader = Json.createReader(stream);
       url = new URL(reader.readObject().getString("proxyId"));
@@ -434,18 +442,18 @@ public class TestUtils {
         }
       }
     }
-
+    
     return node;
   }
-
+  
   public static String doHttpGet(String fullUrl) {
     StringBuilder result = new StringBuilder();
-
+    
     CloseableHttpClient client = null;
     CloseableHttpResponse response = null;
     InputStream stream = null;
     BufferedReader reader = null;
-
+    
     try {
       client = HttpClients.createDefault();
       response = client.execute(new HttpGet(fullUrl));
@@ -490,7 +498,35 @@ public class TestUtils {
         }
       }
     }
-
+    
     return response.toString();
+  }
+  
+  /**
+   * Convert time (ex: 12:34) to seconds for comparison.
+   * @param timeString  time in string format.
+   * @return converted time to seconds.
+   */
+  public static int timeToSecond(String timeString) {
+    List<String> splitedTimeString = Arrays.asList(timeString.split(":"));
+    int count = splitedTimeString.size();
+    switch (count) {
+      // second only
+      case 1: {
+        return Integer.parseInt(splitedTimeString.get(0));
+      }
+      // minute and second (12:34)
+      case 2: {
+        return Integer.parseInt(splitedTimeString.get(0))*60
+          + Integer.parseInt(splitedTimeString.get(1));
+      }
+      // hour, minute and second (12:34:56)
+      case 3: {
+        return Integer.parseInt(splitedTimeString.get(0))*3600
+          + Integer.parseInt(splitedTimeString.get(0))*60
+          + Integer.parseInt(splitedTimeString.get(1));
+      }
+    }
+    return 0;
   }
 }

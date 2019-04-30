@@ -1,6 +1,15 @@
 package io.cosmosoftware.kite.pages;
 
+import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.MobileDriver;
+import io.appium.java_client.TouchAction;
+import io.appium.java_client.touch.WaitOptions;
+import io.appium.java_client.touch.offset.PointOption;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
+import io.cosmosoftware.kite.util.WebDriverInteractions;
+import io.cosmosoftware.kite.util.WebDriverUtils;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -8,17 +17,27 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
+import static io.cosmosoftware.kite.entities.Timeouts.*;
+import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
+import static io.cosmosoftware.kite.util.WebDriverInteractions.clickElement;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
 
 public abstract class BasePage {
   protected final Logger logger;
   protected final WebDriver webDriver;
+  protected final WebDriverWait defaultWait;
+  protected boolean isAppium;
   
   
   protected BasePage(WebDriver webDriver, Logger logger) {
     this.webDriver = webDriver;
+    this.isAppium = webDriver instanceof AppiumDriver;
     this.logger = logger;
+    this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
     PageFactory.initElements(webDriver, this);
   }
   
@@ -32,7 +51,7 @@ public abstract class BasePage {
    *
    */
   public void click(WebElement element) throws KiteInteractionException {
-    this.click(element, false);
+    click(element, false);
   }
   
   /**
@@ -43,16 +62,21 @@ public abstract class BasePage {
    *
    */
   public void click(WebElement element, boolean useAction) throws KiteInteractionException {
-    try {
-      if (useAction) {
-        Actions actions = new Actions(this.webDriver);
-        actions.moveToElement(element).click().perform();
-      } else {
-        element.click();
-      }
-    } catch (Exception e) {
-      processInteractionException( "click", e);
+    if (isAppium) {
+      clickElement(webDriver, element,false);
+    } else {
+      clickElement(webDriver, element,useAction);
     }
+  }
+  
+  /**
+   * Performs a simple tap action at a specific point
+   *
+   * @param x         the x
+   * @param y         the y
+   */
+  public void tap(int x, int y) throws KiteTestException {
+    WebDriverInteractions.tap(webDriver, x, y);
   }
   
   /**
@@ -62,7 +86,7 @@ public abstract class BasePage {
    * @param y         the y
    */
   public void doubleTap(int x, int y) {
-    new Actions(webDriver).moveByOffset(x, y).doubleClick().perform();
+    WebDriverInteractions.doubleTap(webDriver, x, y);
   }
   
   
@@ -75,69 +99,12 @@ public abstract class BasePage {
     }
   }
   
-  /**
-   * Press down at the begin point and move to end point. Can be used to draw a line if the cursor
-   * is in drawing/annotating mode.
-   *
-   * @param begin     point to begin.
-   * @param end       end point
-   */
-  public void drawLine(Point begin, Point end) throws KiteInteractionException {
-    try {
-      Actions action = new Actions(webDriver);
-      action.moveByOffset(begin.x, begin.y)
-        .clickAndHold()
-        .moveByOffset(end.x, end.y)
-        .release().perform();
-    } catch (Exception e) {
-      processInteractionException("draw line", e);
-    }
-  }
-  
-  /**
-   * Press down at the begin point and move to fill the area of a square. Can be used to draw a
-   * square if the cursor is in drawing/annotating mode.
-   *
-   * @param begin            point to begin.
-   * @param squareSideLength length of the side of the square.
-   */
-  public void drawSquare(Point begin, int squareSideLength) throws KiteInteractionException {
-    try {
-      final int waitTime = 50;
-      int startX = begin.x;
-      int startY = begin.y;
-      
-      Actions action = new Actions(webDriver);
-      action.moveByOffset(startX, startY).clickAndHold();
-      for (int measure = squareSideLength / 20; measure <= squareSideLength; measure += squareSideLength / 20) {
-        int length = squareSideLength - measure;
-        action.moveByOffset(length, 0)
-          .moveByOffset(0, -length)
-          .moveByOffset(-length, 0)
-          .moveByOffset(0, length);
-      }
-      action.release().perform();
-    } catch (Exception e) {
-      processInteractionException("draw square",e);
-    }
-  }
-  
-  
+ 
   /**
    * Resizes the windows to the screen's available width and height
    */
   public  void maximizeCurrentWindow() throws KiteInteractionException {
-    try {
-      if (!isElectron(webDriver)) {
-        String getScreenHeight = "return screen.availHeight";
-        String getScreenWidth = "return screen.availWidth";
-        int screenHeight = (int) ((long) executeJsScript(webDriver, getScreenHeight));
-        int screenWidth = (int) ((long) executeJsScript(webDriver, getScreenWidth));
-        webDriver.manage().window().setSize(new Dimension(screenWidth, screenHeight));
-      }
-    } catch (Exception e) {
-      processInteractionException("maximize current window", e);
-    }
+    WebDriverUtils.maximizeCurrentWindow(webDriver);
   }
   
   private void clearElementText(WebElement element) {
@@ -160,9 +127,19 @@ public abstract class BasePage {
   protected void processInteractionException(String interactionName, Exception e) throws KiteInteractionException {
     throw new KiteInteractionException(e.getClass().getName() + " while performing " + interactionName, e.getCause());
   }
-
-
-
+  
+  /**
+   * Performs a swipe up action from the beginning point to end point.
+   *
+   * @param begin     the begin
+   * @param end       the end
+   *
+   * @throws KiteTestException the kite test exception
+   */
+  public void swipe(Point begin, Point end) throws KiteTestException {
+    WebDriverInteractions.swipe(webDriver,begin,end);
+  }
+  
   /**
    * Wait until the webElement elem is visible up to timeoutInSecond.
    *

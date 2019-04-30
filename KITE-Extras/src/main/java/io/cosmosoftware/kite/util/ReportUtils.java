@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.util;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.usrmgmt.TypeRole;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Capabilities;
@@ -204,9 +206,11 @@ public class ReportUtils {
     return new SimpleDateFormat("yyyy-MM-dd HHmmss").format(new Date(date));
   }
   
-  //Text attachments for Allure
-  public static byte[] saveScreenshotPNG (WebDriver driver) {
-    return ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
+  public static byte[] saveScreenshotPNG (WebDriver driver) throws KiteTestException {
+    try {
+      return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+    } catch (Exception e) {
+      throw new KiteTestException("Failed to take screenshot: " + e.getLocalizedMessage(), Status.BROKEN, e.getCause(), true);
+    }
   }
-
 }

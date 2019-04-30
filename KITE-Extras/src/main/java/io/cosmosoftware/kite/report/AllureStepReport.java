@@ -11,7 +11,7 @@ import java.util.List;
  * This class is a wrapper of the Allure's StepResult.
  */
 public class AllureStepReport extends Entity {
-
+  
   private String description = "N/C";
   private Status status = Status.PASSED;
   private ParamList parameters;
@@ -39,7 +39,6 @@ public class AllureStepReport extends Entity {
   }
   
   public synchronized void setStatus(Status status) {
-    this.ignore = status.equals(Status.SKIPPED);
     this.status = status;
     this.setStopTimestamp();
   }
@@ -50,7 +49,7 @@ public class AllureStepReport extends Entity {
     // in theory, this is only tru after the steps that can be ignored happen
     // and will be fault if the successor step can't be ignore
     this.ignore = step.canBeIgnore();
-    if (this.status.equals(Status.PASSED) && !step.status.equals(Status.SKIPPED)) {
+    if (this.status.equals(Status.PASSED) && !step.getStatus().equals(Status.SKIPPED)) {
       // prevent overwriting failed/broken status
       // step should not has status "skipped" if sub steps gets skipped on failure
       this.status = step.getStatus();
@@ -60,7 +59,7 @@ public class AllureStepReport extends Entity {
       }
     }
   }
-
+  
   public void addParam(String name, String value) {
     this.parameters.addLabel(name, value);
   }
@@ -87,7 +86,7 @@ public class AllureStepReport extends Entity {
   
   public void setDetails(StatusDetails details) {
     this.details = details;
-    Reporter.getInstance().textAttachment(this, "statusDetail", details.toJson().toString(), "json");
+    // Reporter.getInstance().textAttachment(this, "statusDetail", details.toJson().toString(), "json");
   }
   
   public Status getStatus() {
@@ -95,16 +94,10 @@ public class AllureStepReport extends Entity {
   }
   
   public boolean failed() {
-    if (this.canBeIgnore()) {
-      return false;
-    }
     return this.status.equals(Status.FAILED);
   }
   
   public boolean broken() {
-    if (this.canBeIgnore()) {
-      return false;
-    }
     return this.status.equals(Status.BROKEN);
   }
   
@@ -137,7 +130,7 @@ public class AllureStepReport extends Entity {
     }
     return this.status;
   }
-
+  
   @Override
   public JsonObjectBuilder getJsonBuilder() {
     this.status = getActualStatus();
@@ -154,7 +147,7 @@ public class AllureStepReport extends Entity {
         attArray.add(attachment.toJson());
       }
     }
-  
+    
     JsonObjectBuilder builder =  super.getJsonBuilder()
       .add("description", this.description)
       .add("stage", this.stage)
