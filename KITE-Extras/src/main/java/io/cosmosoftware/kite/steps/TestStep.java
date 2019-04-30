@@ -60,7 +60,7 @@ public abstract class TestStep {
 
   public void setLogger(Logger logger) { this.logger = logger; }
   
-  protected String getClassName() {
+  protected String translateClassName() {
     
     String name = this.getClass().getSimpleName();
     Set<String> upperLetters = new HashSet<>();
