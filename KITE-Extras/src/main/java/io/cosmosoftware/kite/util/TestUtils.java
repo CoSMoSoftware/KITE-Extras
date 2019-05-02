@@ -498,8 +498,7 @@ public class TestUtils {
         }
       }
     }
-    
-    return response.toString();
+    return result.toString();
   }
   
   /**
