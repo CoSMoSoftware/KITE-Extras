@@ -5,7 +5,6 @@ import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
 import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
 import org.openqa.selenium.WebDriver;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
@@ -32,13 +31,11 @@ public abstract class TestStep {
     } catch (Exception e) {
       Reporter.getInstance().processException(this.report, e);
     }
-    stepCompleted = true;
   }
   
   public void skip() {
     logger.warn("Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
-    stepCompleted = true;
   }
   
   public void init(){
@@ -53,6 +50,7 @@ public abstract class TestStep {
   
   public void finish(){
     this.report.setStopTimestamp();
+    stepCompleted = true;
   }
   
   public AllureStepReport getStepReport() {
@@ -66,7 +64,7 @@ public abstract class TestStep {
   public void setLogger(Logger logger) { this.logger = logger; }
 
   private String getClassName() {
-    String s = this.getClass().getName();
+    String s = this.getClass().getSimpleName();
     if (s.contains(".")) {
       s = s.substring(s.lastIndexOf(".") + 1);
     }

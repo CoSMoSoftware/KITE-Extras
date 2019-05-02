@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -30,11 +34,11 @@ public class Scenario {
     try {
       missingKey = "gateway";
       gateway = jsonObject.getString("gateway");
-      missingKey = "command";
-      command = jsonObject.getString("command");
       if (instrumentation.get(gateway) == null) {
         throw new Exception(" Error in json config scenario, gateway specified is not in the instrumentation file ! ");
       }
+      missingKey = "command";
+      command = jsonObject.getString("command");
     } catch (NullPointerException e) {
       throw new KiteTestException("Error in json config scenario, the key " + missingKey + " is missing.", Status.BROKEN, e);
     }
@@ -64,9 +68,9 @@ public class Scenario {
   }
 
   public String runCommands() {
-    logger.info("Trying to run " + this.command + " on " + this.gateway);
+    logger.info("Trying to run " + command + " on " + this.gateway);
     Instance instance = instrumentation.get(this.gateway);
-    String result = this.command;
+    String result = command;
     logger.info("Executing command : " + command + " on " + instance.getIpAddress());
     try {
       SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
@@ -76,7 +80,7 @@ public class Scenario {
         logger.info("runCommands() : \r\n" + command);
         result += "  SUCCESS (Client : " + instance.getIpAddress() + ")";
       } else {
-        logger.error("Failed runCommands() : \r\n" + this.command);
+        logger.error("Failed runCommands() : \r\n" + command);
         result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
       }
     } catch (Exception e) {
@@ -95,7 +99,7 @@ public class Scenario {
     Instance instance = instrumentation.get(this.gateway);
     String[]  interfacesList = {instance.getNit0(), instance.getNit1(), instance.getNit2()};
     for (String inter : interfacesList) {
-      if (this.command.contains(inter)) {
+      if (command.contains(inter)) {
         String cleanUpCommand = "sudo tc qdisc del dev " + inter + " root";
         try {
           SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
