@@ -318,7 +318,7 @@ public class WebDriverUtils {
    * @param webDriver the web driver
    * @param activity  activity to open.
    */
-  public static void starAppActivity(AndroidDriver webDriver, Activity activity) {
+  public static void startAppActivity(AndroidDriver webDriver, Activity activity) {
     webDriver.startActivity(activity);
   }
   
