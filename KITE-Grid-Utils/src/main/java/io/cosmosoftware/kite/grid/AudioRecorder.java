@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -47,14 +48,8 @@ public class AudioRecorder extends HttpServlet {
   /** The Constant WIN_AUDIO_DRIVER. */
   private static final String WIN_AUDIO_DRIVER = "waveaudio";
 
-  /** The Constant WIN_DIR_COMMAND. */
-  private static final String WIN_DIR_COMMAND = "dir";
-
   /** The Constant MAC_AUDIO_DRIVER. */
   private static final String MAC_AUDIO_DRIVER = "coreaudio";
-
-  /** The Constant MAC_DIR_COMMAND. */
-  private static final String MAC_DIR_COMMAND = "ls";
 
   /** The Constant PROP_SOX_PATH. */
   private static final String PROP_SOX_PATH = "sox.path";
@@ -261,14 +256,11 @@ public class AudioRecorder extends HttpServlet {
           "restart"
         };
         executeCommand(splitCommand, false, true);
-
-        // Choose between Windows and Mac listing
-        String dirCommand = MAC_DIR_COMMAND;
-        if (isWindows) dirCommand = WIN_DIR_COMMAND;
-
+        
         // List all the split files and choose the longest duration for score
-        String[] listCommand = {dirCommand};
-        listOutput = executeCommand(listCommand, false, true, SPLITTED_FILE);
+        File file = new File(System.getProperty("user.dir"));
+        listOutput = Arrays.asList(file.list());
+        
         double longestDuration = 0;
         String outputFile = listOutput.get(0);
         for (String output : listOutput) {
@@ -295,6 +287,7 @@ public class AudioRecorder extends HttpServlet {
           "1%",
           "reverse"
         };
+        
         executeCommand(trimMediaCommand, false, true);
 
         // File lengths were different
