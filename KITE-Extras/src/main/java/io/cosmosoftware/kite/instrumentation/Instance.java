@@ -23,32 +23,26 @@ import javax.json.JsonObject;
  */
 public class Instance {
 
-  private String id;
+  private final String id;
 
-  private String username;
+  private final String username;
 
-  private String name;
+  private final String name;
 
-  private String ipAddress;
+  private final String ipAddress;
 
-  private String keyFilePath;
+  private final String keyFilePath;
 
-  private String type;
+  private final String type;
 
-  private String password;
+  private final String password;
 
-  private String nit0;
+  private final String nit0;
 
-  private String nit1;
+  private final String nit1;
 
-  private String nit2;
+  private final String nit2;
 
-  /**
-   * Instantiates a new Instance.
-   */
-  public Instance() {
-    super();
-  }
 
   /**
    * Instantiates a new Instance.
@@ -56,16 +50,17 @@ public class Instance {
    * @param jsonObject the json object
    */
   public Instance(JsonObject jsonObject) {
-    this.id = jsonObject.getString("_id");
-    this.ipAddress = jsonObject.getString("ipAddress");
-    this.username = jsonObject.getString("username");
-    this.name = jsonObject.getString("name");
-    this.keyFilePath = jsonObject.getString("keyFilePath");
-    this.type = jsonObject.getString("type");
-    this.password = jsonObject.getString("password");
-    this.nit0 = jsonObject.getString("nit0");
-    this.nit1 = jsonObject.getString("nit1");
-    this.nit2 = jsonObject.getString("nit2");
+
+      this.id = jsonObject.getString("_id");
+      this.ipAddress = jsonObject.getString("ipAddress");
+      this.username = jsonObject.getString("username");
+      this.name = jsonObject.getString("name");
+      this.keyFilePath = jsonObject.getString("keyFilePath");
+      this.type = jsonObject.getString("type");
+      this.password = jsonObject.getString("password");
+      this.nit0 = jsonObject.getString("nit0");
+      this.nit1 = jsonObject.getString("nit1");
+      this.nit2 = jsonObject.getString("nit2");
   }
 
   /**
@@ -75,15 +70,6 @@ public class Instance {
    */
   public String getId() {
     return id;
-  }
-
-  /**
-   * Sets id.
-   *
-   * @param id the id
-   */
-  public void setId(String id) {
-    this.id = id;
   }
 
   /**
@@ -105,30 +91,12 @@ public class Instance {
   }
 
   /**
-   * Sets username.
-   *
-   * @param username the username
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
    * Gets ip address.
    *
    * @return the ip address
    */
   public String getIpAddress() {
     return ipAddress;
-  }
-
-  /**
-   * Sets ip address.
-   *
-   * @param ipAddress the ip address
-   */
-  public void setIpAddress(String ipAddress) {
-    this.ipAddress = ipAddress;
   }
 
   /**
@@ -141,30 +109,12 @@ public class Instance {
   }
 
   /**
-   * Sets key file path.
-   *
-   * @param keyFilePath the key file path
-   */
-  public void setKeyFilePath(String keyFilePath) {
-    this.keyFilePath = keyFilePath;
-  }
-
-  /**
    * Gets type.
    *
    * @return the type
    */
   public String getType() {
     return type;
-  }
-
-  /**
-   * Sets type.
-   *
-   * @param type the type
-   */
-  public void setType(String type) {
-    this.type = type;
   }
 
   /**
@@ -177,30 +127,12 @@ public class Instance {
   }
 
   /**
-   * Sets password.
-   *
-   * @param password the password
-   */
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  /**
    * Gets nit0.
    *
    * @return the nit0
    */
   public String getNit0() {
     return nit0;
-  }
-
-  /**
-   * Sets nit0.
-   *
-   * @param nit0 the nit0
-   */
-  public void setNit0(String nit0) {
-    this.nit0 = nit0;
   }
 
   /**
@@ -213,30 +145,12 @@ public class Instance {
   }
 
   /**
-   * Sets nit1.
-   *
-   * @param nit1 the nit1
-   */
-  public void setNit1(String nit1) {
-    this.nit1 = nit1;
-  }
-
-  /**
    * Gets nit2.
    *
    * @return the nit2
    */
   public String getNit2() {
     return nit2;
-  }
-
-  /**
-   * Sets nit2.
-   *
-   * @param nit2 the nit2
-   */
-  public void setNit2(String nit2) {
-    this.nit2 = nit2;
   }
 
 }
