@@ -4,6 +4,9 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
+
 import javax.json.JsonObject;
 
 /**
@@ -49,18 +52,30 @@ public class Instance {
    *
    * @param jsonObject the json object
    */
-  public Instance(JsonObject jsonObject) {
-
+  public Instance(JsonObject jsonObject) throws KiteTestException {
+    String missingKey = "";
+    try {
+      missingKey = "_id";
       this.id = jsonObject.getString("_id");
+      missingKey = "ipAddress";
       this.ipAddress = jsonObject.getString("ipAddress");
+      missingKey = "username";
       this.username = jsonObject.getString("username");
-      this.name = jsonObject.getString("name");
+      missingKey = "keyFilePath";
       this.keyFilePath = jsonObject.getString("keyFilePath");
+      missingKey = "type";
       this.type = jsonObject.getString("type");
-      this.password = jsonObject.getString("password");
+      missingKey = "nit0";
       this.nit0 = jsonObject.getString("nit0");
+      missingKey = "nit1";
       this.nit1 = jsonObject.getString("nit1");
+      missingKey = "nit2";
       this.nit2 = jsonObject.getString("nit2");
+    } catch (NullPointerException e) {
+      throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
+    }
+    this.name = jsonObject.getString("name", this.id);
+    this.password = jsonObject.getString("password", null);
   }
 
   /**

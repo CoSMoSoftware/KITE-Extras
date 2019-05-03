@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.util.HashMap;
@@ -19,11 +21,15 @@ public class Instrumentation extends HashMap<String, Instance> {
    *
    * @param jsonObject the json object
    */
-  public Instrumentation(JsonObject jsonObject) {
+  public Instrumentation(JsonObject jsonObject) throws KiteTestException {
     JsonArray jsonArray = jsonObject.getJsonArray("instances");
     for (int i = 0; i < jsonArray.size(); i++) {
-      Instance instance = new Instance(jsonArray.getJsonObject(i));
-      this.put(instance.getId(), instance);
+      try {
+        Instance instance = new Instance(jsonArray.getJsonObject(i));
+        this.put(instance.getId(), instance);
+      } catch (KiteTestException e) {
+        throw e;
+      }
     }
   }
   
