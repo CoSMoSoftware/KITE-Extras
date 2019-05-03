@@ -1,0 +1,28 @@
+{
+  "instances": [
+    {
+      "_id": "gw1",
+	  "type": "gateway",
+      "name": "Alice Gateway",
+      "ipAddress": "11.222.33.238",
+      "username": "gw-user",
+      "password": "optional",
+      "keyFilePath": "file://path/to/privatekey.pem",
+	  "nit0": "eth0",
+	  "nit1": "eth1",
+	  "nit2": "eth2",
+    },
+    {
+      "_id": "gw2",
+	  "type": "gateway",
+      "name": "Bob Gateway",
+      "ipAddress": "11.222.33.241",
+      "username": "gw-user",
+      "password": "optional",
+      "keyFilePath": "file://path/to/privatekey.pem",
+	  "nit0": "eth0",
+	  "nit1": "eth1",
+	  "nit2": "eth2",
+    }
+  ]
+ } 

@@ -1,56 +1,81 @@
 /*
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.instrumentation;
+
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
 
 import javax.json.JsonObject;
 
 /**
  * The type Instance: represents a selenium node or a gateway for network instrumentation.
+ *     {
+ *       "_id": "gw1",
+ * 	  "type": "gateway",
+ *       "name": "Alice Gateway",
+ *       "ipAddress": "11.222.33.238",
+ *       "username": "gw-user",
+ *       "password": "optional",
+ *       "keyFilePath": "file://path/to/privatekey.pem",
+ * 	  "nit0": "eth0",
+ * 	  "nit1": "eth1",
+ * 	  "nit2": "eth2",
+ *     },
  */
 public class Instance {
 
-  private String id;
+  private final String id;
 
-  private String username;
+  private final String username;
 
-  private String name;
+  private final String name;
 
-  private String ipAddress;
+  private final String ipAddress;
 
-  private String keyFilePath;
+  private final String keyFilePath;
 
-  /**
-   * Instantiates a new Instance.
-   */
-  public Instance() {
-    super();
-  }
+  private final String type;
+
+  private final String password;
+
+  private final String nit0;
+
+  private final String nit1;
+
+  private final String nit2;
+
 
   /**
    * Instantiates a new Instance.
    *
    * @param jsonObject the json object
    */
-  public Instance(JsonObject jsonObject) {
-    this.id = jsonObject.getString("_id");
-    this.ipAddress = jsonObject.getString("ipAddress");
-    this.username = jsonObject.getString("username");
-    this.name = jsonObject.getString("name");
-    this.keyFilePath = jsonObject.getString("keyFilePath");
+  public Instance(JsonObject jsonObject) throws KiteTestException {
+    String missingKey = "";
+    try {
+      missingKey = "_id";
+      this.id = jsonObject.getString("_id");
+      missingKey = "ipAddress";
+      this.ipAddress = jsonObject.getString("ipAddress");
+      missingKey = "username";
+      this.username = jsonObject.getString("username");
+      missingKey = "keyFilePath";
+      this.keyFilePath = jsonObject.getString("keyFilePath");
+      missingKey = "type";
+      this.type = jsonObject.getString("type");
+      missingKey = "nit0";
+      this.nit0 = jsonObject.getString("nit0");
+      missingKey = "nit1";
+      this.nit1 = jsonObject.getString("nit1");
+      missingKey = "nit2";
+      this.nit2 = jsonObject.getString("nit2");
+    } catch (NullPointerException e) {
+      throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
+    }
+    this.name = jsonObject.getString("name", this.id);
+    this.password = jsonObject.getString("password", null);
   }
 
   /**
@@ -60,15 +85,6 @@ public class Instance {
    */
   public String getId() {
     return id;
-  }
-
-  /**
-   * Sets id.
-   *
-   * @param id the id
-   */
-  public void setId(String id) {
-    this.id = id;
   }
 
   /**
@@ -90,30 +106,12 @@ public class Instance {
   }
 
   /**
-   * Sets username.
-   *
-   * @param username the username
-   */
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  /**
    * Gets ip address.
    *
    * @return the ip address
    */
   public String getIpAddress() {
     return ipAddress;
-  }
-
-  /**
-   * Sets ip address.
-   *
-   * @param ipAddress the ip address
-   */
-  public void setIpAddress(String ipAddress) {
-    this.ipAddress = ipAddress;
   }
 
   /**
@@ -126,12 +124,48 @@ public class Instance {
   }
 
   /**
-   * Sets key file path.
+   * Gets type.
    *
-   * @param keyFilePath the key file path
+   * @return the type
    */
-  public void setKeyFilePath(String keyFilePath) {
-    this.keyFilePath = keyFilePath;
+  public String getType() {
+    return type;
+  }
+
+  /**
+   * Gets password.
+   *
+   * @return the password
+   */
+  public String getPassword() {
+    return password;
+  }
+
+  /**
+   * Gets nit0.
+   *
+   * @return the nit0
+   */
+  public String getNit0() {
+    return nit0;
+  }
+
+  /**
+   * Gets nit1.
+   *
+   * @return the nit1
+   */
+  public String getNit1() {
+    return nit1;
+  }
+
+  /**
+   * Gets nit2.
+   *
+   * @return the nit2
+   */
+  public String getNit2() {
+    return nit2;
   }
 
 }

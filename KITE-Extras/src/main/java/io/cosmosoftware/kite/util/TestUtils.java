@@ -344,10 +344,7 @@ public class TestUtils {
    * @throws IOException Signals that an I/O exception has occurred.
    */
   public static void downloadFile(String urlStr, String filePath) throws IOException {
-    if (urlStr.contains("~")) {
-      urlStr = urlStr.replaceAll(
-        "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"));
-    }
+    urlStr = filePath(urlStr);
     logger.info("Downloading '" + filePath + "' from '" + urlStr + "'");
     
     ReadableByteChannel rbc = null;
@@ -371,6 +368,12 @@ public class TestUtils {
           logger.warn(e);
         }
     }
+  }
+
+  public static String filePath( String filePath ) {
+    return filePath.contains("~") ? filePath.replaceAll(
+              "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
+            : filePath;
   }
 
   /**
