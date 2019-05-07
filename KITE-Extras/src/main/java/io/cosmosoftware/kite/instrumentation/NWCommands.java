@@ -51,28 +51,24 @@ public class NWCommands {
       command = this.finalCommand;
     } else {
       if (this.delay != 0) {
-        if (command == "") {
-          command = "sudo tc qdisc add dev " + inter + " root handle 1: netem delay " + delay + "ms ";
-        } else {
-          command += "delay " + delay + "ms ";
-        }
+        command = "sudo tc qdisc add dev " + inter + " root handle 1: netem delay " + delay + "ms ";
       }
       if (this.packetloss != 0) {
-        if (command == "") {
+        if (command.equals("")) {
           command = "sudo tc qdisc add dev " + inter + " root handle 1: netem loss " + packetloss + "% ";
         } else {
           command += "loss " + packetloss + "% ";
         }
       }
       if (this.corrupt != 0) {
-        if (command == "") {
+        if (command.equals("")) {
           command = "sudo tc qdisc add dev " + inter + " root handle 1: netem corrupt " + corrupt + "% ";
         } else {
           command += "corrupt " + corrupt + "% ";
         }
       }
       if (this.duplicate != 0) {
-        if (command == "") {
+        if (command.equals("")) {
           command = "sudo tc qdisc add dev " + inter + " root netem handle 1: duplicate " + duplicate + "% ";
         } else {
           command += "duplicate " + duplicate + "% ";
@@ -80,7 +76,7 @@ public class NWCommands {
       }
       if (this.bandwidth != null) {
         try {
-          if (command == "") {
+          if (command.equals("")) {
             command = "sudo tc qdisc add dev " + inter + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
           } else {
             command += "|| true && sudo tc qdisc add dev " + inter + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
@@ -90,7 +86,7 @@ public class NWCommands {
         }
       }
     }
-    if (command == "") {
+    if (command.equals("")) {
       throw new KiteTestException("No command to run.", Status.BROKEN);
     }
     return command;

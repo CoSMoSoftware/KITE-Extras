@@ -19,7 +19,7 @@ public class Scenario {
   private final Instrumentation instrumentation;
   private final int clientId;
   private final  String name;
-  private HashMap<String, String> commandList = new HashMap();
+  private HashMap<String, String> commandList = new HashMap<>();
   private final int duration;
   private final Logger logger;
 
@@ -46,14 +46,14 @@ public class Scenario {
           gateway = nwCommands.getGateway();
           command = this.commandList.get(gateway);
           this.commandList.remove(gateway);
-          if (command != "") {
+          if (!command.equals("")) {
             command += "|| true && " + nwCommands.getCommand();
           } else {
             command += nwCommands.getCommand();
           }
           commandList.put(gateway, command);
         } catch (KiteTestException e) {
-          throw e;
+          throw new KiteTestException("Error in commandList configuration", Status.FAILED, e);
         }
       }
     } catch (NullPointerException e) {
@@ -81,24 +81,24 @@ public class Scenario {
   }
 
   public String runCommands() {
-    String result = "";
+    StringBuilder result = new StringBuilder();
     for (String gw : this.commandList.keySet()) {
       String command = this.commandList.get(gw);
-      if (command != "") {
+      if (!command.equals("")) {
         logger.info("Trying to run " + command + "on " + gw);
         Instance instance = instrumentation.get(gw);
-        result += command;
+        result.append(command);
         logger.info("Executing command : " + command + "on " + instance.getIpAddress());
         try {
           SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
               instance.getIpAddress(), command);
           if (sshManager.call().commandSuccessful()) {
-            Thread.sleep(this.duration);
+            Thread.sleep(1000);
             logger.info("runCommands() : \r\n" + command);
-            result += "  SUCCESS (Client : " + instance.getIpAddress() + ")";
+            result.append("  SUCCESS (Client : ").append(instance.getIpAddress()).append(")");
           } else {
             logger.error("Failed runCommands() : \r\n" + command);
-            result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+            result.append("  FAILURE (Client : ").append(instance.getIpAddress()).append(")");
           }
         } catch (Exception e) {
           logger.error(
@@ -106,19 +106,19 @@ public class Scenario {
                   + command
                   + "\r\n"
                   + ReportUtils.getStackTrace(e));
-          result += "  Error " + e.getMessage();
+          result.append("  Error ").append(e.getMessage());
         }
-        result += "\n\n";
+        result.append("\n\n");
       }
     }
-    return result;
+    return result.toString();
   }
 
   public String cleanUp() {
-    String result = "";
+    StringBuilder result = new StringBuilder();
     for (String gw : this.commandList.keySet()) {
       String command = this.commandList.get(gw);
-      if (command != "") {
+      if (!command.equals("")) {
         Instance instance = instrumentation.get(gw);
         String[] interfacesList = {instance.getNit0(), instance.getNit1(), instance.getNit2()};
         for (String inter : interfacesList) {
@@ -130,10 +130,10 @@ public class Scenario {
               if (sshManager.call().commandSuccessful()) {
                 Thread.sleep(1000);
                 logger.info("cleanUp() : " + inter + " on gateway " + gw);
-                result += cleanUpCommand;
+                result.append(cleanUpCommand);
               } else {
-                logger.error("Failed cleanUp() : " + inter);
-                result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+                logger.error("Failed cleanUp() : " + inter + " on gateway " + gw);
+                result.append("  FAILURE (Client : ").append(instance.getIpAddress()).append(")");
               }
             } catch (Exception e) {
               logger.error(
@@ -141,16 +141,16 @@ public class Scenario {
                       + inter
                       + "\r\n"
                       + ReportUtils.getStackTrace(e));
-              result += "  Error " + e.getMessage();
+              result.append("  Error ").append(e.getMessage());
             }
           } else {
             logger.info("No CleanUp to do on interface : " + inter + " on gateway " + gw);
           }
         }
-        result += " on gateway " + gw + "\n\n";
+        result.append(" on gateway ").append(gw).append("\n\n");
       }
     }
-    return result;
+    return result.toString();
 
   }
 
