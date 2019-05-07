@@ -79,10 +79,14 @@ public class NWCommands {
         }
       }
       if (this.bandwidth != null) {
-        if (command == "") {
-          command = "sudo tc qdisc add dev " + inter + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
-        } else {
-          command += "|| true && sudo tc qdisc add dev " + inter + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
+        try {
+          if (command == "") {
+            command = "sudo tc qdisc add dev " + inter + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
+          } else {
+            command += "|| true && sudo tc qdisc add dev " + inter + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
+          }
+        } catch (NullPointerException e) {
+          throw new KiteTestException("Parameters are missing in bandwidth command.", Status.FAILED, e);
         }
       }
     }

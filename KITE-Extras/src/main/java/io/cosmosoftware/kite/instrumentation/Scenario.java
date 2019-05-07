@@ -85,10 +85,10 @@ public class Scenario {
     for (String gw : this.commandList.keySet()) {
       String command = this.commandList.get(gw);
       if (command != "") {
-        logger.info("Trying to run " + command + " on " + gw);
+        logger.info("Trying to run " + command + "on " + gw);
         Instance instance = instrumentation.get(gw);
         result += command;
-        logger.info("Executing command : " + command + " on " + instance.getIpAddress());
+        logger.info("Executing command : " + command + "on " + instance.getIpAddress());
         try {
           SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
               instance.getIpAddress(), command);
@@ -129,7 +129,7 @@ public class Scenario {
                   instance.getIpAddress(), cleanUpCommand);
               if (sshManager.call().commandSuccessful()) {
                 Thread.sleep(1000);
-                logger.info("cleanUp() : " + inter);
+                logger.info("cleanUp() : " + inter + " on gateway " + gw);
                 result += cleanUpCommand;
               } else {
                 logger.error("Failed cleanUp() : " + inter);
@@ -144,10 +144,10 @@ public class Scenario {
               result += "  Error " + e.getMessage();
             }
           } else {
-            logger.info("No CleanUp to do on interface : " + inter);
+            logger.info("No CleanUp to do on interface : " + inter + " on gateway " + gw);
           }
         }
-        result += "\n\n";
+        result += " on gateway " + gw + "\n\n";
       }
     }
     return result;
