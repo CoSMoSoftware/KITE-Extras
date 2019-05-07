@@ -10,35 +10,66 @@ import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.ReportUtils;
 import org.apache.log4j.Logger;
 
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.util.HashMap;
 
 public class Scenario {
 
   private final Instrumentation instrumentation;
   private final int clientId;
   private final  String name;
-  private final String gateway;
-  private final String command;
+  private HashMap<String, String> commandList = new HashMap();
   private final int duration;
   private final Logger logger;
 
+  /*
+  Note pour moi :
+   - deplacer la gestion des commandes dans NWCommands ==> pas ouf en fait
+   - get les commands ici
+   - creer une liste de commande de la longueur de la liste des instrumenntation afin de savoir ou run la commande ==> plus d'attribut gateway
+   - concatener les differentes commandes dans le bon idex
+
+   Que faire si command dans commandList ?
+
+   On dit aue y a toujours commandList meme si on run une seule commande ==> beaucoup plus simple
+
+   Command list HashMap entre gw et command
+   */
 
   public Scenario(JsonObject jsonObject, Logger logger, int i, Instrumentation instrumentation) throws Exception {
 
     this.instrumentation = instrumentation;
-    clientId = jsonObject.containsKey("clientId") ? jsonObject.getInt("clientId") : 0;
+    this.clientId = jsonObject.containsKey("clientId") ? jsonObject.getInt("clientId") : 0;
     if (clientId < 0) {
       throw new Exception(" Error in json config scenario, clientId specified is invalid ! ");
     }
+    for (String gw  : this.instrumentation.keySet()) {
+      commandList.put(gw, "");
+    }
     String missingKey="";
+    String gateway;
+    String command;
     try {
-      missingKey = "gateway";
-      gateway = jsonObject.getString("gateway");
-      if (instrumentation.get(gateway) == null) {
-        throw new Exception(" Error in json config scenario, gateway specified is not in the instrumentation file ! ");
+      missingKey = "commandList or command";
+      JsonArray jsonArray = jsonObject.getJsonArray("commandList");
+      for (int j = 0 ; j < jsonArray.size() ; j++) {
+        JsonObject jsonObject2 = jsonArray.getJsonObject(j);
+        try {
+          NWCommands nwCommands = new NWCommands(jsonObject2, this.instrumentation);
+          gateway = nwCommands.getGateway();
+          command = this.commandList.get(gateway);
+          this.commandList.remove(gateway);
+          if (command != "") {
+            command += "|| true && " + nwCommands.getCommand();
+          } else {
+            command += nwCommands.getCommand();
+          }
+          commandList.put(gateway, command);
+        } catch (KiteTestException e) {
+          throw e;
+        }
       }
-      missingKey = "command";
-      command = jsonObject.getString("command");
     } catch (NullPointerException e) {
       throw new KiteTestException("Error in json config scenario, the key " + missingKey + " is missing.", Status.BROKEN, e);
     }
@@ -55,12 +86,8 @@ public class Scenario {
     return clientId;
   }
 
-  public String getGateway() {
-    return gateway;
-  }
-
-  public String getCommand() {
-    return command;
+  public HashMap<String, String> getCommandList() {
+    return commandList;
   }
 
   public Integer getDuration() {
@@ -68,61 +95,73 @@ public class Scenario {
   }
 
   public String runCommands() {
-    logger.info("Trying to run " + command + " on " + this.gateway);
-    Instance instance = instrumentation.get(this.gateway);
-    String result = command;
-    logger.info("Executing command : " + command + " on " + instance.getIpAddress());
-    try {
-      SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
-          instance.getIpAddress(), command);
-      if (sshManager.call().commandSuccessful()) {
-        Thread.sleep(this.duration);
-        logger.info("runCommands() : \r\n" + command);
-        result += "  SUCCESS (Client : " + instance.getIpAddress() + ")";
-      } else {
-        logger.error("Failed runCommands() : \r\n" + command);
-        result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+    String result = "";
+    for (String gw : this.commandList.keySet()) {
+      String command = this.commandList.get(gw);
+      if (command != "") {
+        logger.info("Trying to run " + command + " on " + gw);
+        Instance instance = instrumentation.get(gw);
+        result += command;
+        logger.info("Executing command : " + command + " on " + instance.getIpAddress());
+        try {
+          SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
+              instance.getIpAddress(), command);
+          if (sshManager.call().commandSuccessful()) {
+            Thread.sleep(this.duration);
+            logger.info("runCommands() : \r\n" + command);
+            result += "  SUCCESS (Client : " + instance.getIpAddress() + ")";
+          } else {
+            logger.error("Failed runCommands() : \r\n" + command);
+            result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+          }
+        } catch (Exception e) {
+          logger.error(
+              "runCommand(). Command:\r\n"
+                  + command
+                  + "\r\n"
+                  + ReportUtils.getStackTrace(e));
+          result += "  Error " + e.getMessage();
+        }
+        result += "\n\n";
       }
-    } catch (Exception e) {
-      logger.error(
-          "runCommand(). Command:\r\n"
-              + command
-              + "\r\n"
-              + ReportUtils.getStackTrace(e));
-      result += "  Error " + e.getMessage();
     }
     return result;
   }
 
   public String cleanUp() {
     String result = "";
-    Instance instance = instrumentation.get(this.gateway);
-    String[]  interfacesList = {instance.getNit0(), instance.getNit1(), instance.getNit2()};
-    for (String inter : interfacesList) {
-      if (command.contains(inter)) {
-        String cleanUpCommand = "sudo tc qdisc del dev " + inter + " root";
-        try {
-          SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
-              instance.getIpAddress(), cleanUpCommand);
-          if (sshManager.call().commandSuccessful()) {
-            Thread.sleep(1000);
-            logger.info("cleanUp() : " + inter);
-            result += cleanUpCommand;
+    for (String gw : this.commandList.keySet()) {
+      String command = this.commandList.get(gw);
+      if (command != "") {
+        Instance instance = instrumentation.get(gw);
+        String[] interfacesList = {instance.getNit0(), instance.getNit1(), instance.getNit2()};
+        for (String inter : interfacesList) {
+          if (command.contains(inter)) {
+            String cleanUpCommand = "sudo tc qdisc del dev " + inter + " root";
+            try {
+              SSHManager sshManager = new SSHManager(instance.getKeyFilePath(), instance.getUsername(),
+                  instance.getIpAddress(), cleanUpCommand);
+              if (sshManager.call().commandSuccessful()) {
+                Thread.sleep(1000);
+                logger.info("cleanUp() : " + inter);
+                result += cleanUpCommand;
+              } else {
+                logger.error("Failed cleanUp() : " + inter);
+                result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+              }
+            } catch (Exception e) {
+              logger.error(
+                  "cleanUp(). \r\n"
+                      + inter
+                      + "\r\n"
+                      + ReportUtils.getStackTrace(e));
+              result += "  Error " + e.getMessage();
+            }
           } else {
-            logger.error("Failed cleanUp() : " + inter);
-            result += "  FAILURE (Client : " + instance.getIpAddress() + ")";
+            logger.info("No CleanUp to do on interface : " + inter);
           }
-        } catch (Exception e) {
-          logger.error(
-              "cleanUp(). \r\n"
-                  + inter
-                  + "\r\n"
-                  + ReportUtils.getStackTrace(e));
-          result += "  Error " + e.getMessage();
         }
-      }
-      else {
-        logger.info("No CleanUp to do on interface : " + inter);
+        result += "\n\n";
       }
     }
     return result;
