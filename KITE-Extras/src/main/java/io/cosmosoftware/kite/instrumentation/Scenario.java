@@ -23,20 +23,6 @@ public class Scenario {
   private final int duration;
   private final Logger logger;
 
-  /*
-  Note pour moi :
-   - deplacer la gestion des commandes dans NWCommands ==> pas ouf en fait
-   - get les commands ici
-   - creer une liste de commande de la longueur de la liste des instrumenntation afin de savoir ou run la commande ==> plus d'attribut gateway
-   - concatener les differentes commandes dans le bon idex
-
-   Que faire si command dans commandList ?
-
-   On dit aue y a toujours commandList meme si on run une seule commande ==> beaucoup plus simple
-
-   Command list HashMap entre gw et command
-   */
-
   public Scenario(JsonObject jsonObject, Logger logger, int i, Instrumentation instrumentation) throws Exception {
 
     this.instrumentation = instrumentation;
