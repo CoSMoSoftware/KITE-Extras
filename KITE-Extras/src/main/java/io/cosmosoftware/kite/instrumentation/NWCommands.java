@@ -51,28 +51,16 @@ public class NWCommands {
       command = this.finalCommand;
     } else {
       if (this.delay != 0) {
-        command = "sudo tc qdisc add dev " + inter + " root handle 1: netem delay " + delay + "ms ";
+        command = createCommand(command, "delay " + delay + "ms ");
       }
       if (this.packetloss != 0) {
-        if (command.equals("")) {
-          command = "sudo tc qdisc add dev " + inter + " root handle 1: netem loss " + packetloss + "% ";
-        } else {
-          command += "loss " + packetloss + "% ";
-        }
+        command = createCommand(command, "loss " + packetloss + "% ");
       }
       if (this.corrupt != 0) {
-        if (command.equals("")) {
-          command = "sudo tc qdisc add dev " + inter + " root handle 1: netem corrupt " + corrupt + "% ";
-        } else {
-          command += "corrupt " + corrupt + "% ";
-        }
+        command = createCommand(command, "corrupt " + corrupt + "% ");
       }
       if (this.duplicate != 0) {
-        if (command.equals("")) {
-          command = "sudo tc qdisc add dev " + inter + " root netem handle 1: duplicate " + duplicate + "% ";
-        } else {
-          command += "duplicate " + duplicate + "% ";
-        }
+        command = createCommand(command, "duplicate " + duplicate + "% ");
       }
       if (this.bandwidth != null) {
         try {
@@ -88,6 +76,15 @@ public class NWCommands {
     }
     if (command.equals("")) {
       throw new KiteTestException("No command to run.", Status.BROKEN);
+    }
+    return command;
+  }
+
+  private String createCommand(String command, String info) {
+    if (command.equals("")) {
+      command = "sudo tc qdisc add dev " + inter + " root handle 1: netem " + info;
+    } else {
+      command += info;
     }
     return command;
   }
