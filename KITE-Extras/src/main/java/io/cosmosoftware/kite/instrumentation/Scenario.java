@@ -139,11 +139,11 @@ public class Scenario {
                       + ReportUtils.getStackTrace(e));
               result.append("  Error ").append(e.getMessage());
             }
+            result.append(" on gateway ").append(gw).append("\n\n");
           } else {
             logger.info("No CleanUp to do on interface : " + inter + " on gateway " + gw);
           }
         }
-        result.append(" on gateway ").append(gw).append("\n\n");
       }
     }
     return result.toString();
