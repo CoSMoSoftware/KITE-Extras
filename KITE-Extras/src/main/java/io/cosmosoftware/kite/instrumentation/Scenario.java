@@ -37,27 +37,23 @@ public class Scenario {
     String gateway;
     String command;
     try {
-      missingKey = "commandList or command";
+      missingKey = "commandList";
       JsonArray jsonArray = jsonObject.getJsonArray("commandList");
       for (int j = 0 ; j < jsonArray.size() ; j++) {
         JsonObject jsonObject2 = jsonArray.getJsonObject(j);
-        try {
-          NWCommands nwCommands = new NWCommands(jsonObject2, this.instrumentation);
-          gateway = nwCommands.getGateway();
-          command = this.commandList.get(gateway);
-          this.commandList.remove(gateway);
-          if (!command.equals("")) {
-            command += "|| true && " + nwCommands.getCommand();
-          } else {
-            command += nwCommands.getCommand();
-          }
-          commandList.put(gateway, command);
-        } catch (KiteTestException e) {
-          throw new KiteTestException("Error in commandList configuration", Status.FAILED, e);
+        NWCommands nwCommands = new NWCommands(jsonObject2, this.instrumentation);
+        gateway = nwCommands.getGateway();
+        command = this.commandList.get(gateway);
+        this.commandList.remove(gateway);
+        if (!command.equals("")) {
+          command += "|| true && " + nwCommands.getCommand();
+        } else {
+          command += nwCommands.getCommand();
         }
+        commandList.put(gateway, command);
       }
     } catch (NullPointerException e) {
-      throw new KiteTestException("Error in json config scenario, the key " + missingKey + " is missing.", Status.BROKEN, e);
+      throw new KiteTestException("Error in json config scenario, the key " + missingKey + " is missing.", Status.FAILED, e);
     }
     name = jsonObject.getString("name", "Scenario number : " + i);
     duration = jsonObject.containsKey("duration") ? jsonObject.getInt("duration") : 10000;
