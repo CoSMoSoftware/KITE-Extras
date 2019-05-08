@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.util;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.usrmgmt.TypeRole;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.Capabilities;
@@ -126,7 +128,7 @@ public class ReportUtils {
    */
   public static String getLogHeader(WebDriver webDriver) {
     
-    return getLogHeader(webDriver, -1 , null);
+    return getLogHeader(webDriver, -1, null);
   }
   
   /**
@@ -142,11 +144,11 @@ public class ReportUtils {
     Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
     String str = (isElectron(webDriver) ? "elec_" :
       getBrowserName(capabilities) + getBrowserVersion(capabilities) + "_");
-    str  += getPlatform(capabilities) + "-";
+    str += getPlatform(capabilities) + "-";
     if (typeRole != null) {
       str += typeRole.getShortName();
     } else {
-      str += "" + (index == -1 ? ((RemoteWebDriver)webDriver).getSessionId().toString().substring(0,5) : index);
+      str += "" + (index == -1 ? ((RemoteWebDriver) webDriver).getSessionId().toString().substring(0, 5) : index);
     }
     return str;
     
@@ -183,6 +185,14 @@ public class ReportUtils {
     return writer.toString();
   }
   
+  public static byte[] saveScreenshotPNG(WebDriver driver) throws KiteTestException {
+    try {
+      return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+    } catch (Exception e) {
+      throw new KiteTestException("Failed to take screenshot: " + e.getLocalizedMessage(), Status.BROKEN, e.getCause(), true);
+    }
+  }
+  
   /**
    * Timestamp string.
    *
@@ -195,6 +205,7 @@ public class ReportUtils {
   
   /**
    * Timestamp string.
+   *
    * @param date value of date in milliseconds
    *
    * @return the current date/time as a String
@@ -203,10 +214,4 @@ public class ReportUtils {
     //must be file name safe (no /\?%*:|"<>)
     return new SimpleDateFormat("yyyy-MM-dd HHmmss").format(new Date(date));
   }
-  
-  //Text attachments for Allure
-  public static byte[] saveScreenshotPNG (WebDriver driver) {
-    return ((TakesScreenshot)driver).getScreenshotAs(OutputType.BYTES);
-  }
-
 }

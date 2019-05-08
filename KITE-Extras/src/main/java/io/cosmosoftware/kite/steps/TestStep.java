@@ -7,23 +7,24 @@ import io.cosmosoftware.kite.report.Status;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 
 public abstract class TestStep {
-
-
-  protected Logger logger = null;
-
+  
+  
   protected final WebDriver webDriver;
+  protected Logger logger = null;
   protected AllureStepReport report;
-  private boolean stepCompleted = false;
-
   private String name = getClassName();
+  private boolean stepCompleted = false;
   
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
   }
-    
+  
   public void execute() {
     try {
       logger.info("Executing step: " + stepDescription());
@@ -33,36 +34,11 @@ public abstract class TestStep {
     }
   }
   
-  public void skip() {
-    logger.warn("Skipping step: " + stepDescription());
-    this.report.setStatus(Status.SKIPPED);
-  }
-  
-  public void init(){
-    this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
-    this.report.setDescription(stepDescription());
-    this.report.setStartTimestamp();
-  }
-
-  public boolean stepCompleted() {
-    return this.stepCompleted;
-  }
-  
-  public void finish(){
+  public void finish() {
     this.report.setStopTimestamp();
     stepCompleted = true;
   }
   
-  public AllureStepReport getStepReport() {
-    return report;
-  }
-  
-  public abstract String stepDescription();
-  
-  protected abstract void step() throws KiteTestException;
-
-  public void setLogger(Logger logger) { this.logger = logger; }
-
   private String getClassName() {
     String s = this.getClass().getSimpleName();
     if (s.contains(".")) {
@@ -70,13 +46,59 @@ public abstract class TestStep {
     }
     return s;
   }
-
+  
   public String getName() {
     return name;
   }
-
+  
   public void setName(String name) {
     this.name = name;
   }
-
+  
+  public AllureStepReport getStepReport() {
+    return report;
+  }
+  
+  public void init() {
+    this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
+    this.report.setDescription(stepDescription());
+    this.report.setStartTimestamp();
+  }
+  
+  public void setLogger(Logger logger) {
+    this.logger = logger;
+  }
+  
+  public void skip() {
+    logger.warn("Skipping step: " + stepDescription());
+    this.report.setStatus(Status.SKIPPED);
+  }
+  
+  protected abstract void step() throws KiteTestException;
+  
+  public boolean stepCompleted() {
+    return this.stepCompleted;
+  }
+  
+  public abstract String stepDescription();
+  
+  protected String translateClassName() {
+    
+    String name = this.getClass().getSimpleName();
+    Set<String> upperLetters = new HashSet<>();
+    
+    for (char letter : name.toCharArray()) {
+      String letterString = Character.toString(letter);
+      if (letterString.matches("[A-Z]") || letterString.matches("[0-9]")) {
+        upperLetters.add(letterString);
+      }
+    }
+    
+    for (String letterString : upperLetters) {
+      name = name.replaceAll(letterString, " " + letterString.toLowerCase());
+    }
+    
+    return name;
+  }
+  
 }

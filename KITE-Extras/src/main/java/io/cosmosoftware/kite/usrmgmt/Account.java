@@ -23,10 +23,7 @@ public class Account extends Entity {
    * The Email.
    */
   protected String email;
-  /**
-   * The Ext.
-   */
-  protected String ext = null;
+  protected JsonObject jsonObject;
   /**
    * The Password.
    */
@@ -53,11 +50,11 @@ public class Account extends Entity {
    * @param jsonObject the json object
    */
   public Account(JsonObject jsonObject) {
+    this.jsonObject = jsonObject;
     this.username = jsonObject.getString("username");
     this.credential = jsonObject.getString("credential");
     this.password = jsonObject.getString("password");
     this.email = jsonObject.getString("email");
-    this.ext = jsonObject.getString("ext", this.ext);
   }
   
   /**
@@ -73,7 +70,6 @@ public class Account extends Entity {
     this.credential = credential;
     this.password = password;
     this.email = email;
-    this.ext = null;
     this.accountType = AccountType.FREE_ACCOUNT;
     this.role = AccountRole.CALLEE;
   }
@@ -130,22 +126,8 @@ public class Account extends Entity {
     this.email = email;
   }
   
-  /**
-   * Returns account ext.
-   *
-   * @return account ext String
-   */
-  public String getExt() {
-    return ext;
-  }
-  
-  /**
-   * Sets account's ext value, used to login if the credential is a phone number
-   *
-   * @param ext account's ext value
-   */
-  public void setExt(String ext) {
-    this.ext = ext;
+  public JsonObject getJsonObject() {
+    return jsonObject;
   }
   
   /**
@@ -184,6 +166,10 @@ public class Account extends Entity {
     return username;
   }
   
+  public boolean isCaller() {
+    return this.role.equals(AccountRole.CALLER);
+  }
+  
   /**
    * Sets account's username
    *
@@ -191,5 +177,11 @@ public class Account extends Entity {
    */
   public void setUsername(String username) {
     this.username = username;
+  }
+  
+  @Override
+  public String toString() {
+    return "[" + this.username
+      + "; " + this.email + "]";
   }
 }

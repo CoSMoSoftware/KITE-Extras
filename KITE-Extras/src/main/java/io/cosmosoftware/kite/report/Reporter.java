@@ -14,74 +14,19 @@ import static io.cosmosoftware.kite.util.TestHelper.jsonToString;
 import static io.cosmosoftware.kite.util.TestUtils.*;
 
 public class Reporter {
-
-  protected Logger logger = Logger.getLogger(this.getClass().getName());
-
-  public static Reporter getInstance() {
-    return instance;
-  }
-
-  private final String DEFAULT_REPORT_FOLDER = System.getProperty("user.dir") + "/kite-allure-reports/";
-  private String reportPath = DEFAULT_REPORT_FOLDER;
+  
   private static Reporter instance = new Reporter();
-  
-  private List<Container> containers = new ArrayList<>();
-  private List<AllureTestReport> tests = new ArrayList<>();
+  private final String DEFAULT_REPORT_FOLDER = System.getProperty("user.dir") + "/kite-allure-reports/";
+  protected Logger logger = Logger.getLogger(this.getClass().getName());
   private List<CustomAttachment> attachments = new ArrayList<>();
+  private List<Container> containers = new ArrayList<>();
+  private String reportPath = DEFAULT_REPORT_FOLDER;
+  private List<AllureTestReport> tests = new ArrayList<>();
 
-  public void clearLists(){
-    this.containers = new ArrayList<>();
-    this.tests = new ArrayList<>();
-    this.attachments = new ArrayList<>();
-  }
-
-  public void setReportPath(String reportPath) {
-    if (reportPath != null && !reportPath.isEmpty()) {
-      this.reportPath = verifyPathFormat(reportPath);
-    }
-    logger.info("Creating report folder if not exist at :" + this.reportPath);
-    createDirs(this.reportPath);
-  }
-
-  public void jsonAttachment(AllureStepReport step, String name, JsonValue jsonObject) {
-    jsonAttachment(step, name, (JsonObject)jsonObject);
-  }
-
-    public void jsonAttachment(AllureStepReport step, String name, JsonObject jsonObject) {
-    String value = jsonToString(jsonObject);
-    CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
-    attachment.setText(value);
-    addAttachment(step, attachment);
-  }
-  
-  public void textAttachment(AllureStepReport step, String name, String value, String type) {
-    CustomAttachment attachment = new CustomAttachment(name, "text/" + type, type);
-    attachment.setText(value);
-    addAttachment(step, attachment);
-  }
-  
-  public void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
-    createDirs(this.reportPath + subFolder);
-    printJsonTofile(value, verifyPathFormat(this.reportPath + subFolder) + name + "." + type);
-  }
-  
-  public void screenshotAttachment(AllureStepReport step, byte[] screenshot) {
-    CustomAttachment attachment = new CustomAttachment("Page-screenshot(" + timestamp() + ")", "image/png", "png");
-    attachment.setScreenshot(screenshot);
-    addAttachment(step, attachment);
-  }
-  
-  public void screenshotAttachment(AllureStepReport step, String name, byte[] screenshot) {
-    CustomAttachment attachment = new CustomAttachment(name, "image/png", "png");
-    attachment.setScreenshot(screenshot);
-    addAttachment(step, attachment);
-  }
-  
-  private void addAttachment(AllureStepReport step, CustomAttachment attachment) {
+  private void addAttachment(AllureStepReport report, CustomAttachment attachment) {
     this.attachments.add(attachment);
-    step.addAttachment(attachment);
+    report.addAttachment(attachment);
   }
-  
   
   public void addContainer(Container container) {
     this.containers.add(container);
@@ -91,14 +36,13 @@ public class Reporter {
     this.tests.add(test);
   }
   
-  public void updateContainers() {
-    for (Container container : containers) {
-      String fileName = this.reportPath + container.getUuid() + "-container.json";
-      printJsonTofile(container.toString(), fileName);
-    }
+  public void clearLists() {
+    this.containers = new ArrayList<>();
+    this.tests = new ArrayList<>();
+    this.attachments = new ArrayList<>();
   }
   
-  public void generateReportFiles(){
+  public void generateReportFiles() {
     updateContainers();
     
     for (AllureTestReport test : tests) {
@@ -109,6 +53,21 @@ public class Reporter {
     for (CustomAttachment attachment : attachments) {
       attachment.saveToFile(reportPath);
     }
+  }
+  
+  public static Reporter getInstance() {
+    return instance;
+  }
+  
+  public void jsonAttachment(AllureStepReport report, String name, JsonValue jsonObject) {
+    jsonAttachment(report, name, (JsonObject) jsonObject);
+  }
+  
+  public void jsonAttachment(AllureStepReport report, String name, JsonObject jsonObject) {
+    String value = jsonToString(jsonObject);
+    CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
+    attachment.setText(value);
+    addAttachment(report, attachment);
   }
   
   public void processException(AllureStepReport report, Exception e) {
@@ -124,10 +83,10 @@ public class Reporter {
       message = e.getLocalizedMessage();
       if (report.canBeIgnore()) {
         logger.warn(
-            "(Optional) Step " + status.value() + ":\r\n   message = " + message);
+          "(Optional) Step " + status.value() + ":\r\n   message = " + message);
       } else {
         logger.error(
-            "Step " + status.value() + ":\r\n   message = " + message);
+          "Step " + status.value() + ":\r\n   message = " + message);
       }
       logger.debug(trace);
     } else {
@@ -135,7 +94,7 @@ public class Reporter {
         "must be caught and thrown as KiteTestException";
       details.setFlaky(true);
       status = Status.BROKEN;
-      logger.error("Step " + status.value()+ ":\r\n   message = " + message + "\r\n   trace = " + trace);
+      logger.error("Step " + status.value() + ":\r\n   message = " + message + "\r\n   trace = " + trace);
     }
     details.setMessage(message);
     details.setTrace(trace);
@@ -143,6 +102,46 @@ public class Reporter {
     report.setDetails(details);
   }
   
-  public void setLogger(Logger logger) { this.logger = logger; }
-
+  public void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
+    createDirs(this.reportPath + subFolder);
+    printJsonTofile(value, verifyPathFormat(this.reportPath + subFolder) + name + "." + type);
+  }
+  
+  public void screenshotAttachment(AllureStepReport report, byte[] screenshot) {
+    CustomAttachment attachment = new CustomAttachment("Page-screenshot(" + timestamp() + ")", "image/png", "png");
+    attachment.setScreenshot(screenshot);
+    addAttachment(report, attachment);
+  }
+  
+  public void screenshotAttachment(AllureStepReport report, String name, byte[] screenshot) {
+    CustomAttachment attachment = new CustomAttachment(name, "image/png", "png");
+    attachment.setScreenshot(screenshot);
+    addAttachment(report, attachment);
+  }
+  
+  public void setLogger(Logger logger) {
+    this.logger = logger;
+  }
+  
+  public void setReportPath(String reportPath) {
+    if (reportPath != null && !reportPath.isEmpty()) {
+      this.reportPath = verifyPathFormat(reportPath);
+    }
+    logger.info("Creating report folder if not exist at :" + this.reportPath);
+    createDirs(this.reportPath);
+  }
+  
+  public void textAttachment(AllureStepReport report, String name, String value, String type) {
+    CustomAttachment attachment = new CustomAttachment(name, "text/" + type, type);
+    attachment.setText(value);
+    addAttachment(report, attachment);
+  }
+  
+  public void updateContainers() {
+    for (Container container : containers) {
+      String fileName = this.reportPath + container.getUuid() + "-container.json";
+      printJsonTofile(container.toString(), fileName);
+    }
+  }
+  
 }
