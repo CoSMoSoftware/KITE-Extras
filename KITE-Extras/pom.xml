@@ -11,7 +11,7 @@
 
   <artifactId>kite-extras</artifactId>
   <name>kite-extras</name>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
 
   <build>
     <plugins>
