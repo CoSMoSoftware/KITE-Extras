@@ -74,6 +74,10 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * @return the instance
    */
 
+  public static RoomManager getInstance(String baseURL, int usersPerRoom) {
+    return  RoomManager.getInstance(baseURL, usersPerRoom, false);
+  }
+
   public static RoomManager getInstance(String baseURL, int usersPerRoom, boolean loop) {
     if (roomManager == null) {
       roomManager = new RoomManager(baseURL, usersPerRoom, loop);
