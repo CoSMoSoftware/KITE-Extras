@@ -74,7 +74,7 @@ public abstract class TestStep {
     this.report.setStatus(Status.SKIPPED);
   }
   
-  protected abstract void step();
+  protected abstract void step() throws KiteTestException;
   
   public boolean stepCompleted() {
     return this.stepCompleted;
