@@ -25,11 +25,13 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   private int roomId = 0;
   private int roomIndex = 0;
   private String[] roomNames = null;
-  
-  
-  private RoomManager(String baseURL, int usersPerRoom) {
+  private boolean loopRooms;
+
+
+  private RoomManager(String baseURL, int usersPerRoom, boolean loop) {
     this.baseURL = baseURL;
     this.usersPerRoom = usersPerRoom;
+    this.loopRooms = loop;
     logger.info("new RoomManager(" + usersPerRoom + ") for " + baseURL);
   }
   
@@ -71,9 +73,10 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    *
    * @return the instance
    */
-  public static RoomManager getInstance(String baseURL, int usersPerRoom) {
+
+  public static RoomManager getInstance(String baseURL, int usersPerRoom, boolean loop) {
     if (roomManager == null) {
-      roomManager = new RoomManager(baseURL, usersPerRoom);
+      roomManager = new RoomManager(baseURL, usersPerRoom, loop);
     }
     return roomManager;
   }
@@ -87,12 +90,12 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * @throws Exception if i > roomNames.length - 1
    */
   public String getRoomName(int i) throws Exception {
-    if (i > roomNames.length - 1) {
+    if (i > roomNames.length - 1 && !loopRooms) {
       logger.error("Error: only " + roomNames.length + " rooms in the room list, unable to create the "
         + i + "th room. Please check the config file.");
       throw new Exception("Unable to create the new room, there are not enough rooms provided in the room list.");
     }
-    return roomNames[i];
+    return roomNames[i%roomNames.length ];
   }
   
   /**

@@ -11,7 +11,7 @@ import javax.json.JsonObject;
 
 public class NWCommands {
 
-  private final String inter;
+  private final String nit;
   private final String gateway;
   private final String finalCommand;
   private final int delay;
@@ -19,9 +19,11 @@ public class NWCommands {
   private final int corrupt;
   private final int duplicate;
   private final JsonObject bandwidth;
+  private final Instrumentation instrumentation;
 
   public NWCommands(JsonObject jsonObject, Instrumentation instrumentation) throws Exception {
     try {
+      this.instrumentation = instrumentation;
       this.gateway = jsonObject.getString("gateway");
       if (instrumentation.get(gateway) == null) {
         throw new Exception(" Error in json config scenario, gateway specified is not in the instrumentation file ! ");
@@ -29,9 +31,9 @@ public class NWCommands {
     } catch (NullPointerException e) {
       throw new KiteTestException("Error in json config scenario, the key gateway is missing.", Status.BROKEN, e);
     }
-    this.inter = jsonObject.containsKey("interface") && !jsonObject.containsKey("command") ? jsonObject.getString("interface") : null;
+    this.nit = jsonObject.containsKey("nit") && !jsonObject.containsKey("command") ? jsonObject.getString("nit") : null;
     this.finalCommand = jsonObject.containsKey("command") ? jsonObject.getString("command") : null;
-    if (this.finalCommand == null && this.inter == null) {
+    if (this.finalCommand == null && this.nit == null) {
       throw new KiteTestException("Error in json config scenario, the key interface is missing.", Status.BROKEN);
     }
     this.delay =  jsonObject.getInt("delay", 0);
@@ -65,9 +67,9 @@ public class NWCommands {
       if (this.bandwidth != null) {
         try {
           if (command.equals("")) {
-            command = "sudo tc qdisc add dev " + inter + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
+            command = "sudo tc qdisc add dev " + nit + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
           } else {
-            command += "|| true && sudo tc qdisc add dev " + inter + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
+            command += "|| true && sudo tc qdisc add dev " + nit + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
           }
         } catch (NullPointerException e) {
           throw new KiteTestException("Parameters are missing in bandwidth command.", Status.FAILED, e);
@@ -82,7 +84,7 @@ public class NWCommands {
 
   private String createCommand(String command, String info) {
     if (command.equals("")) {
-      command = "sudo tc qdisc add dev " + inter + " root handle 1: netem " + info;
+      command = "sudo tc qdisc add dev " + nit + " root handle 1: netem " + info;
     } else {
       command += info;
     }
