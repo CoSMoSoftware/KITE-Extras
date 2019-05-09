@@ -6,12 +6,12 @@
   <parent>
     <groupId>io.cosmosoftware.kite</groupId>
     <artifactId>kite-extras-base</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.7-beta</version>
   </parent>
 
   <artifactId>kite-extras</artifactId>
   <name>kite-extras</name>
-  <version>0.1.6</version>
+  <version>0.1.7</version>
 
   <build>
     <plugins>

@@ -6,7 +6,9 @@ package io.cosmosoftware.kite.util;
 
 import io.cosmosoftware.kite.action.JSActionScript;
 import io.cosmosoftware.kite.entities.Timeouts;
+import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.steps.TestStep;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,12 +31,120 @@ import java.util.*;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
-/** The type Test utils. */
+/**
+ * The type Test utils.
+ */
 public class TestUtils {
-
+  
   static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
-
+  
   private static final Logger logger = Logger.getLogger(TestUtils.class.getName());
+  
+  /**
+   * Create a directory if not existing
+   *
+   * @param dirName directory name
+   */
+  public static void createDirs(String dirName) {
+    dirName = verifyPathFormat(dirName);
+    File dir = new File(dirName);
+    if (!dir.exists()) {
+      dir.mkdirs();
+    }
+  }
+  
+  public static String doHttpGet(String fullUrl) {
+    StringBuilder result = new StringBuilder();
+    
+    CloseableHttpClient client = null;
+    CloseableHttpResponse response = null;
+    InputStream stream = null;
+    BufferedReader reader = null;
+    
+    try {
+      client = HttpClients.createDefault();
+      response = client.execute(new HttpGet(fullUrl));
+      stream = response.getEntity().getContent();
+      reader = new BufferedReader(new InputStreamReader(stream));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        result.append(line);
+      }
+    } catch (Exception e) {
+      logger.error("Exception while talking to the grid", e);
+      result.delete(0, result.length());
+      result.append(getStackTrace(e));
+    } finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the BufferedReader", e);
+        }
+      }
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the InputStream", e);
+        }
+      }
+      if (response != null) {
+        if (logger.isDebugEnabled()) logger.debug("response->" + response);
+        try {
+          response.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpResponse", e);
+        }
+      }
+      if (client != null) {
+        try {
+          client.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpClient", e);
+        }
+      }
+    }
+    return result.toString();
+  }
+  
+  /**
+   * Download file.
+   *
+   * @param urlStr   the url str
+   * @param filePath the file path
+   *
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  public static void downloadFile(String urlStr, String filePath) throws IOException {
+    if (urlStr.contains("~")) {
+      urlStr = urlStr.replaceAll(
+        "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"));
+    }
+    logger.info("Downloading '" + filePath + "' from '" + urlStr + "'");
+    
+    ReadableByteChannel rbc = null;
+    FileOutputStream fos = null;
+    try {
+      URL url = new URL(urlStr);
+      rbc = Channels.newChannel(url.openStream());
+      fos = new FileOutputStream(filePath);
+      fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+    } finally {
+      if (fos != null)
+        try {
+          fos.close();
+        } catch (IOException e) {
+          logger.warn(e);
+        }
+      if (rbc != null)
+        try {
+          rbc.close();
+        } catch (IOException e) {
+          logger.warn(e);
+        }
+    }
+  }
   
   /**
    * Execute command string.
@@ -73,6 +183,90 @@ public class TestUtils {
   }
   
   /**
+   * Executes a JS script string with a given webdriver
+   *
+   * @param webDriver    the webdriver
+   * @param scriptString the JS script to execute
+   *
+   * @return the result of the script execution
+   */
+  public static Object executeJsScript(WebDriver webDriver, String scriptString) throws KiteTestException {
+    try {
+      return ((JavascriptExecutor) webDriver).executeScript(scriptString);
+    } catch (Exception e) {
+      throw new KiteTestException("Unable to execute JavaScript code '"
+        + scriptString.substring(0, scriptString.length() / 3) + "...' :"
+        + e.getLocalizedMessage(), Status.BROKEN);
+    }
+  }
+  
+  /**
+   * Gets node url.
+   *
+   * @param hubUrl    the hub url
+   * @param sessionId the session id
+   *
+   * @return the node
+   */
+  public static String getNode(String hubUrl, String sessionId) {
+    String node = null;
+    
+    String protocolAuthorityFormat = "%s://%s";
+    
+    CloseableHttpClient client = null;
+    CloseableHttpResponse response = null;
+    InputStream stream = null;
+    JsonReader reader = null;
+    
+    try {
+      URL url = new URL(hubUrl);
+      client = HttpClients.createDefault();
+      response =
+        client.execute(
+          new HttpGet(
+            String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority())
+              + "/grid/api/testsession?session="
+              + sessionId));
+      stream = response.getEntity().getContent();
+      reader = Json.createReader(stream);
+      url = new URL(reader.readObject().getString("proxyId"));
+      node = String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority());
+    } catch (Exception e) {
+      logger.error("Exception while talking to the grid", e);
+    } finally {
+      if (reader != null) {
+        reader.close();
+      }
+      if (stream != null) {
+        try {
+          stream.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the InputStream", e);
+        }
+      }
+      if (response != null) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("response->" + response);
+        }
+        try {
+          response.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpResponse", e);
+        }
+      }
+      if (client != null) {
+        try {
+          client.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpClient", e);
+        }
+      }
+    }
+    
+    return node;
+  }
+  
+  /**
    * Id to string string.
    *
    * @param id an int between 0 and 999
@@ -81,18 +275,6 @@ public class TestUtils {
    */
   public static String idToString(int id) {
     return "" + (id < 10 ? "00" + id : (id < 100 ? "0" + id : "" + id));
-  }
-
-  /**
-   * Create a directory if not existing
-   * @param dirName directory name
-   */
-  public static void createDirs(String dirName) {
-    dirName = verifyPathFormat(dirName);
-    File dir = new File(dirName);
-    if (!dir.exists()) {
-      dir.mkdirs();
-    }
   }
   
   /**
@@ -138,6 +320,28 @@ public class TestUtils {
     } catch (Exception e) {
       logger.error("\r\n" + getStackTrace(e));
     }
+  }
+  
+  /**
+   * Process the step in the new TestRunner and Kite
+   *
+   * @param step             the test step to execute
+   * @param parentStepReport the report of the parent step,
+   *                         containing the status of the last step.
+   */
+  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {
+    step.init();
+    if (!parentStepReport.failed() && !parentStepReport.broken()) {
+      step.execute();
+    } else {
+      if (parentStepReport.canBeIgnore()) {
+        step.execute();
+      } else {
+        step.skip();
+      }
+    }
+    step.finish();
+    parentStepReport.addStepReport(step.getStepReport());
   }
   
   /**
@@ -227,6 +431,58 @@ public class TestUtils {
   }
   
   /**
+   * Convert time (ex: 12:34) to seconds for comparison.
+   *
+   * @param timeString time in string format.
+   *
+   * @return converted time to seconds.
+   */
+  public static int timeToSecond(String timeString) {
+    List<String> splitedTimeString = Arrays.asList(timeString.split(":"));
+    int count = splitedTimeString.size();
+    switch (count) {
+      // second only
+      case 1: {
+        return Integer.parseInt(splitedTimeString.get(0));
+      }
+      // minute and second (12:34)
+      case 2: {
+        return Integer.parseInt(splitedTimeString.get(0)) * 60
+          + Integer.parseInt(splitedTimeString.get(1));
+      }
+      // hour, minute and second (12:34:56)
+      case 3: {
+        return Integer.parseInt(splitedTimeString.get(0)) * 3600
+          + Integer.parseInt(splitedTimeString.get(0)) * 60
+          + Integer.parseInt(splitedTimeString.get(1));
+      }
+    }
+    return 0;
+  }
+  
+  public static String verifyPathFormat(String url) {
+    if (url != null && !url.endsWith("/")) {
+      return url + "/";
+    }
+    return url;
+  }
+  
+  /**
+   * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
+   * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
+   * getSum(frame1) > 0 => return "still" if getSum(frame2) == getSum(frame1) == 0 => return "blank"
+   *
+   * @param webDriver webdriver that control the browser
+   * @param index     index of the video element on the page in question
+   *
+   * @return "blank" or "still" or "video"
+   * @throws InterruptedException the interrupted exception
+   */
+  public static String videoCheck(WebDriver webDriver, int index) throws KiteTestException {
+    return videoCheckSum(webDriver, index).getString("result");
+  }
+  
+  /**
    * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
    * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
    * getSum(frame1) > 0 => return "still" if getSum(frame2) == getSum(frame1) == 0 => return "blank"
@@ -237,7 +493,7 @@ public class TestUtils {
    * @return the check sum
    * @throws InterruptedException the interrupted exception
    */
-  public static JsonObject videoCheckSum(WebDriver webDriver, int index) {
+  public static JsonObject videoCheckSum(WebDriver webDriver, int index) throws KiteTestException {
     String result = "blank";
     JsonObjectBuilder resultObject = Json.createObjectBuilder();
     long canvasData1 =
@@ -252,7 +508,7 @@ public class TestUtils {
         result = "video";
       } else {
         waitAround(Timeouts.ONE_SECOND_INTERVAL);
-  
+        
         canvasData3 = (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumByIndexScript(index));
         result = Math.abs(canvasData3 - canvasData1) != 0 ? "video" : "still";
       }
@@ -264,21 +520,6 @@ public class TestUtils {
       .add("canvasData3", canvasData3) // if ever needed
       .add("result", result);
     return resultObject.build();
-  }
-
-  /**
-   * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
-   * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
-   * getSum(frame1) > 0 => return "still" if getSum(frame2) == getSum(frame1) == 0 => return "blank"
-   *
-   * @param webDriver webdriver that control the browser
-   * @param index     index of the video element on the page in question
-   *
-   * @return "blank" or "still" or "video"
-   * @throws InterruptedException the interrupted exception
-   */
-  public static String videoCheck(WebDriver webDriver, int index) {
-    return videoCheckSum(webDriver, index).getString("result");
   }
   
   /**
@@ -295,205 +536,9 @@ public class TestUtils {
     }
   }
   
-  /**
-   * Process the step in the new TestRunner and Kite
-   * @param step the test step to execute
-   * @param parentStepReport  the report of the parent step,
-   *                          containing the status of the last step.
-   */
-  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {
-    step.init();
-    if (!parentStepReport.failed() && !parentStepReport.broken()) {
-      step.execute();
-    } else {
-      if (parentStepReport.canBeIgnore()) {
-        step.execute();
-      } else {
-        step.skip();
-      }
-    }
-    step.finish();
-    parentStepReport.addStepReport(step.getStepReport());
-  }
-  
-  public static String verifyPathFormat(String url) {
-    if (url != null && !url.endsWith("/")) {
-      return url + "/";
-    }
-    return url;
-  }
-  
-  /**
-   * Executes a JS script string with a given webdriver
-   *
-   * @param webDriver    the webdriver
-   * @param scriptString the JS script to execute
-   *
-   * @return the result of the script execution
-   */
-  public static Object executeJsScript(WebDriver webDriver, String scriptString) {
-    return ((JavascriptExecutor) webDriver).executeScript(scriptString);
-  }
-  
-  /**
-   * Download file.
-   *
-   * @param urlStr   the url str
-   * @param filePath the file path
-   *
-   * @throws IOException Signals that an I/O exception has occurred.
-   */
-  public static void downloadFile(String urlStr, String filePath) throws IOException {
-    urlStr = filePath(urlStr);
-    logger.info("Downloading '" + filePath + "' from '" + urlStr + "'");
-    
-    ReadableByteChannel rbc = null;
-    FileOutputStream fos = null;
-    try {
-      URL url = new URL(urlStr);
-      rbc = Channels.newChannel(url.openStream());
-      fos = new FileOutputStream(filePath);
-      fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-    } finally {
-      if (fos != null)
-        try {
-          fos.close();
-        } catch (IOException e) {
-          logger.warn(e);
-        }
-      if (rbc != null)
-        try {
-          rbc.close();
-        } catch (IOException e) {
-          logger.warn(e);
-        }
-    }
-  }
-
   public static String filePath( String filePath ) {
     return filePath.contains("~") ? filePath.replaceAll(
-              "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
-            : filePath;
-  }
-
-  /**
-   * Gets node url.
-   *
-   * @param hubUrl the hub url
-   * @param sessionId the session id
-   * @return the node
-   */
-  public static String getNode(String hubUrl, String sessionId) {
-    String node = null;
-
-    String protocolAuthorityFormat = "%s://%s";
-
-    CloseableHttpClient client = null;
-    CloseableHttpResponse response = null;
-    InputStream stream = null;
-    JsonReader reader = null;
-
-    try {
-      URL url = new URL(hubUrl);
-      client = HttpClients.createDefault();
-      response =
-          client.execute(
-              new HttpGet(
-                  String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority())
-                      + "/grid/api/testsession?session="
-                      + sessionId));
-      stream = response.getEntity().getContent();
-      reader = Json.createReader(stream);
-      url = new URL(reader.readObject().getString("proxyId"));
-      node = String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority());
-    } catch (Exception e) {
-      logger.error("Exception while talking to the grid", e);
-    } finally {
-      if (reader != null) {
-        reader.close();
-      }
-      if (stream != null) {
-        try {
-          stream.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the InputStream", e);
-        }
-      }
-      if (response != null) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("response->" + response);
-        }
-        try {
-          response.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the CloseableHttpResponse", e);
-        }
-      }
-      if (client != null) {
-        try {
-          client.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the CloseableHttpClient", e);
-        }
-      }
-    }
-
-    return node;
-  }
-
-  public static String doHttpGet(String fullUrl) {
-    StringBuilder result = new StringBuilder();
-
-    CloseableHttpClient client = null;
-    CloseableHttpResponse response = null;
-    InputStream stream = null;
-    BufferedReader reader = null;
-
-    try {
-      client = HttpClients.createDefault();
-      response = client.execute(new HttpGet(fullUrl));
-      stream = response.getEntity().getContent();
-      reader = new BufferedReader(new InputStreamReader(stream));
-      String line;
-      while ((line = reader.readLine()) != null) {
-        result.append(line);
-      }
-    } catch (Exception e) {
-      logger.error("Exception while talking to the grid", e);
-      result.delete(0, result.length());
-      result.append(getStackTrace(e));
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the BufferedReader", e);
-        }
-      }
-      if (stream != null) {
-        try {
-          stream.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the InputStream", e);
-        }
-      }
-      if (response != null) {
-        if (logger.isDebugEnabled()) logger.debug("response->" + response);
-        try {
-          response.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the CloseableHttpResponse", e);
-        }
-      }
-      if (client != null) {
-        try {
-          client.close();
-        } catch (IOException e) {
-          logger.warn("Exception while closing the CloseableHttpClient", e);
-        }
-      }
-    }
-
-    return result.toString();
+      "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
+      : filePath;
   }
 }
