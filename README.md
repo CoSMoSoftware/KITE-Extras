@@ -1,4 +1,4 @@
-This includes the major modules for [KITE](https://github.com/webrtc/KITE/tree/kite-2.0). 
+This includes the utility modules for [KITE](https://github.com/webrtc/KITE/tree/kite-2.0). 
 
 These modules contain the functions and tools that facilitate writing new tests, testing with KITE, and analyzing reports from KITE tests.
 
