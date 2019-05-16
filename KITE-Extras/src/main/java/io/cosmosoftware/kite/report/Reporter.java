@@ -100,6 +100,7 @@ public class Reporter {
     details.setTrace(trace);
     report.setStatus(status);
     report.setDetails(details);
+    jsonAttachment(report, "error.log", details.toJson());
   }
   
   public void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
