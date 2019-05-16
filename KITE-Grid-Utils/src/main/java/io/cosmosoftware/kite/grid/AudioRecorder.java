@@ -1,5 +1,8 @@
 package io.cosmosoftware.kite.grid;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,10 +12,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -67,9 +68,9 @@ public class AudioRecorder extends HttpServlet {
    */
   private static final String WIN_AUDIO_DRIVER = "waveaudio";
   /**
-   * The Constant WIN_NEW_FILE_OPTION.
+   * The Constant NEW_FILE_OPTION.
    */
-  private static final String WIN_NEW_FILE_OPTION = "-d";
+  private static final String NEW_FILE_OPTION = "-d";
   /**
    * The Constant serialVersionUID.
    */
@@ -99,9 +100,9 @@ public class AudioRecorder extends HttpServlet {
    * @return the string
    */
   private static String buildOutput(Process process, List<String> stringList, String filter) {
-    StringBuilder builder = new StringBuilder();
-    
     Scanner scanner = new Scanner(process.getInputStream());
+
+    StringBuilder builder = new StringBuilder();
     System.out.println("*** BEGIN OUTPUT ***");
     while (scanner.hasNextLine()) {
       String line = scanner.nextLine();
@@ -176,18 +177,17 @@ public class AudioRecorder extends HttpServlet {
     List<String> listOutput = new ArrayList<String>();
     
     if (record != null) { // record=1
-      
+  
       if (soxPath == null) {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, PROP_SOX_PATH + " is not found");
         return;
       }
-      
+  
       String newFile = "";
       String audioDriver = "";
       String audioDevice = "";
-      
+  
       if (isWindows) {
-        newFile = WIN_NEW_FILE_OPTION;
         audioDriver = WIN_AUDIO_DRIVER;
       } else {
         audioDriver = MAC_AUDIO_DRIVER;
@@ -199,7 +199,7 @@ public class AudioRecorder extends HttpServlet {
           return;
         }
       }
-      
+  
       // Record the audio of specified duration trimming silence at the beginning
       String[] recordCommandWindows = {
         soxPath,
@@ -211,7 +211,7 @@ public class AudioRecorder extends HttpServlet {
         "1",
         "-b",
         "16",
-        newFile,
+        NEW_FILE_OPTION,
         RECORDED_FILE,
         "trim",
         "0",
@@ -238,8 +238,35 @@ public class AudioRecorder extends HttpServlet {
         "0.1",
         "1%"
       };
+      String[] recordCommandMacWithNewFileOption = {
+        soxPath,
+        "-r",
+        "8000",
+        "-c",
+        "1",
+        "-b",
+        "16",
+        NEW_FILE_OPTION,
+        RECORDED_FILE,
+        "trim",
+        "0",
+        duration,
+        "silence",
+        "1",
+        "0.1",
+        "1%"
+      };
+      
       try {
-        executeCommand(isWindows ? recordCommandWindows : recordCommandMac, true, false);
+        executeCommand(isWindows ? recordCommandWindows : recordCommandMacWithNewFileOption, true, false);
+      } catch (KiteTestException ke) {
+        try {
+          executeCommand(isWindows ? recordCommandWindows : recordCommandMac, true, false);
+        } catch (Exception e) {
+          e.printStackTrace();
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+          return;
+        }
       } catch (InterruptedException e) {
         e.printStackTrace();
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
@@ -373,7 +400,7 @@ public class AudioRecorder extends HttpServlet {
         removeFiles(listOutput);
         response.getWriter().append(pesqScore);
         
-      } catch (UnsupportedAudioFileException | InterruptedException e) {
+      } catch (UnsupportedAudioFileException | InterruptedException | KiteTestException e) {
         e.printStackTrace();
         removeFiles(listOutput);
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
@@ -416,9 +443,6 @@ public class AudioRecorder extends HttpServlet {
     }
   }
   
-  
-  
-  
   /**
    * Do post.
    *
@@ -436,35 +460,6 @@ public class AudioRecorder extends HttpServlet {
   }
   
   /**
-   * Execute command for array.
-   *
-   * @param command the command
-   * @param logFile the log file
-   * @param waitFor the wait for
-   * @param filter  the filter
-   *
-   * @return the list
-   * @throws IOException          Signals that an I/O exception has occurred.
-   * @throws InterruptedException the interrupted exception
-   */
-  private static List<String> executeCommand(
-    String[] command, boolean logFile, boolean waitFor, String filter)
-    throws IOException, InterruptedException {
-    Process process = executeCommand(command, logFile);
-    
-    List<String> output = new ArrayList<String>();
-    if (!logFile) {
-      buildOutput(process, output, filter);
-    }
-    
-    if (waitFor) {
-      process.waitFor();
-    }
-    
-    return output;
-  }
-  
-  /**
    * Execute command.
    *
    * @param command the command
@@ -475,12 +470,14 @@ public class AudioRecorder extends HttpServlet {
    */
   private static Process executeCommand(String[] command, boolean logFile) throws IOException {
     ProcessBuilder processBuilder = new ProcessBuilder(command);
-    processBuilder.redirectErrorStream(true);
-    if (logFile)
+    //processBuilder.redirectErrorStream(true);
+    if (logFile) {
       processBuilder.redirectOutput(ProcessBuilder.Redirect.appendTo(new File(LOG_FILE)));
-    
+    }
     System.out.print("*** Executing: ");
-    for (String component : command) System.out.print(component + " ");
+    for (String component : command) {
+      System.out.print(component + " ");
+    }
     System.out.println();
     
     return processBuilder.start();
@@ -498,8 +495,13 @@ public class AudioRecorder extends HttpServlet {
    * @throws InterruptedException the interrupted exception
    */
   private static String executeCommand(String[] command, boolean logFile, boolean waitFor)
-    throws IOException, InterruptedException {
+    throws IOException, InterruptedException, KiteTestException {
     Process process = executeCommand(command, logFile);
+    
+    if (process.getErrorStream().available() > 0) {
+      throw new KiteTestException("The command execution resulted in an error: "
+        +  convertInputStreamToString(process.getErrorStream()), Status.BROKEN);
+    }
     
     String output = null;
     if (!logFile) {
@@ -543,6 +545,19 @@ public class AudioRecorder extends HttpServlet {
   }
   
   private static void removeFiles(List<String> fileList) {
-    for (String filename : fileList) new File(filename).delete();
+    for (String filename : fileList){
+      new File(filename).delete();
+    }
   }
+  
+  private static String convertInputStreamToString(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream result = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int length;
+    while ((length = inputStream.read(buffer)) != -1) {
+      result.write(buffer, 0, length);
+    }
+    return result.toString(StandardCharsets.UTF_8.name());
+  }
+  
 }
