@@ -33,6 +33,12 @@
       <artifactId>selenium-server</artifactId>
       <version>${kite.selenium.version}</version>
     </dependency>
-  </dependencies>
+      <dependency>
+        <groupId>io.cosmosoftware.kite</groupId>
+        <artifactId>kite-extras</artifactId>
+        <version>0.1.10</version>
+        <scope>compile</scope>
+      </dependency>
+    </dependencies>
 
 </project>
