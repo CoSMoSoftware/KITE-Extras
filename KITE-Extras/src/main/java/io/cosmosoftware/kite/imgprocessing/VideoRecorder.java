@@ -27,7 +27,7 @@ public class VideoRecorder{
   
   private final int DEFAULT_TOP_MARGIN = 110;
   private File recordedVideoDirectoryPath;
-  private SpecializedScreenRecorder recorder;
+  private CustomizedScreenRecorder recorder;
   private String fileFormat;
   
   /**
@@ -51,7 +51,7 @@ public class VideoRecorder{
    */
   public void startRecording(Point startingPoint, int width, int height, String videoName) throws KiteTestException {
     try {
-      this.recorder = new SpecializedScreenRecorder(
+      this.recorder = new CustomizedScreenRecorder(
         getDefaultGraphicConfiguration(),
         startingPoint == null
           ? getDefaultCaptureArea()

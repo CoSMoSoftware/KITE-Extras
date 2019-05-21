@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
+
 package io.cosmosoftware.kite.imgprocessing;
 
 import java.awt.AWTException;
@@ -6,7 +11,6 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.monte.media.Format;
 import org.monte.media.Registry;
 import org.monte.screenrecorder.ScreenRecorder;
@@ -14,12 +18,12 @@ import org.monte.screenrecorder.ScreenRecorder;
 /**
  * The type Specialized screen recorder.
  */
-public class SpecializedScreenRecorder extends ScreenRecorder {
+public class CustomizedScreenRecorder extends ScreenRecorder {
   
   private String name;
   
   /**
-   * Instantiates a new Specialized screen recorder.
+   * Instantiates a new Customized screen recorder.
    *
    * @param cfg           the cfg
    * @param captureArea   the capture area
@@ -33,10 +37,10 @@ public class SpecializedScreenRecorder extends ScreenRecorder {
    * @throws IOException  the io exception
    * @throws AWTException the awt exception
    */
-  public SpecializedScreenRecorder(GraphicsConfiguration cfg,
-                                   Rectangle captureArea, Format fileFormat, Format screenFormat,
-                                   Format mouseFormat, Format audioFormat, File movieFolder,
-                                   String videoFileName) throws IOException, AWTException {
+  public CustomizedScreenRecorder(GraphicsConfiguration cfg,
+                                  Rectangle captureArea, Format fileFormat, Format screenFormat,
+                                  Format mouseFormat, Format audioFormat, File movieFolder,
+                                  String videoFileName) throws IOException, AWTException {
     super(cfg, captureArea, fileFormat, screenFormat, mouseFormat,
       audioFormat, movieFolder);
     this.name = videoFileName;
