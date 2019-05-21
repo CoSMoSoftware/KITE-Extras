@@ -371,7 +371,7 @@ public class TestUtils {
    *
    * @param webDriver                     browser running the test
    * @param videoIndex                    video index in page's video array
-   * @param recordingDurationInMilisecond duration to record
+   * @param recordingDurationInMillisecond duration to record
    * @param details                       Json object containing details about the video file (name, type, ..)
    * @param callbackUrl                   server url to send video back to
    *
@@ -380,15 +380,15 @@ public class TestUtils {
   public static boolean recordVideoStream(
     WebDriver webDriver,
     int videoIndex,
-    int recordingDurationInMilisecond,
+    int recordingDurationInMillisecond,
     JsonObject details,
     String callbackUrl) {
     // todo: test this
     try {
       executeJsScript(webDriver,
-        JSActionScript.recordVideoStreamScript(videoIndex, recordingDurationInMilisecond, details, callbackUrl));
+        JSActionScript.recordVideoStreamScript(videoIndex, recordingDurationInMillisecond, details, callbackUrl));
       WebDriverWait wait =
-        new WebDriverWait(webDriver, (recordingDurationInMilisecond + 10000) / 1000);
+        new WebDriverWait(webDriver, (recordingDurationInMillisecond + 10000) / 1000);
       wait.until(ExpectedConditions.presenceOfElementLocated(By.id("videoRecorded" + videoIndex)));
       return true;
     } catch (Exception e) {
