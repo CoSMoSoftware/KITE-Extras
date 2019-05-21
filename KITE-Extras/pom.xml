@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.cosmosoftware.kite</groupId>
     <artifactId>kite-extras-base</artifactId>
-    <version>0.1.13</version>
+    <version>0.1.14</version>
   </parent>
 
   <artifactId>kite-extras</artifactId>
@@ -127,6 +127,11 @@
       <groupId>com.blueconic</groupId>
       <artifactId>browscap-java</artifactId>
       <version>${kite.browscap-java.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.pojosontheweb</groupId>
+      <artifactId>monte-repack</artifactId>
+      <version>${kite.pojosontheweb.version}</version>
     </dependency>
   </dependencies>
 </project>
