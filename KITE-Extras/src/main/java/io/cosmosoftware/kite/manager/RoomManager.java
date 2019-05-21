@@ -129,7 +129,11 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     String roomUrl;
     if (baseURL.contains("roomId")) {
       roomUrl = baseURL.endsWith("=") ? baseURL : baseURL + "=";
-    } else {
+    }
+    else if (baseURL.endsWith("html")){
+      return baseURL;
+    }
+    else {
       roomUrl = baseURL.endsWith("/") ? baseURL : baseURL + "/";
     }
     if (roomNames != null && roomNames.length > 0) {
@@ -173,7 +177,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     this.roomNames = roomNames;
   }
 
-  public String getRandomRoomId(int roomIdLen) {
+  private String getRandomRoomId(int roomIdLen) {
     return Integer.toString((int) Math.floor(Math.random() * Math.pow(10, roomIdLen)));
   }
 
