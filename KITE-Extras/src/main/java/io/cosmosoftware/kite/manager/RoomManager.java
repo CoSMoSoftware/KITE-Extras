@@ -121,7 +121,10 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    */
   public synchronized String getRoomUrl(String hubIpOrDns) throws Exception {
     boolean newMeeting = roomIndex == 0;
-    if (roomIndex > 0 && roomIndex % usersPerRoom == 0) {
+    if(usersPerRoom ==0){
+      newMeeting = true;
+    }
+    else if (roomIndex > 0 && roomIndex % usersPerRoom == 0) {
       roomId++;
       newMeeting = true;
     }
@@ -131,9 +134,14 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     String result;
     if (roomNames != null && roomNames.length > 0) {
       meetingId = getRoomName(roomId);
-      result = this.baseURL + meetingId + (this.baseURL.contains("?") ? "" : "?");
+      if(baseURL.contains("roomId")){
+        result = baseURL.endsWith("=")? baseURL + meetingId : baseURL + "=" + meetingId;
+      }
+      else {
+        result = baseURL.endsWith("/")? baseURL +meetingId : baseURL + "/" + meetingId;
+      }
     } else {
-      meetingId = getHubId(hubIpOrDns) + roomId;
+      meetingId = getHubId(hubIpOrDns) + getRandomRoomId(1000000);
       return this.baseURL + meetingId;
     }
     if (newMeeting) {
@@ -168,6 +176,10 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    */
   public void setRoomNames(String[] roomNames) {
     this.roomNames = roomNames;
+  }
+
+  public String getRandomRoomId(int roomIdLen){
+    return Integer.toString((int)Math.floor(Math.random() * Math.pow(10,roomIdLen)));
   }
   
   
