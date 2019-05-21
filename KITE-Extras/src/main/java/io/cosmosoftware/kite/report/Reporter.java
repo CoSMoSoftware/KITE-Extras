@@ -138,6 +138,10 @@ public class Reporter {
     addAttachment(report, attachment);
   }
   
+  public String getReportPath() {
+    return reportPath;
+  }
+  
   public void updateContainers() {
     for (Container container : containers) {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
