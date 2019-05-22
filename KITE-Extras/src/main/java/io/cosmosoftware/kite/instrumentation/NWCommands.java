@@ -18,7 +18,7 @@ public class NWCommands {
   private final int packetloss;
   private final int corrupt;
   private final int duplicate;
-  private final JsonObject bandwidth;
+  private final int bandwidth;
   private final Instrumentation instrumentation;
 
   public NWCommands(JsonObject jsonObject, Instrumentation instrumentation) throws Exception {
@@ -40,7 +40,7 @@ public class NWCommands {
     this.packetloss = jsonObject.getInt("packetloss", 0);
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
-    this.bandwidth = jsonObject.containsKey("bandwidth") ? jsonObject.getJsonObject("bandwidth") : null;
+    this.bandwidth = jsonObject.getInt("bandwidth", 0);
   }
 
   public String getGateway() {
@@ -64,16 +64,8 @@ public class NWCommands {
       if (this.duplicate != 0) {
         command = createCommand(command, "duplicate " + duplicate + "% ");
       }
-      if (this.bandwidth != null) {
-        try {
-          if (command.equals("")) {
-            command = "sudo tc qdisc add dev " + nit + " root tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
-          } else {
-            command += "|| true && sudo tc qdisc add dev " + nit + " parent 1: tbf rate " + this.bandwidth.getInt("rate") + "kbit burst " + this.bandwidth.getInt("burst") + "kb latency " + this.bandwidth.getInt("latency") + "ms ";
-          }
-        } catch (NullPointerException e) {
-          throw new KiteTestException("Parameters are missing in bandwidth command.", Status.FAILED, e);
-        }
+      if (this.bandwidth != 0) {
+        command = createCommand(command, "rate " + bandwidth + "kbit ");
       }
     }
     if (command.equals("")) {
@@ -84,7 +76,7 @@ public class NWCommands {
 
   private String createCommand(String command, String info) {
     if (command.equals("")) {
-      command = "sudo tc qdisc add dev " + nit + " root handle 1: netem " + info;
+      command = "sudo tc qdisc add dev " + nit + " root netem " + info;
     } else {
       command += info;
     }
