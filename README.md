@@ -1,12 +1,11 @@
-This includes the utility modules for [KITE](https://github.com/webrtc/KITE/tree/kite-2.0). 
+This includes the utility module for [KITE](https://github.com/webrtc/KITE/tree/kite-2.0). 
 
-These modules contain the functions and tools that facilitate writing new tests, testing with KITE, and analyzing reports from KITE tests.
+This module contain the functions and tools that facilitate writing new tests, testing with KITE, and analyzing reports from KITE tests.
 
-These modules might or might not be neccessary to be used as dependency for KITE test.
+This module might or might not be neccessary to be used as dependency for KITE test.
 
-There are 2 modules in this repository, **KITE-Extras** and **KITE-Grid-Utils**. 
 
-# 1. KITE-Extras
+# KITE-Extras
 
 This module contains multiple tools for KTIE testing. Part of this module is used in the KITE Engine itself, namely the KITE-Framework module in KITE. Therefore, this is a mandatory dependency for KITE. 
 
@@ -106,5 +105,3 @@ This account manager works with a file containing the accounts. The accounts wil
 ## util
 This package includes `public static` utility functions which are used widely across KITE Engine and KITE tests. These functions can be either utility Java functions that can be reused between test such as logging and timestamps, data converting,.. or Selenium/Appium webdriver functions that facilitate the complex combinations of WebDriver API usages, such as resizing/switching windows, drawing shapes/lines,...
 
-# KITE-Grid-Utils
-This module contains the classes that help with the setup of Selenium grid. These classes can be custom servlet for nodes for specific test cases or enhance logging for test-grid interactions.
