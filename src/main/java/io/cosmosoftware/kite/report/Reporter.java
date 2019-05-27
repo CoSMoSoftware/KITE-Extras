@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
@@ -18,10 +19,10 @@ public class Reporter {
   private static Reporter instance = new Reporter();
   private final String DEFAULT_REPORT_FOLDER = System.getProperty("user.dir") + "/kite-allure-reports/";
   protected Logger logger = Logger.getLogger(this.getClass().getName());
-  private List<CustomAttachment> attachments = new ArrayList<>();
-  private List<Container> containers = new ArrayList<>();
+  private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
+  private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private String reportPath = DEFAULT_REPORT_FOLDER;
-  private List<AllureTestReport> tests = new ArrayList<>();
+  private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
 
   private void addAttachment(AllureStepReport report, CustomAttachment attachment) {
     this.attachments.add(attachment);
@@ -55,7 +56,7 @@ public class Reporter {
     }
   }
   
-  public static Reporter getInstance() {
+  public synchronized static Reporter getInstance() {
     return instance;
   }
   
@@ -142,7 +143,7 @@ public class Reporter {
     return reportPath;
   }
   
-  public void updateContainers() {
+  public synchronized void updateContainers() {
     for (Container container : containers) {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
       printJsonTofile(container.toString(), fileName);
