@@ -6,7 +6,7 @@
 
   <groupId>io.cosmosoftware.kite</groupId>
   <artifactId>kite-extras</artifactId>
-  <version>0.1.14</version>
+  <version>0.1.15</version>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
