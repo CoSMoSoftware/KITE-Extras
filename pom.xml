@@ -6,18 +6,16 @@
 
   <groupId>io.cosmosoftware.kite</groupId>
   <artifactId>kite-extras</artifactId>
-  <version>0.1.15</version>
+  <version>0.1.16</version>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kite.log4j.version>1.2.17</kite.log4j.version>
     
     <!-- Core dependencies -->
-    <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.java.version>1.8</kite.java.version>
     <kite.guava.version>25.1-jre</kite.guava.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- maven plugin versions, shouldn't need be changed very often -->
+    <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <!-- Report related dependencies -->
     <kite.json.version>1.1.2</kite.json.version>

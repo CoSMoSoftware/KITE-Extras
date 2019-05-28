@@ -8,6 +8,7 @@ import io.cosmosoftware.kite.entities.MeetingStatus;
 import io.cosmosoftware.kite.util.TestUtils;
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
 
   private static final Logger logger = Logger.getLogger(RoomManager.class.getName());
-  private static RoomManager roomManager = null;
+  private static HashMap<String, RoomManager> roomManagers = new HashMap<>();
   private final String baseURL;
   private final int usersPerRoom;
   private int roomId = 0;
@@ -55,10 +56,13 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
+   *                     
    * @return the instance
    * @throws Exception the exception
    */
-  public static RoomManager getInstance() throws Exception {
+  public static RoomManager getInstance(String name) throws Exception {
+    RoomManager roomManager = roomManagers.get(name);
     if (roomManager == null) {
       throw new Exception("RoomManager has not been instanciated yet, please call getInstance(String baseURL, int numberOfRooms, int usersPerRoom) first.");
     }
@@ -68,30 +72,34 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
    * @param baseURL      the base url
    * @param usersPerRoom the users per room
    * @return the instance
    */
-  public static RoomManager getInstance(String baseURL, int usersPerRoom) {
-    return RoomManager.getInstance(baseURL, usersPerRoom, false);
+  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom) {
+    return RoomManager.getInstance(name, baseURL, usersPerRoom, false);
   }
 
 
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
    * @param baseURL      the base url
    * @param usersPerRoom the users per room
    * @param loop         whether to start from first room when all the rooms have been used.
    * @return the instance
    */
-  public static RoomManager getInstance(String baseURL, int usersPerRoom, boolean loop) {
+  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom, boolean loop) {
+    RoomManager roomManager = roomManagers.get(name);
     if (roomManager == null) {
       roomManager = new RoomManager(baseURL, usersPerRoom, loop);
+      roomManagers.put(name, roomManager);
     }
     return roomManager;
   }
-
+  
   /**
    * Gets the meeting room name from the roomNames array.
    *
