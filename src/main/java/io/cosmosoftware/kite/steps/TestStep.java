@@ -20,9 +20,17 @@ public abstract class TestStep {
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
-  
+
+
+  private StepPhase stepPhase = StepPhase.RAMPUP;
+
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
+  }
+  
+  public TestStep(WebDriver webDriver, StepPhase stepPhase) {
+    this.webDriver = webDriver;
+    this.stepPhase = stepPhase;
   }
   
   public void execute() {
@@ -39,7 +47,7 @@ public abstract class TestStep {
     stepCompleted = true;
   }
   
-  private String getClassName() {
+  public String getClassName() {
     String s = this.getClass().getSimpleName();
     if (s.contains(".")) {
       s = s.substring(s.lastIndexOf(".") + 1);
@@ -81,6 +89,14 @@ public abstract class TestStep {
   }
   
   public abstract String stepDescription();
+
+  public StepPhase getStepPhase() {
+    return stepPhase;
+  }
+
+  public void setStepPhase(StepPhase stepPhase) {
+    this.stepPhase = stepPhase;
+  }
   
   protected String translateClassName() {
     

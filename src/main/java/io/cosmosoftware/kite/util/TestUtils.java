@@ -9,6 +9,7 @@ import io.cosmosoftware.kite.entities.Timeouts;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.Status;
+import io.cosmosoftware.kite.steps.StepPhase;
 import io.cosmosoftware.kite.steps.TestStep;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -329,7 +330,11 @@ public class TestUtils {
    * @param parentStepReport the report of the parent step,
    *                         containing the status of the last step.
    */
-  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {
+  public static void processTestStep(StepPhase stepPhase, TestStep step, AllureStepReport parentStepReport) {
+    if (stepPhase != step.getStepPhase() && step.getStepPhase() != StepPhase.ALL) {
+      logger.debug("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
+      return;
+    }
     step.init();
     if (!parentStepReport.failed() && !parentStepReport.broken()) {
       step.execute();
