@@ -69,7 +69,7 @@ public abstract class TestStep {
   
   public void init() {
     this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
-    this.report.setDescription(stepDescription());
+    this.report.setDescription(stepPhase.name() + " " + stepDescription());
     this.report.setStartTimestamp();
   }
   

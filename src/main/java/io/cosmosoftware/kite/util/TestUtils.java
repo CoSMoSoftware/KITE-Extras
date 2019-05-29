@@ -322,10 +322,11 @@ public class TestUtils {
       logger.error("\r\n" + getStackTrace(e));
     }
   }
-  
+
   /**
    * Process the step in the new TestRunner and Kite
-   *
+   * 
+   * @param stepPhase        the StepPhase for this stepExecution
    * @param step             the test step to execute
    * @param parentStepReport the report of the parent step,
    *                         containing the status of the last step.
@@ -335,6 +336,17 @@ public class TestUtils {
       logger.debug("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
       return;
     }
+    processTestStep(step, parentStepReport);
+  }
+    
+  /**
+   * Process the step in the new TestRunner and Kite
+   *
+   * @param step             the test step to execute
+   * @param parentStepReport the report of the parent step,
+   *                         containing the status of the last step.
+   */
+  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {   
     step.init();
     if (!parentStepReport.failed() && !parentStepReport.broken()) {
       step.execute();
