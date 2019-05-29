@@ -10,6 +10,7 @@ import org.openqa.selenium.WebDriver;
 import java.util.HashSet;
 import java.util.Set;
 
+import static io.cosmosoftware.kite.steps.StepPhase.*;
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 
 public abstract class TestStep {
@@ -22,7 +23,7 @@ public abstract class TestStep {
   private boolean stepCompleted = false;
 
 
-  private StepPhase stepPhase = StepPhase.RAMPUP;
+  private StepPhase stepPhase = RAMPUP;
 
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
@@ -35,7 +36,7 @@ public abstract class TestStep {
   
   public void execute() {
     try {
-      logger.info("Executing step: " + stepDescription());
+      logger.info(stepPhaseName() + "Executing step: " + stepDescription());
       step();
     } catch (Exception e) {
       Reporter.getInstance().processException(this.report, e);
@@ -68,8 +69,8 @@ public abstract class TestStep {
   }
   
   public void init() {
-    this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
-    this.report.setDescription(stepPhase.name() + " " + stepDescription());
+    this.report = new AllureStepReport(stepPhaseName() + getLogHeader(webDriver) + ": " + stepDescription());
+    this.report.setDescription(stepPhaseName() + stepDescription());
     this.report.setStartTimestamp();
   }
   
@@ -78,7 +79,7 @@ public abstract class TestStep {
   }
   
   public void skip() {
-    logger.warn("Skipping step: " + stepDescription());
+    logger.warn(stepPhase.name() + " " + "Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
   }
   
@@ -115,6 +116,17 @@ public abstract class TestStep {
     }
     
     return name;
+  }
+  
+  private String stepPhaseName() {
+    switch (stepPhase) {
+      case RAMPUP:
+        return "RU ";
+      case LOADREACHED:
+        return "LR ";
+      default:
+        return "";
+    }
   }
   
 }
