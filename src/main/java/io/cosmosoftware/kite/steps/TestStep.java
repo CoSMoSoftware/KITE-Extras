@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import static io.cosmosoftware.kite.steps.StepPhase.*;
@@ -22,8 +23,10 @@ public abstract class TestStep {
   private String name = getClassName();
   private boolean stepCompleted = false;
 
-
   private StepPhase stepPhase = RAMPUP;
+  private StepPhase currentStepPhase = RAMPUP;
+
+  private LinkedHashMap<String, String> csvResult = null;
 
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
@@ -68,10 +71,15 @@ public abstract class TestStep {
     return report;
   }
   
-  public void init() {
-    this.report = new AllureStepReport(stepPhaseName() + getLogHeader(webDriver) + ": " + stepDescription());
+  public void init(StepPhase stepPhase) {
+    this.currentStepPhase = stepPhase;
+    this.report = new AllureStepReport(getClientID() + ": " + stepDescription());
     this.report.setDescription(stepPhaseName() + stepDescription());
     this.report.setStartTimestamp();
+  }
+  
+  public String getClientID() {
+    return stepPhaseName() + getLogHeader(webDriver);
   }
   
   public void setLogger(Logger logger) {
@@ -119,7 +127,7 @@ public abstract class TestStep {
   }
   
   private String stepPhaseName() {
-    switch (stepPhase) {
+    switch (currentStepPhase) {
       case RAMPUP:
         return "RU ";
       case LOADREACHED:
@@ -128,5 +136,12 @@ public abstract class TestStep {
         return "";
     }
   }
-  
+
+  public void setCsvResult(LinkedHashMap<String, String> csvResult) {
+    this.csvResult = csvResult;
+  }
+
+  public LinkedHashMap<String, String> getCsvResult() {
+    return csvResult;
+  }
 }

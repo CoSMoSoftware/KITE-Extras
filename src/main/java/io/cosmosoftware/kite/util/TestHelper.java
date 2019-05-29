@@ -144,18 +144,19 @@ public class TestHelper {
         fout = new FileOutputStream(path + filename);
         pw = new PrintWriter(fout, true);
       }
-      if (o instanceof JsonObject) {
-        //logger.info("TestHelper.println(JsonObject) " + o.toString());
-        JsonObject jsonObject = (JsonObject) o;
-        Map<String, String> map = TestHelper.jsonToHashMap(jsonObject);
-        if (!initialized) {
-          pw.println(keysLine(map));
-        }
-        pw.println(valuesLine(map));
+      Map<String, String> map = null;
+      if (o instanceof LinkedHashMap) {
+        map = (LinkedHashMap) o;
+      } else if (o instanceof JsonObject) {
+        map = TestHelper.jsonToHashMap((JsonObject) o);
       } else {
-        //logger.info("TestHelper.println(String) " + o.toString());
         pw.println(o.toString());
+        return;
       }
+      if (!initialized) {
+        pw.println(keysLine(map));
+      }
+      pw.println(valuesLine(map));
     } catch (Exception e) {
       logger.error("\r\n" + ReportUtils.getStackTrace(e));
     }

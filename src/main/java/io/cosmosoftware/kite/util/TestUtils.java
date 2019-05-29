@@ -335,19 +335,8 @@ public class TestUtils {
     if (stepPhase != step.getStepPhase() && step.getStepPhase() != StepPhase.ALL) {
       logger.debug("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
       return;
-    }
-    processTestStep(step, parentStepReport);
-  }
-    
-  /**
-   * Process the step in the new TestRunner and Kite
-   *
-   * @param step             the test step to execute
-   * @param parentStepReport the report of the parent step,
-   *                         containing the status of the last step.
-   */
-  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {   
-    step.init();
+    }   
+    step.init(stepPhase);
     if (!parentStepReport.failed() && !parentStepReport.broken()) {
       step.execute();
     } else {
