@@ -144,4 +144,11 @@ public abstract class TestStep {
   public LinkedHashMap<String, String> getCsvResult() {
     return csvResult;
   }
+
+  public void addToCsvResult(String key, String value) {
+    if (this.csvResult == null) {
+      this.csvResult = new LinkedHashMap<>();
+    }
+    this.csvResult.put(key, value);
+  }
 }
