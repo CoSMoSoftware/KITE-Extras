@@ -5,36 +5,24 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.cosmosoftware.kite</groupId>
-  <artifactId>kite-extras-base</artifactId>
-  <version>0.1.14</version>
-  <name>kite-extras-base</name>
-  <packaging>pom</packaging>
+  <artifactId>kite-extras</artifactId>
+  <version>0.1.17</version>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <kite.log4j.version>1.2.17</kite.log4j.version>
-    <!-- Module versioning -->
-    <kite.extras.version>0.1.11</kite.extras.version>
-    <kite.grid-utils.version>0.1.3</kite.grid-utils.version>
-
-
+    
     <!-- Core dependencies -->
-    <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.java.version>1.8</kite.java.version>
     <kite.guava.version>25.1-jre</kite.guava.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- maven plugin versions, shouldn't need be changed very often -->
+    <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <!-- Report related dependencies -->
     <kite.json.version>1.1.2</kite.json.version>
     <kite.org.json.version>20180130</kite.org.json.version>
-    <kite.allure-java-common.version>2.10.0</kite.allure-java-common.version>
-    <kite.allure2-model-pojo.version>1.0.0</kite.allure2-model-pojo.version>
     <kite.jackson-annotations.version>2.9.8</kite.jackson-annotations.version>
-    <kite.maven-shade.version>3.2.1</kite.maven-shade.version>
 
     <!-- Utility dependencies -->
-    <kite.sqlite.jdbc.version>3.23.1</kite.sqlite.jdbc.version>
     <kite.common-io.version>2.6</kite.common-io.version>
     <kite.jcraft.version>0.1.54</kite.jcraft.version>
     <kite.tess4j.version>4.0.2</kite.tess4j.version>
@@ -45,13 +33,6 @@
     <kite.user-agent.version>1.21</kite.user-agent.version>
     <kite.woothee.version>1.8.0</kite.woothee.version>
     <kite.browscap-java.version>1.2.7</kite.browscap-java.version>
-
-    <!--Web app dependencies-->
-    <kite.servlet.version>4.0.1</kite.servlet.version>
-    <kite.velocity.version>1.7</kite.velocity.version>
-    <kite.velocity-tool.version>2.0</kite.velocity-tool.version>
-    <kite.websocket-api.version>1.1</kite.websocket-api.version>
-    <kite.commons-logging.version>1.1.1</kite.commons-logging.version>
 
     <!-- Automation framework dependencies -->
     <kite.selenium.version>3.141.59</kite.selenium.version>
@@ -64,8 +45,126 @@
 
   </properties>
 
-  <modules>
-    <module>KITE-Extras</module>
-    <module>KITE-Grid-Utils</module>
-  </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${kite.mvn.compiler.version}</version>
+        <configuration>
+          <source>${kite.java.version}</source>
+          <target>${kite.java.version}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${kite.log4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+      <version>${kite.dataformat-xml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${kite.jackson-annotations.version}</version>
+    </dependency>
+    <!--Scope ALL-->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${kite.junit-jupiter-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.appium</groupId>
+      <artifactId>java-client</artifactId>
+      <version>${kite.appium.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.aspectj</groupId>
+          <artifactId>aspectjweaver</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.json</artifactId>
+      <version>${kite.json.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${kite.guava.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${kite.common-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>${kite.jcraft.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sourceforge.tess4j</groupId>
+      <artifactId>tess4j</artifactId>
+      <version>${kite.tess4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${kite.org.json.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/eu.bitwalker/UserAgentUtils -->
+    <dependency>
+      <groupId>eu.bitwalker</groupId>
+      <artifactId>UserAgentUtils</artifactId>
+      <version>${kite.user-agent.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/is.tagomor.woothee/woothee-java -->
+    <dependency>
+      <groupId>is.tagomor.woothee</groupId>
+      <artifactId>woothee-java</artifactId>
+      <version>${kite.woothee.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${kite.jaxb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>${kite.jaxb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${kite.jaxb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>${kite.activation.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.blueconic</groupId>
+      <artifactId>browscap-java</artifactId>
+      <version>${kite.browscap-java.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.pojosontheweb</groupId>
+      <artifactId>monte-repack</artifactId>
+      <version>${kite.pojosontheweb.version}</version>
+    </dependency>
+  </dependencies>
+
 </project>

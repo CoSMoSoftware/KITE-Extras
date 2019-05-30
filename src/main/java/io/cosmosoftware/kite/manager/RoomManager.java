@@ -8,6 +8,7 @@ import io.cosmosoftware.kite.entities.MeetingStatus;
 import io.cosmosoftware.kite.util.TestUtils;
 import org.apache.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,9 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * the number of rooms to be created.
  */
 public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
-  
+
   private static final Logger logger = Logger.getLogger(RoomManager.class.getName());
-  private static RoomManager roomManager = null;
+  private static HashMap<String, RoomManager> roomManagers = new HashMap<>();
   private final String baseURL;
   private final int usersPerRoom;
   private int roomId = 0;
@@ -34,7 +35,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     this.loopRooms = loop;
     logger.info("new RoomManager(" + usersPerRoom + ") for " + baseURL);
   }
-  
+
   private String getHubId(String hubIpOrDns) {
     if (hubIpOrDns == null) {
       return "";
@@ -51,45 +52,50 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     }
     return rawHubId;
   }
-  
+
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
+   *                     
    * @return the instance
    * @throws Exception the exception
    */
-  public static RoomManager getInstance() throws Exception {
+  public static RoomManager getInstance(String name) throws Exception {
+    RoomManager roomManager = roomManagers.get(name);
     if (roomManager == null) {
       throw new Exception("RoomManager has not been instanciated yet, please call getInstance(String baseURL, int numberOfRooms, int usersPerRoom) first.");
     }
     return roomManager;
   }
-  
+
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
    * @param baseURL      the base url
    * @param usersPerRoom the users per room
-   *
    * @return the instance
    */
-  public static RoomManager getInstance(String baseURL, int usersPerRoom) {
-    return  RoomManager.getInstance(baseURL, usersPerRoom, false);
+  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom) {
+    return RoomManager.getInstance(name, baseURL, usersPerRoom, false);
   }
 
 
   /**
    * Gets instance.
    *
+   * @param name         the name of the roomManager
    * @param baseURL      the base url
    * @param usersPerRoom the users per room
-   * @param loop whether to start from first room when all the rooms have been used.
-   *
+   * @param loop         whether to start from first room when all the rooms have been used.
    * @return the instance
    */
-  public static RoomManager getInstance(String baseURL, int usersPerRoom, boolean loop) {
+  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom, boolean loop) {
+    RoomManager roomManager = roomManagers.get(name);
     if (roomManager == null) {
       roomManager = new RoomManager(baseURL, usersPerRoom, loop);
+      roomManagers.put(name, roomManager);
     }
     return roomManager;
   }
@@ -98,50 +104,59 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * Gets the meeting room name from the roomNames array.
    *
    * @param i the index of the room name in the array
-   *
    * @return the room name correspoding to index i in the array
    * @throws Exception if i > roomNames.length - 1
    */
   public String getRoomName(int i) throws Exception {
     if (i > roomNames.length - 1 && !loopRooms) {
       logger.error("Error: only " + roomNames.length + " rooms in the room list, unable to create the "
-        + i + "th room. Please check the config file.");
+          + i + "th room. Please check the config file.");
       throw new Exception("Unable to create the new room, there are not enough rooms provided in the room list.");
     }
-    return roomNames[i%roomNames.length ];
+    return roomNames[i % roomNames.length];
   }
-  
+
   /**
    * Gets the meeting room URL for the load testing.
    *
    * @param hubIpOrDns the IP or DNS of the Hub
-   *
    * @return the meeting room URL for the load testing.
    * @throws Exception the exception
    */
   public synchronized String getRoomUrl(String hubIpOrDns) throws Exception {
     boolean newMeeting = roomIndex == 0;
-    if (roomIndex > 0 && roomIndex % usersPerRoom == 0) {
+    if (usersPerRoom == 0) {
+      newMeeting = true;
+    } else if (roomIndex > 0 && roomIndex % usersPerRoom == 0) {
       roomId++;
       newMeeting = true;
     }
     roomIndex++;
-    
     String meetingId;
     String result;
+    String roomUrl;
+    if (baseURL.contains("roomId")) {
+      roomUrl = baseURL.endsWith("=") ? baseURL : baseURL + "=";
+    }
+    else if (baseURL.endsWith("html")){
+      return baseURL;
+    }
+    else {
+      roomUrl = baseURL.endsWith("/") ? baseURL : baseURL + "/";
+    }
     if (roomNames != null && roomNames.length > 0) {
       meetingId = getRoomName(roomId);
-      result = this.baseURL + meetingId + (this.baseURL.contains("?") ? "" : "?");
+      result = roomUrl + meetingId;
     } else {
-      meetingId = getHubId(hubIpOrDns) + roomId;
-      return this.baseURL + meetingId;
+      meetingId = getHubId(hubIpOrDns) + getRandomRoomId(1000000);
+      return roomUrl + meetingId;
     }
     if (newMeeting) {
       put(meetingId, new MeetingStatus(meetingId));
     }
     return result;
   }
-  
+
   /**
    * Gets the meeting room URL when running the test locally (on open-source KITE)
    *
@@ -151,7 +166,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   public synchronized String getRoomUrl() throws Exception {
     return getRoomUrl(null);
   }
-  
+
   /**
    * Room list provided boolean.
    *
@@ -160,7 +175,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   public boolean roomListProvided() {
     return this.roomNames != null && this.roomNames.length > 0;
   }
-  
+
   /**
    * Sets the roomNames array.
    *
@@ -169,6 +184,10 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   public void setRoomNames(String[] roomNames) {
     this.roomNames = roomNames;
   }
-  
-  
+
+  private String getRandomRoomId(int roomIdLen) {
+    return Integer.toString((int) Math.floor(Math.random() * Math.pow(10, roomIdLen)));
+  }
+
+
 }

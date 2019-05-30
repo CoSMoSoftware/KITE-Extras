@@ -106,7 +106,6 @@ public class SSHManager implements Callable<SSHManager> {
     InputStream inputStream = null;
     try {
       JSch jsch = new JSch();
-      logger.info("keyFilePath = " + keyFilePath);
       jsch.addIdentity(this.keyFilePath);
       if (this.hostIpOrName.contains(":")) {
         StringTokenizer st = new StringTokenizer(this.hostIpOrName, ":");
