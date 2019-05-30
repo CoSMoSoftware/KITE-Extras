@@ -541,4 +541,64 @@ public class TestUtils {
       "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
       : filePath;
   }
+
+  /**
+   * Gets private ip by querying the hub against a session id.
+   *
+   * @param hupIpOrDns the hup ip or dns
+   * @param sessionId  the session id
+   *
+   * @return the private ip
+   */
+  public static String getPrivateIp(String hupIpOrDns, String sessionId) {
+
+    String privateIp = null;
+
+    CloseableHttpClient client = null;
+    CloseableHttpResponse response = null;
+    InputStream stream = null;
+    JsonReader reader = null;
+
+    try {
+      client = HttpClients.createDefault();
+      HttpGet httpGet =
+          new HttpGet("http://" + hupIpOrDns + ":4444/grid/api/testsession?session=" + sessionId);
+      response = client.execute(httpGet);
+      stream = response.getEntity().getContent();
+      reader = Json.createReader(stream);
+      JsonObject object = reader.readObject();
+      String proxyId = object.getString("proxyId");
+      URL url = new URL(proxyId);
+      privateIp = url.getHost();
+    } catch (Exception e) {
+      logger.error("Exception while talking to the grid", e);
+    } finally {
+      if (reader != null)
+        reader.close();
+      if (stream != null)
+        try {
+          stream.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the InputStream", e);
+        }
+      if (response != null) {
+        if (logger.isDebugEnabled())
+          logger.debug("response->" + response);
+        try {
+          response.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpResponse", e);
+        }
+      }
+      if (client != null)
+        try {
+          client.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpClient", e);
+        }
+    }
+
+    return privateIp;
+
+  }
 }

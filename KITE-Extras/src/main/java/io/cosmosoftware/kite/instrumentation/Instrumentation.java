@@ -5,10 +5,20 @@
 package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.manager.SSHManager;
+import io.cosmosoftware.kite.util.ReportUtils;
+import io.cosmosoftware.kite.util.TestUtils;
+import org.apache.log4j.Logger;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.awt.*;
+import java.net.URI;
 import java.util.HashMap;
+
+import static io.cosmosoftware.kite.util.TestUtils.getPrivateIp;
 
 /**
  * The type Instrumentation.
@@ -32,5 +42,4 @@ public class Instrumentation extends HashMap<String, Instance> {
       }
     }
   }
-
 }
