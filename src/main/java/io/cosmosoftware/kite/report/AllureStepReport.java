@@ -37,7 +37,7 @@ public class AllureStepReport extends Entity {
   }
   
   public void addParam(String name, String value) {
-    this.parameters.addLabel(name, value);
+    this.parameters.put(name, value);
   }
   
   public synchronized void addStepReport(AllureStepReport step) {
@@ -88,7 +88,6 @@ public class AllureStepReport extends Entity {
   
   public void setDescription(String description) {
     this.description = description;
-    //this.parameters.addLabel("Description", description);
   }
   
   public StatusDetails getDetails() {

@@ -3,42 +3,23 @@ package io.cosmosoftware.kite.report;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
-public class ParamList extends ArrayList<ParamList.Parameter> {
+public class ParamList extends LinkedHashMap<String, String> {
   
   public JsonArray toJson() {
     JsonArrayBuilder builder = Json.createArrayBuilder();
-    for (Parameter label : this) {
-      builder.add(label.toJson());
+    for (String key : this.keySet()) {
+      builder.add(Json.createObjectBuilder()
+        .add("name", key)
+        .add("value", this.get(key)).build());
     }
     return builder.build();
-  }
-  
-  public synchronized void addLabel(String name, String value) {
-    this.add(new Parameter(name,value));
   }
   
   @Override
   public String toString() {
     return toJson().toString();
-  }
-  
-  public class Parameter {
-    private final String name;
-    private final String value;
-  
-    public Parameter(String name, String value) {
-      this.name = name;
-      this.value = value;
-    }
-  
-    public JsonObject toJson() {
-      return Json.createObjectBuilder()
-        .add("name", name)
-        .add("value", value).build();
-    }
   }
   
 }

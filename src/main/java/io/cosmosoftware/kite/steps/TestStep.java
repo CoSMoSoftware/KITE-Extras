@@ -25,8 +25,8 @@ public abstract class TestStep {
 
   private boolean optional = false;
 
-  private StepPhase stepPhase = RAMPUP;
-  private StepPhase currentStepPhase = RAMPUP;
+  private StepPhase stepPhase = DEFAULT;
+  private StepPhase currentStepPhase = DEFAULT;
 
   private LinkedHashMap<String, String> csvResult = null;
 

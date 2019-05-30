@@ -31,7 +31,11 @@ public class AllureTestReport extends AllureStepReport {
   }
   
   public void addLabel(String name, String value) {
-    this.labels.addLabel(name, value);
+    this.labels.put(name, value);
+  }
+
+  public String getLabel(String name) {
+    return this.labels.get(name);
   }
   
   public void addLink(String link) {
