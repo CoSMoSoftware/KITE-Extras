@@ -9,9 +9,9 @@ import io.cosmosoftware.kite.report.Status;
 
 import javax.json.JsonObject;
 
-public class NetworkProfiles {
+public class NetworkProfile {
 
-  private final Profiles profile;
+  private final Profile profile;
 
   private final String name;
 
@@ -21,13 +21,13 @@ public class NetworkProfiles {
    *
    * @param jsonObject the json object
    */
-  public NetworkProfiles(JsonObject jsonObject) throws KiteTestException {
+  public NetworkProfile(JsonObject jsonObject) throws KiteTestException {
     String missingKey = "";
     try {
       missingKey = "name";
       this.name = jsonObject.getString("name");
       missingKey = "profile";
-      this.profile = new Profiles(jsonObject.getJsonObject("profile"));
+      this.profile = new Profile(jsonObject.getJsonObject("profile"));
 
     } catch (Exception e) {
       throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
@@ -40,7 +40,7 @@ public class NetworkProfiles {
    *
    * @return the profile
    */
-  public Profiles getProfile() {
+  public Profile getProfile() {
     return profile;
   }
 

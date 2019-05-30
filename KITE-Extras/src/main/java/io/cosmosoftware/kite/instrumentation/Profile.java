@@ -9,7 +9,7 @@ import io.cosmosoftware.kite.report.Status;
 
 import javax.json.JsonObject;
 
-public class Profiles {
+public class Profile {
 
   private final String nit;
   private final String command;
@@ -19,7 +19,7 @@ public class Profiles {
   private final int duplicate;
   private final int bandwidth;
 
-  public Profiles(JsonObject jsonObject) throws Exception {
+  public Profile(JsonObject jsonObject) throws Exception {
     this.nit = "enp0s8";
     this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);

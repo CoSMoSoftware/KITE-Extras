@@ -12,7 +12,7 @@ import java.util.HashMap;
 /**
  * The type Networks.
  */
-public class Networks extends HashMap<String, NetworkProfiles> {
+public class NetworkProfileHashMap extends HashMap<String, NetworkProfile> {
 
 
   /**
@@ -20,10 +20,10 @@ public class Networks extends HashMap<String, NetworkProfiles> {
    *
    * @param jsonArray the json array
    */
-  public Networks(JsonArray jsonArray) throws KiteTestException {
+  public NetworkProfileHashMap(JsonArray jsonArray) throws KiteTestException {
     for (int i = 0; i < jsonArray.size(); i++) {
       try {
-        NetworkProfiles network = new NetworkProfiles(jsonArray.getJsonObject(i));
+        NetworkProfile network = new NetworkProfile(jsonArray.getJsonObject(i));
         this.put(network.getName(), network);
       } catch (KiteTestException e) {
         throw e;
