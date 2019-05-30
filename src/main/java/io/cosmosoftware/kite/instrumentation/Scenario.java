@@ -26,6 +26,7 @@ public class Scenario {
   private final String command;
   private final String network;
   private final String gateway;
+  private final Integer duration;
   private ArrayList<Integer> clientIds = new ArrayList<>();
   private final NetworkProfileHashMap networkProfileHashMap;
   private final Logger logger;
@@ -59,6 +60,7 @@ public class Scenario {
     } catch (Exception e) {
       throw new KiteTestException("The key " + missingKey + " is missing", Status.FAILED, e);
     }
+    this.duration = jsonObject.getInt("duration", 10000);
   }
 
   public String getName() {
@@ -80,6 +82,8 @@ public class Scenario {
   public String getType() {
     return type;
   }
+
+  public Integer getDuration() { return duration; }
 
   public String sendCommand(WebDriver webDriver, Instrumentation instrumentation, String remoteAddress, String GridId, String instrumentUrl) {
     StringBuilder result = new StringBuilder();
