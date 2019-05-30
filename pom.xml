@@ -6,7 +6,7 @@
 
   <groupId>io.cosmosoftware.kite</groupId>
   <artifactId>kite-extras</artifactId>
-  <version>0.1.16</version>
+  <version>0.1.17</version>
 
   <properties>
     <kite.log4j.version>1.2.17</kite.log4j.version>
@@ -33,6 +33,10 @@
     <kite.user-agent.version>1.21</kite.user-agent.version>
     <kite.woothee.version>1.8.0</kite.woothee.version>
     <kite.browscap-java.version>1.2.7</kite.browscap-java.version>
+    <org.hibernate.javax.persistence.version>1.0.2.Final</org.hibernate.javax.persistence.version>
+    <jboss-transaction-api_1.1_spec.version>1.0.1.Final</jboss-transaction-api_1.1_spec.version>
+    <narayana-jta.version>5.9.0.Final</narayana-jta.version>
+    <org.hibernate.ogm.version>5.3.1.Final</org.hibernate.ogm.version>
 
     <!-- Automation framework dependencies -->
     <kite.selenium.version>3.141.59</kite.selenium.version>
@@ -164,6 +168,29 @@
       <groupId>com.pojosontheweb</groupId>
       <artifactId>monte-repack</artifactId>
       <version>${kite.pojosontheweb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <version>${org.hibernate.javax.persistence.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jboss.spec.javax.transaction/jboss-transaction-api_1.1_spec -->
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <version>${jboss-transaction-api_1.1_spec.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jboss.narayana.jta/narayana-jta -->
+    <dependency>
+      <groupId>org.jboss.narayana.jta</groupId>
+      <artifactId>narayana-jta</artifactId>
+      <version>${narayana-jta.version}</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.hibernate.ogm/hibernate-ogm-mongodb -->
+    <dependency>
+      <groupId>org.hibernate.ogm</groupId>
+      <artifactId>hibernate-ogm-mongodb</artifactId>
+      <version>${org.hibernate.ogm.version}</version>
     </dependency>
   </dependencies>
 
