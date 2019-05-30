@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
+import static io.cosmosoftware.kite.steps.StepPhase.*;
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 
 public abstract class TestStep {
@@ -20,14 +22,24 @@ public abstract class TestStep {
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
-  
+
+  private StepPhase stepPhase = RAMPUP;
+  private StepPhase currentStepPhase = RAMPUP;
+
+  private LinkedHashMap<String, String> csvResult = null;
+
   public TestStep(WebDriver webDriver) {
     this.webDriver = webDriver;
   }
   
+  public TestStep(WebDriver webDriver, StepPhase stepPhase) {
+    this.webDriver = webDriver;
+    this.stepPhase = stepPhase;
+  }
+  
   public void execute() {
     try {
-      logger.info("Executing step: " + stepDescription());
+      logger.info(stepPhaseName() + "Executing step: " + stepDescription());
       step();
     } catch (Exception e) {
       Reporter.getInstance().processException(this.report, e);
@@ -39,7 +51,7 @@ public abstract class TestStep {
     stepCompleted = true;
   }
   
-  private String getClassName() {
+  public String getClassName() {
     String s = this.getClass().getSimpleName();
     if (s.contains(".")) {
       s = s.substring(s.lastIndexOf(".") + 1);
@@ -59,10 +71,15 @@ public abstract class TestStep {
     return report;
   }
   
-  public void init() {
-    this.report = new AllureStepReport(getLogHeader(webDriver) + ": " + stepDescription());
-    this.report.setDescription(stepDescription());
+  public void init(StepPhase stepPhase) {
+    this.currentStepPhase = stepPhase;
+    this.report = new AllureStepReport(getClientID() + ": " + stepDescription());
+    this.report.setDescription(stepPhaseName() + stepDescription());
     this.report.setStartTimestamp();
+  }
+  
+  public String getClientID() {
+    return stepPhaseName() + getLogHeader(webDriver);
   }
   
   public void setLogger(Logger logger) {
@@ -70,7 +87,7 @@ public abstract class TestStep {
   }
   
   public void skip() {
-    logger.warn("Skipping step: " + stepDescription());
+    logger.warn(stepPhase.name() + " " + "Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
   }
   
@@ -81,6 +98,14 @@ public abstract class TestStep {
   }
   
   public abstract String stepDescription();
+
+  public StepPhase getStepPhase() {
+    return stepPhase;
+  }
+
+  public void setStepPhase(StepPhase stepPhase) {
+    this.stepPhase = stepPhase;
+  }
   
   protected String translateClassName() {
     
@@ -101,4 +126,22 @@ public abstract class TestStep {
     return name;
   }
   
+  private String stepPhaseName() {
+    switch (currentStepPhase) {
+      case RAMPUP:
+        return "RU ";
+      case LOADREACHED:
+        return "LR ";
+      default:
+        return "";
+    }
+  }
+
+  public void setCsvResult(LinkedHashMap<String, String> csvResult) {
+    this.csvResult = csvResult;
+  }
+
+  public LinkedHashMap<String, String> getCsvResult() {
+    return csvResult;
+  }
 }
