@@ -26,15 +26,18 @@ public class Scenario {
   private final String command;
   private final String network;
   private final String gateway;
+  private final String nit;
   private final Integer duration;
   private ArrayList<Integer> clientIds = new ArrayList<>();
   private final NetworkProfileHashMap networkProfileHashMap;
+  private final Instrumentation instrumentation;
   private final Logger logger;
 
-  public Scenario(JsonObject jsonObject, Logger logger, NetworkProfileHashMap networkProfileHashMap) throws Exception {
+  public Scenario(JsonObject jsonObject, Logger logger, NetworkProfileHashMap networkProfileHashMap, Instrumentation instrumentation) throws Exception {
     this.logger = logger;
     String missingKey="";
     this.networkProfileHashMap = networkProfileHashMap;
+    this.instrumentation = instrumentation;
     try {
       missingKey = "type";
       this.type = jsonObject.getString("type");
@@ -55,6 +58,7 @@ public class Scenario {
       missingKey = "network";
       this.network = jsonObject.getString("network");
       this.command =  this.networkProfileHashMap.get(this.network).getProfile().getCommand().trim();
+      this.nit = this.networkProfileHashMap.get(this.network).getProfile().getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (Exception e) {
@@ -85,20 +89,20 @@ public class Scenario {
 
   public Integer getDuration() { return duration; }
 
-  public String sendCommand(WebDriver webDriver, Instrumentation instrumentation, String remoteAddress, String GridId, String instrumentUrl) {
+  public String sendCommand(WebDriver webDriver) {
     StringBuilder result = new StringBuilder();
     result.append("Running ").append(this.command).append(" on ");
     if (this.type.equals("gateway")) {
       result.append(this.gateway);
       logger.info(result.toString());
-      result.append(this.runCommandGateway(this.command, GridId, instrumentUrl, instrumentation));
+      result.append(this.runCommandGateway(this.command, this.instrumentation));
     }
     if (this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(remoteAddress, sessionId);
+      String nodeIp = TestUtils.getPrivateIp(this.instrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
       if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
-        result.append(this.runCommandClient(this.command, GridId, instrumentUrl, nodeIp));
+        result.append(this.runCommandClient(this.command, this.instrumentation, nodeIp));
       } else {
         result.append("Node ").append(nodeIp).append(" is not Linux");
       }
@@ -106,22 +110,21 @@ public class Scenario {
     return result.toString();
   }
 
-  public String cleanUp(WebDriver webDriver, Instrumentation instrumentation, String remoteAddress, String GridId, String instrumentUrl) {
+  public String cleanUp(WebDriver webDriver) {
     StringBuilder result = new StringBuilder();
-    String inter = "enp0s8";
-    String cleanUpCommand = "sudo tc qdisc del dev " + inter + " root || true && sudo tc qdisc del dev " + inter + " ingress || true && sudo tc qdisc del dev ifb0 root ||true ";
+    String cleanUpCommand = "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root ||true ";
     result.append("Doing CleanUp for ").append(this.command).append( " on ");
     if ( this.type.equals("gateway")) {
       result.append(this.gateway);
       logger.info(result.toString());
-      result.append(this.runCommandGateway(cleanUpCommand, GridId, instrumentUrl, instrumentation));
+      result.append(this.runCommandGateway(cleanUpCommand, this.instrumentation));
     }
     if ( this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(remoteAddress, sessionId);
+      String nodeIp = TestUtils.getPrivateIp(this.instrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
       if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
-        result.append(this.runCommandClient(cleanUpCommand, GridId, instrumentUrl, nodeIp));
+        result.append(this.runCommandClient(cleanUpCommand, this.instrumentation, nodeIp));
       } else {
         result.append(" FAILED, check instrumentUrl !");
       }
@@ -141,7 +144,7 @@ public class Scenario {
         result = "FAILED";
       }
     } catch (Exception e) {
-      result = "thrown an ERROR";
+      result = "thrown ERROR : " + e.getLocalizedMessage();
     }
     return result;
   }
@@ -154,13 +157,15 @@ public class Scenario {
       InputStream response = connection.getInputStream();
       result = "SUCCEEDED and got response : " + response.toString();
     } catch (Exception e) {
-      result = "thrown an ERROR";
+      result = "thrown ERROR : " + e.getLocalizedMessage();
     }
     return result;
   }
 
-  private String runCommandGateway(String command, String GridId, String instrumentUrl, Instrumentation instrumentation) {
+  private String runCommandGateway(String command, Instrumentation instrumentation) {
     StringBuilder result = new StringBuilder();
+    String instrumentUrl = instrumentation.getInstrumentUrl();
+    String GridId = instrumentation.getKiteServerGridId();
     if (instrumentUrl == null) {
       String url = "http://localhost:8080/KITEServer/command?id=" + GridId + "&gw=" + this.gateway + "&command=" + command;
       result.append("via KiteServer ").append(this.KiteServerCommand(url));
@@ -176,8 +181,10 @@ public class Scenario {
     return result.toString();
   }
 
-  private String runCommandClient(String command, String GridId, String instrumentUrl, String nodeIp) {
+  private String runCommandClient(String command, Instrumentation instrumentation, String nodeIp) {
     StringBuilder result = new StringBuilder();
+    String instrumentUrl = instrumentation.getInstrumentUrl();
+    String GridId = instrumentation.getKiteServerGridId();
     if (instrumentUrl == null) {
       String url = "http://localhost:8080/KITEServer/command?id=" + GridId + "&ip=" + nodeIp + "&command=" + command;
       result.append(this.KiteServerCommand(url));
@@ -188,5 +195,9 @@ public class Scenario {
       result.append(" FAILED, check instrumentUrl !");
     }
     return result.toString();
+  }
+
+  public boolean shouldExecute(int clientId) {
+    return (this.getType().equals("gateway") && clientId == 0) || (this.getType().equals("client") && this.getClientIds().contains(clientId));
   }
 }

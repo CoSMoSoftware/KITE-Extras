@@ -25,9 +25,9 @@ public class NetworkProfile {
     String missingKey = "";
     try {
       missingKey = "name";
-      this.name = jsonObject.getString("name");
+      this.name = jsonObject.getString(missingKey);
       missingKey = "profile";
-      this.profile = new Profile(jsonObject.getJsonObject("profile"));
+      this.profile = new Profile(jsonObject.getJsonObject(missingKey));
 
     } catch (Exception e) {
       throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
