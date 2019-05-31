@@ -332,8 +332,8 @@ public class TestUtils {
    *                         containing the status of the last step.
    */
   public static void processTestStep(StepPhase stepPhase, TestStep step, AllureStepReport parentStepReport) {
-    if (stepPhase != step.getStepPhase() && step.getStepPhase() != StepPhase.ALL) {
-      logger.debug("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
+    if (!stepPhase.shouldProcess(step)) {
+      logger.info("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
       return;
     }   
     step.init(stepPhase);

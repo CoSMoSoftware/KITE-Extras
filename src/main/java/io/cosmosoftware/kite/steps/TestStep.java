@@ -23,8 +23,10 @@ public abstract class TestStep {
   private String name = getClassName();
   private boolean stepCompleted = false;
 
-  private StepPhase stepPhase = RAMPUP;
-  private StepPhase currentStepPhase = RAMPUP;
+  private boolean optional = false;
+
+  private StepPhase stepPhase = DEFAULT;
+  private StepPhase currentStepPhase = DEFAULT;
 
   private LinkedHashMap<String, String> csvResult = null;
 
@@ -39,10 +41,10 @@ public abstract class TestStep {
   
   public void execute() {
     try {
-      logger.info(stepPhaseName() + "Executing step: " + stepDescription());
+      logger.info(currentStepPhase.getShortName() + "Executing step: " + stepDescription());
       step();
     } catch (Exception e) {
-      Reporter.getInstance().processException(this.report, e);
+      Reporter.getInstance().processException(this.report, e, optional);
     }
   }
   
@@ -74,12 +76,12 @@ public abstract class TestStep {
   public void init(StepPhase stepPhase) {
     this.currentStepPhase = stepPhase;
     this.report = new AllureStepReport(getClientID() + ": " + stepDescription());
-    this.report.setDescription(stepPhaseName() + stepDescription());
+    this.report.setDescription(currentStepPhase.getShortName() + stepDescription());
     this.report.setStartTimestamp();
   }
   
   public String getClientID() {
-    return stepPhaseName() + getLogHeader(webDriver);
+    return currentStepPhase.getShortName() + getLogHeader(webDriver);
   }
   
   public void setLogger(Logger logger) {
@@ -87,7 +89,7 @@ public abstract class TestStep {
   }
   
   public void skip() {
-    logger.warn(stepPhase.name() + " " + "Skipping step: " + stepDescription());
+    logger.warn(currentStepPhase.getShortName() + "Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
   }
   
@@ -126,16 +128,6 @@ public abstract class TestStep {
     return name;
   }
   
-  private String stepPhaseName() {
-    switch (currentStepPhase) {
-      case RAMPUP:
-        return "RU ";
-      case LOADREACHED:
-        return "LR ";
-      default:
-        return "";
-    }
-  }
 
   public void setCsvResult(LinkedHashMap<String, String> csvResult) {
     this.csvResult = csvResult;
@@ -150,5 +142,9 @@ public abstract class TestStep {
       this.csvResult = new LinkedHashMap<>();
     }
     this.csvResult.put(key, value);
+  }
+
+  public void setOptional(boolean optional) {
+    this.optional = optional;
   }
 }
