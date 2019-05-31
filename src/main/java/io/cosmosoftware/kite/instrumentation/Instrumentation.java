@@ -15,8 +15,8 @@ import java.util.HashMap;
  */
 public class Instrumentation extends HashMap<String, Instance> {
 
-  private final String remoteAddress;
-  private final String instrumentUrl;
+  private  String remoteAddress;
+  private  String instrumentUrl;
   private String kiteServerGridId;
 
   /**
@@ -24,9 +24,9 @@ public class Instrumentation extends HashMap<String, Instance> {
    *
    * @param jsonObject the json object
    */
-  public Instrumentation(JsonObject jsonObject, String instrumentUrl, String remoteAddress) throws KiteTestException {
-    this.instrumentUrl = instrumentUrl;
-    this.remoteAddress = remoteAddress;
+  public Instrumentation(JsonObject jsonObject) throws KiteTestException {
+    this.instrumentUrl = null;
+    this.remoteAddress = null;
     this.kiteServerGridId = null;
     JsonArray jsonArray = jsonObject.getJsonArray("instances");
     for (int i = 0; i < jsonArray.size(); i++) {
@@ -43,8 +43,16 @@ public class Instrumentation extends HashMap<String, Instance> {
     return this.remoteAddress;
   }
 
+  public void setRemoteAddress(String remoteAddress) {
+    this.remoteAddress = remoteAddress;
+  }
+
   public String getInstrumentUrl() {
     return this.instrumentUrl;
+  }
+
+  public void setInstrumentUrl(String instrumentUrl) {
+    this.instrumentUrl = instrumentUrl;
   }
 
   public void setKiteServerGridId(String kiteServerGridId) {
