@@ -31,7 +31,7 @@ public class ParamList extends ArrayList<ParamList.Parameter> {
   
     public Parameter(String name, String value) {
       this.name = name;
-      this.value = value;
+      this.value = value == null ? "" : value;
     }
   
     public JsonObject toJson() {
