@@ -37,22 +37,4 @@ public class NetworkProfileHashMap extends HashMap<String, Profile> {
     }
   }
 
-
-  /**
-   * Instantiates a new Network List.
-   *
-   * @param networkProfilesPath the path to the networkProfiles config
-   */
-  public NetworkProfileHashMap(String networkProfilesPath) throws KiteTestException {
-    System.setProperty("networkProfiles", networkProfilesPath);
-    
-    //todo: read array from the file.
-    JsonArray jsonArray = null;   
-    
-    for (int i = 0; i < jsonArray.size(); i++) {
-      NetworkProfile network = new NetworkProfile(jsonArray.getJsonObject(i));
-      this.put(network.getName(), network);
-    }
-  }
-
 }
