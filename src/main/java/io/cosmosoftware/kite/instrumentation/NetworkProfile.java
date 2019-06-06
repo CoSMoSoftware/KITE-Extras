@@ -9,7 +9,7 @@ import io.cosmosoftware.kite.report.Status;
 
 import javax.json.JsonObject;
 
-public class Profile {
+public class NetworkProfile {
 
   private final String nit;
   private final String command;
@@ -21,7 +21,7 @@ public class Profile {
   private static final String INTERFACE_0_NAME = "enp0s8";
   private static final String INTERFACE_1_NAME = "enp0s9";
 
-  public Profile(JsonObject jsonObject) throws Exception {
+  public NetworkProfile(JsonObject jsonObject) throws Exception {
     this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);
     this.corrupt = jsonObject.getInt("corrupt", 0);

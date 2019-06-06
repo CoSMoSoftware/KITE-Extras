@@ -20,7 +20,7 @@ public class NetworkInstrumentation {
   private final String remoteAddress;
   private final HashMap<String, Instance> instances;
   private final String kiteServerGridId;
-  private final  HashMap<String, Profile> networkProfiles;
+  private final  HashMap<String, NetworkProfile> networkProfiles;
   private final String kiteServer;
 
   /**
@@ -49,9 +49,9 @@ public class NetworkInstrumentation {
       try {
         missingKey = "name";
         String name = jsonArray.getJsonObject(i).getString(missingKey);
-        missingKey = "profile";
-        Profile profile = new Profile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
-        this.networkProfiles.put(name, profile);
+        missingKey = "networkProfile";
+        NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
+        this.networkProfiles.put(name, networkProfile);
 
       } catch (Exception e) {
         throw new KiteTestException("Error in json config networkProfiles, the key " + missingKey + " is missing.", Status.BROKEN, e);
@@ -74,9 +74,9 @@ public class NetworkInstrumentation {
       try {
         missingKey = "name";
         String name = jsonArray.getJsonObject(i).getString(missingKey);
-        missingKey = "profile";
-        Profile profile = new Profile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
-        this.networkProfiles.put(name, profile);
+        missingKey = "networkProfile";
+        NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
+        this.networkProfiles.put(name, networkProfile);
 
       } catch (Exception e) {
         throw new KiteTestException("Error in json config networkProfiles, the key " + missingKey + " is missing.", Status.BROKEN, e);
@@ -93,7 +93,7 @@ public class NetworkInstrumentation {
     return this.instances;
   }
 
-  public HashMap<String, Profile> getNetworkProfiles() {
+  public HashMap<String, NetworkProfile> getNetworkProfiles() {
     return this.networkProfiles;
   }
 
