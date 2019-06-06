@@ -57,8 +57,8 @@ public class Scenario {
       }
       missingKey = "network";
       this.network = jsonObject.getString("network");
-      this.command =  this.networkProfileHashMap.get(this.network).getProfile().getCommand().trim();
-      this.nit = this.networkProfileHashMap.get(this.network).getProfile().getInterface();
+      this.command =  this.networkProfileHashMap.get(this.network).getCommand().trim();
+      this.nit = this.networkProfileHashMap.get(this.network).getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (Exception e) {

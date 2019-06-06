@@ -5,6 +5,7 @@
 package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.Status;
 
 import javax.json.JsonArray;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 /**
  * The type Networks.
  */
-public class NetworkProfileHashMap extends HashMap<String, NetworkProfile> {
+public class NetworkProfileHashMap extends HashMap<String, Profile> {
 
 
   /**
@@ -22,8 +23,17 @@ public class NetworkProfileHashMap extends HashMap<String, NetworkProfile> {
    */
   public NetworkProfileHashMap(JsonArray jsonArray) throws KiteTestException {
     for (int i = 0; i < jsonArray.size(); i++) {
-      NetworkProfile network = new NetworkProfile(jsonArray.getJsonObject(i));
-      this.put(network.getName(), network);
+      String missingKey = "";
+      try {
+        missingKey = "name";
+        String name = jsonArray.getJsonObject(i).getString(missingKey);
+        missingKey = "profile";
+        Profile profile = new Profile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
+        this.put(name, profile);
+
+      } catch (Exception e) {
+        throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
+      }
     }
   }
 
