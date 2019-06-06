@@ -26,6 +26,7 @@ public class Instrumentation extends HashMap<String, Instance> {
    */
   public Instrumentation(JsonObject jsonObject, String instrumentUrl, String remoteAddress) throws KiteTestException {
     this.instrumentUrl = instrumentUrl;
+    System.setProperty("instrumentUrl", instrumentUrl);
     this.remoteAddress = remoteAddress;
     JsonArray jsonArray = jsonObject.getJsonArray("instances");
     for (int i = 0; i < jsonArray.size(); i++) {
