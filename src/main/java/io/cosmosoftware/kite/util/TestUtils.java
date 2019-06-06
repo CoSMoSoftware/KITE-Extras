@@ -607,4 +607,58 @@ public class TestUtils {
     return privateIp;
 
   }
+
+  public static JsonArray getJsonArray(JsonObject jsonObject, String key) {
+    JsonArray fileArray = null;
+    try {
+      String fileUrl = jsonObject.getString(key, "");
+      if (!fileUrl.equals("") ) {
+        String File = System.getProperty("java.io.tmpdir") + key + ".json";
+        System.setProperty(key, fileUrl);
+        if (fileUrl.contains("file://")) {
+          downloadFile(fileUrl, File);
+        } else {
+          File = fileUrl;
+        }
+        fileArray = readJsonFile(File).getJsonArray(key);
+      } else {
+        fileArray = jsonObject.getJsonArray(key);
+      }
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
+    }
+    return fileArray;
+  }
+
+  /**
+   * Reads a json file into a JsonObject
+   *
+   * @param jsonFile the file to read
+   *
+   * @return the jsonObject
+   */
+  public static JsonObject readJsonFile(String jsonFile) {
+    FileReader fileReader = null;
+    JsonReader jsonReader = null;
+    try {
+      logger.info("Reading '" + jsonFile + "' ...");
+      fileReader = new FileReader(new File(jsonFile));
+      jsonReader = Json.createReader(fileReader);
+      return jsonReader.readObject();
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
+    } finally {
+      if (fileReader != null) {
+        try {
+          fileReader.close();
+        } catch (IOException e) {
+          logger.warn(e.getMessage(), e);
+        }
+      }
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    return null;
+  }
 }
