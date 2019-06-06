@@ -21,6 +21,8 @@ import java.util.ArrayList;
 
 public class Scenario {
 
+  private static final int DEFAULT_SCENARIO_DURATION = 10000;
+  
   private final String type;
   private final String name;
   private final String command;
@@ -64,7 +66,7 @@ public class Scenario {
     } catch (Exception e) {
       throw new KiteTestException("The key " + missingKey + " is missing", Status.FAILED, e);
     }
-    this.duration = jsonObject.getInt("duration", 10000);
+    this.duration = jsonObject.getInt("duration", DEFAULT_SCENARIO_DURATION);
   }
 
   public String getName() {
