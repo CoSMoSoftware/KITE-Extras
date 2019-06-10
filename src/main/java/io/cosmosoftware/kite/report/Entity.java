@@ -14,8 +14,8 @@ import java.util.UUID;
 public class Entity {
   protected String name;
   protected String uuid;
-  protected long start;
-  protected long stop;
+  protected long start = 0;
+  protected long stop = 0;
   protected String stage;
   
   
@@ -23,6 +23,10 @@ public class Entity {
     this.name = name;
     this.stage = Stage.SCHEDULED;
     this.uuid = UUID.randomUUID().toString();
+  }
+  
+  public void setStage(String stage) {
+    this.stage = stage;
   }
   
   public void setName(String name) {
