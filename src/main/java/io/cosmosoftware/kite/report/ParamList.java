@@ -16,7 +16,7 @@ public class ParamList extends LinkedHashMap<String, String> {
     for (String key : this.keySet()) {
       builder.add(Json.createObjectBuilder()
         .add("name", key)
-        .add("value", this.get(key)).build());
+        .add("value", this.get(key) != null ? this.get(key) : "NC").build());
     }
     return builder.build();
   }
