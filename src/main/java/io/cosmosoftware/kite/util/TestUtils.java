@@ -541,4 +541,64 @@ public class TestUtils {
       "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
       : filePath;
   }
+  
+  /**
+   * Gets the json object.
+   *
+   * @param filename
+   *            the filename
+   * @return the json object
+   * @throws FileNotFoundException
+   *             the file not found exception
+   */
+  public static JsonObject readJsonFile(String filename) throws FileNotFoundException {
+    JsonObject jsonObject;
+    
+    File file = new File(filename);
+    
+    FileReader fileReader = null;
+    JsonReader jsonReader = null;
+    try {
+      fileReader = new FileReader(file);
+      jsonReader = Json.createReader(fileReader);
+      jsonObject = jsonReader.readObject();
+    } finally {
+      if (fileReader != null) {
+        try {
+          fileReader.close();
+        } catch (IOException e) {
+          logger.warn(e.getMessage(), e);
+        }
+      }
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    
+    return jsonObject;
+  }
+  
+  /**
+   * Gets the json object.
+   *
+   * @param inputStream
+   *            the input stream
+   * @return the json object
+   */
+  public static JsonObject readJsonStream(InputStream inputStream) {
+    JsonObject jsonObject;
+    
+    JsonReader jsonReader = null;
+    try {
+      jsonReader = Json.createReader(inputStream);
+      jsonObject = jsonReader.readObject();
+    } finally {
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    
+    return jsonObject;
+  }
+  
 }

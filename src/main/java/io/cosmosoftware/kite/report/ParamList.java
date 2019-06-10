@@ -26,12 +26,14 @@ public class ParamList extends ArrayList<ParamList.Parameter> {
   }
   
   public class Parameter {
-    private final String name;
-    private final String value;
+    private String name;
+    private String value;
   
     public Parameter(String name, String value) {
-      this.name = name;
-      this.value = value == null ? "" : value;
+      if (name != null && value!= null) {
+        this.name = name;
+        this.value = value;
+      }
     }
   
     public JsonObject toJson() {
