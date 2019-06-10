@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -11,10 +15,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import static io.cosmosoftware.kite.steps.StepPhase.*;
+import static io.cosmosoftware.kite.steps.StepPhase.DEFAULT;
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
 import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
-import static io.cosmosoftware.kite.util.TestUtils.takeScreenshot;
 
 public abstract class TestStep {
   

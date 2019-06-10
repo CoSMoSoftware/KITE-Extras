@@ -1,33 +1,26 @@
 /*
- * Copyright 2018 Cosmo Software
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.dao;
 
-import java.util.List;
+import org.apache.log4j.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.transaction.TransactionManager;
-
-import org.apache.log4j.Logger;
+import java.util.List;
 
 /**
  * The Class DaoManager.
  *
- * @param <T>
- *            the generic type
+ * @param <T> the generic type
  */
 public class DaoManager<T> {
 
-	/** The Constant logger. */
 	private static final Logger logger = Logger.getLogger(DaoManager.class.getName());
-
-	/** The emf. */
 	private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("KITEServer");
-
-	/** The em. */
 	private final EntityManager em = emf.createEntityManager();
 
 	/**
@@ -40,10 +33,8 @@ public class DaoManager<T> {
 	/**
 	 * Insert.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @throws Exception
-	 *             the exception
+	 * @param entity the entity
+	 * @throws Exception if the entity is not implemented correctly
 	 */
 	public void insert(T entity) throws Exception {
 		TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -61,11 +52,9 @@ public class DaoManager<T> {
 	/**
 	 * Update.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @return the t
-	 * @throws Exception
-	 *             the exception
+	 * @param entity the entity
+	 * @return the generic type object
+	 * @throws Exception if the entity is not implemented correctly
 	 */
 	public T update(T entity) throws Exception {
 		T managedEntity = null;
@@ -87,13 +76,11 @@ public class DaoManager<T> {
 	/**
 	 * Select.
 	 *
-	 * @param entityClass
-	 *            the entity class
-	 * @param primaryKey
-	 *            the primary key
+	 * @param primaryKey the primary key
+	 * @param entityClass the entity class
 	 * @return the t
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception if the entity is not implemented correctly
+
 	 */
 	public T select(Class<T> entityClass, Object primaryKey) throws Exception {
 		return em.find(entityClass, primaryKey);
@@ -107,8 +94,8 @@ public class DaoManager<T> {
 	 * @param cl
 	 *            the cl
 	 * @return the list
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception if the entity is not implemented correctly
+
 	 */
 	public List<T> select(String query, Class<T> cl) throws Exception {
 		return em.createQuery(query, cl).getResultList();
@@ -117,13 +104,10 @@ public class DaoManager<T> {
 	/**
 	 * Gets the single result.
 	 *
-	 * @param query
-	 *            the query
-	 * @param cl
-	 *            the cl
+	 * @param query the query
+	 * @param cl the class
 	 * @return the last id
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception if the entity is not implemented correctly
 	 */
 	public Object getSingleResult(String query, Class cl) throws Exception {
 		return em.createQuery(query, cl).setMaxResults(1).getSingleResult();
@@ -132,10 +116,8 @@ public class DaoManager<T> {
 	/**
 	 * Delete.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @throws Exception
-	 *             the exception
+	 * @param entity the entity
+	 * @throws Exception if the entity is not implemented correctly
 	 */
 	public void delete(T entity) throws Exception {
 		TransactionManager tm = com.arjuna.ats.jta.TransactionManager.transactionManager();
@@ -153,8 +135,7 @@ public class DaoManager<T> {
 	/**
 	 * Rollback.
 	 *
-	 * @param tm
-	 *            the tm
+	 * @param tm the tm
 	 */
 	private void rollback(TransactionManager tm) {
 		try {

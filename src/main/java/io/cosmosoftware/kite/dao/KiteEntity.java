@@ -1,15 +1,14 @@
 /*
- * Copyright 2018 Cosmo Software
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.dao;
 
-import java.io.Serializable;
-
+import io.cosmosoftware.kite.exception.BadEntityException;
+import io.cosmosoftware.kite.interfaces.EntityValidator;
 import org.json.JSONObject;
 
-import io.cosmosoftware.kite.interfaces.EntityValidator;
-import io.cosmosoftware.kite.exception.BadEntityException;
+import java.io.Serializable;
 
 /**
  * The Class KiteEntity.

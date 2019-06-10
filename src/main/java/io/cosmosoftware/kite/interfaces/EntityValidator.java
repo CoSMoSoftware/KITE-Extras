@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Cosmo Software
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.interfaces;

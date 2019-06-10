@@ -1,16 +1,8 @@
 /*
- * Copyright 2019 Cosmo Software
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.dao;
-
-import java.io.Serializable;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.persistence.Entity;
-import javax.persistence.NoResultException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -21,27 +13,23 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
+import javax.persistence.Entity;
+import javax.persistence.NoResultException;
+import java.io.Serializable;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * The Class KiteIdGenerator.
  */
 public class KiteIdGenerator implements IdentifierGenerator, Configurable {
 
-	/** The Constant logger. */
 	private final static Logger logger = Logger.getLogger(KiteIdGenerator.class.getName());
-
-	/** The Constant ID_DELIMITER. */
 	private static final String ID_DELIMITER = "_";
-
-	/** The Constant NUMBER_FORMAT. */
 	private static final String NUMBER_FORMAT = "%s" + KiteIdGenerator.ID_DELIMITER + "%09d";
-
-	/** The Constant lastIdMap. */
 	private static final Map<String, Long> lastIdMap = new Hashtable<String, Long>();
-
-	/** The prefix. */
 	private String prefix;
-
-	/** The increment. */
 	private int increment = 1;
 
 	/*

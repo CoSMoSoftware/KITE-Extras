@@ -4,9 +4,6 @@
 
 package io.cosmosoftware.kite.imgprocessing;
 
-import java.awt.*;
-import java.io.File;
-
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.Status;
 import org.monte.media.Format;
@@ -15,10 +12,11 @@ import org.monte.media.math.Rational;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.awt.*;
+import java.io.File;
+
 import static org.monte.media.FormatKeys.*;
-import static org.monte.media.FormatKeys.FrameRateKey;
 import static org.monte.media.VideoFormatKeys.*;
-import static org.monte.media.VideoFormatKeys.QualityKey;
 
 /**
  * The type Video recorder.

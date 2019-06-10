@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Cosmo Software
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
 package io.cosmosoftware.kite.exception;
