@@ -71,7 +71,7 @@ public class Reporter {
     addAttachment(report, attachment);
   }
   
-  public void processException(AllureStepReport report, Exception e) {
+  public void processException(AllureStepReport report, Exception e, boolean optional) {
     StatusDetails details = new StatusDetails();
     Status status;
     String message;
@@ -79,7 +79,7 @@ public class Reporter {
     if (e instanceof KiteTestException) {
       details.setKnown(true);
       details.setMuted(((KiteTestException) e).isContinueOnFailure());
-      report.setIgnore(((KiteTestException) e).isContinueOnFailure());
+      report.setIgnore(((KiteTestException) e).isContinueOnFailure() || optional);
       status = ((KiteTestException) e).getStatus();
       message = e.getLocalizedMessage();
       if (report.canBeIgnore()) {
@@ -93,6 +93,7 @@ public class Reporter {
     } else {
       message = "***UNHANDLED EXCEPTION*** \r\n This is a bug and must be fixed. The exception " +
         "must be caught and thrown as KiteTestException";
+      report.setIgnore(optional);
       details.setFlaky(true);
       status = Status.BROKEN;
       logger.error("Step " + status.value() + ":\r\n   message = " + message + "\r\n   trace = " + trace);

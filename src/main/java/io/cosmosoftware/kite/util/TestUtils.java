@@ -9,6 +9,7 @@ import io.cosmosoftware.kite.entities.Timeouts;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.Status;
+import io.cosmosoftware.kite.steps.StepPhase;
 import io.cosmosoftware.kite.steps.TestStep;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -321,16 +322,21 @@ public class TestUtils {
       logger.error("\r\n" + getStackTrace(e));
     }
   }
-  
+
   /**
    * Process the step in the new TestRunner and Kite
    *
+   * @param stepPhase        the StepPhase for this stepExecution
    * @param step             the test step to execute
    * @param parentStepReport the report of the parent step,
    *                         containing the status of the last step.
    */
-  public static void processTestStep(TestStep step, AllureStepReport parentStepReport) {
-    step.init();
+  public static void processTestStep(StepPhase stepPhase, TestStep step, AllureStepReport parentStepReport) {
+    if (!stepPhase.shouldProcess(step)) {
+      logger.info("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
+      return;
+    }
+    step.init(stepPhase);
     if (!parentStepReport.failed() && !parentStepReport.broken()) {
       step.execute();
     } else {
@@ -540,6 +546,66 @@ public class TestUtils {
     return filePath.contains("~") ? filePath.replaceAll(
       "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
       : filePath;
+  }
+
+  /**
+   * Gets private ip by querying the hub against a session id.
+   *
+   * @param hupIpOrDns the hup ip or dns
+   * @param sessionId  the session id
+   *
+   * @return the private ip
+   */
+  public static String getPrivateIp(String hupIpOrDns, String sessionId) {
+
+    String privateIp = null;
+
+    CloseableHttpClient client = null;
+    CloseableHttpResponse response = null;
+    InputStream stream = null;
+    JsonReader reader = null;
+
+    try {
+      client = HttpClients.createDefault();
+      HttpGet httpGet =
+          new HttpGet("http://" + hupIpOrDns + ":4444/grid/api/testsession?session=" + sessionId);
+      response = client.execute(httpGet);
+      stream = response.getEntity().getContent();
+      reader = Json.createReader(stream);
+      JsonObject object = reader.readObject();
+      String proxyId = object.getString("proxyId");
+      URL url = new URL(proxyId);
+      privateIp = url.getHost();
+    } catch (Exception e) {
+      logger.error("Exception while talking to the grid", e);
+    } finally {
+      if (reader != null)
+        reader.close();
+      if (stream != null)
+        try {
+          stream.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the InputStream", e);
+        }
+      if (response != null) {
+        if (logger.isDebugEnabled())
+          logger.debug("response->" + response);
+        try {
+          response.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpResponse", e);
+        }
+      }
+      if (client != null)
+        try {
+          client.close();
+        } catch (IOException e) {
+          logger.warn("Exception while closing the CloseableHttpClient", e);
+        }
+    }
+
+    return privateIp;
+
   }
   
   /**
