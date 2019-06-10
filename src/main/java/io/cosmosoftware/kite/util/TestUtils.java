@@ -607,27 +607,46 @@ public class TestUtils {
     return privateIp;
 
   }
-  
+
+  public static JsonArray getJsonArray(JsonObject jsonObject, String key) {
+    JsonArray fileArray = null;
+    try {
+      String fileUrl = jsonObject.getString(key, "");
+      if (!fileUrl.equals("") ) {
+        String File = System.getProperty("java.io.tmpdir") + key + ".json";
+        System.setProperty(key, fileUrl);
+        if (fileUrl.contains("file://")) {
+          downloadFile(fileUrl, File);
+        } else {
+          File = fileUrl;
+        }
+        fileArray = readJsonFile(File).getJsonArray(key);
+      } else {
+        fileArray = jsonObject.getJsonArray(key);
+      }
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
+    }
+    return fileArray;
+  }
+
   /**
-   * Gets the json object.
+   * Reads a json file into a JsonObject
    *
-   * @param filename
-   *            the filename
-   * @return the json object
-   * @throws FileNotFoundException
-   *             the file not found exception
+   * @param jsonFile the file to read
+   *
+   * @return the jsonObject
    */
-  public static JsonObject readJsonFile(String filename) throws FileNotFoundException {
-    JsonObject jsonObject;
-    
-    File file = new File(filename);
-    
+  public static JsonObject readJsonFile(String jsonFile) {
     FileReader fileReader = null;
     JsonReader jsonReader = null;
     try {
-      fileReader = new FileReader(file);
+      logger.info("Reading '" + jsonFile + "' ...");
+      fileReader = new FileReader(new File(jsonFile));
       jsonReader = Json.createReader(fileReader);
-      jsonObject = jsonReader.readObject();
+      return jsonReader.readObject();
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
     } finally {
       if (fileReader != null) {
         try {
@@ -640,8 +659,7 @@ public class TestUtils {
         jsonReader.close();
       }
     }
-    
-    return jsonObject;
+    return null;
   }
   
   /**

@@ -26,20 +26,17 @@ public class Scenario {
   private final String type;
   private final String name;
   private final String command;
-  private final String network;
   private final String gateway;
   private final String nit;
   private final Integer duration;
   private ArrayList<Integer> clientIds = new ArrayList<>();
-  private final NetworkProfileHashMap networkProfileHashMap;
-  private final Instrumentation instrumentation;
+  private final NetworkInstrumentation networkInstrumentation;
   private final Logger logger;
 
-  public Scenario(JsonObject jsonObject, Logger logger, NetworkProfileHashMap networkProfileHashMap, Instrumentation instrumentation) throws Exception {
+  public Scenario(JsonObject jsonObject, Logger logger, NetworkInstrumentation networkInstrumentation) throws Exception {
     this.logger = logger;
     String missingKey="";
-    this.networkProfileHashMap = networkProfileHashMap;
-    this.instrumentation = instrumentation;
+    this.networkInstrumentation = networkInstrumentation;
     try {
       missingKey = "type";
       this.type = jsonObject.getString("type");
@@ -58,9 +55,9 @@ public class Scenario {
         throw new KiteTestException("The type specified doesn't exist", Status.FAILED);
       }
       missingKey = "network";
-      this.network = jsonObject.getString("network");
-      this.command =  this.networkProfileHashMap.get(this.network).getProfile().getCommand().trim();
-      this.nit = this.networkProfileHashMap.get(this.network).getProfile().getInterface();
+      String network = jsonObject.getString("network");
+      this.command =  this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
+      this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (Exception e) {
@@ -97,14 +94,14 @@ public class Scenario {
     if (this.type.equals("gateway")) {
       result.append(this.gateway);
       logger.info(result.toString());
-      result.append(this.runCommandGateway(this.command, this.instrumentation));
+      result.append(this.runCommandGateway(this.command, this.networkInstrumentation));
     }
     if (this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(this.instrumentation.getRemoteAddress(), sessionId);
+      String nodeIp = TestUtils.getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
       if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
-        result.append(this.runCommandClient(this.command, this.instrumentation, nodeIp));
+        result.append(this.runCommandClient(this.command, this.networkInstrumentation, nodeIp));
       } else {
         result.append("Node ").append(nodeIp).append(" is not Linux");
       }
@@ -119,14 +116,14 @@ public class Scenario {
     if ( this.type.equals("gateway")) {
       result.append(this.gateway);
       logger.info(result.toString());
-      result.append(this.runCommandGateway(cleanUpCommand, this.instrumentation));
+      result.append(this.runCommandGateway(cleanUpCommand, this.networkInstrumentation));
     }
     if ( this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(this.instrumentation.getRemoteAddress(), sessionId);
+      String nodeIp = TestUtils.getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
       if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
-        result.append(this.runCommandClient(cleanUpCommand, this.instrumentation, nodeIp));
+        result.append(this.runCommandClient(cleanUpCommand, this.networkInstrumentation, nodeIp));
       } else {
         result.append(" FAILED, check instrumentUrl !");
       }
@@ -164,38 +161,27 @@ public class Scenario {
     return result;
   }
 
-  private String runCommandGateway(String command, Instrumentation instrumentation) {
+  private String runCommandGateway(String command, NetworkInstrumentation networkInstrumentation) {
     StringBuilder result = new StringBuilder();
-    String instrumentUrl = instrumentation.getInstrumentUrl();
-    String GridId = instrumentation.getKiteServerGridId();
-    if (instrumentUrl == null) {
-      String url = "http://localhost:8080/KITEServer/command?id=" + GridId + "&gw=" + this.gateway + "&command=" + command;
-      result.append("via KiteServer ").append(this.KiteServerCommand(url));
-    } else if (instrumentUrl.endsWith(".json")) {
-      Instance instance = instrumentation.get(this.gateway);
+    String GridId = networkInstrumentation.getKiteServerGridId();
+    String kiteServer = networkInstrumentation.getKiteServer();
+    if (kiteServer == null) {
+      Instance instance = networkInstrumentation.getInstances().get(this.gateway);
       result.append(" via ssh ").append(this.sshCommand(instance, command));
-    } else if (instrumentUrl.startsWith("http://")) {
-      String url = instrumentUrl + GridId + "&gw=" + this.gateway + "&command=" + command;
-      result.append("via KiteServer ").append(this.KiteServerCommand(url));
     } else {
-      result.append(" failed, check instrumentUrl !");
+      String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway + "&command=" + command;
+      result.append("via KiteServer ").append(this.KiteServerCommand(url));
     }
     return result.toString();
   }
 
-  private String runCommandClient(String command, Instrumentation instrumentation, String nodeIp) {
+  private String runCommandClient(String command, NetworkInstrumentation networkInstrumentation, String nodeIp) {
     StringBuilder result = new StringBuilder();
-    String instrumentUrl = instrumentation.getInstrumentUrl();
-    String GridId = instrumentation.getKiteServerGridId();
-    if (instrumentUrl == null) {
-      String url = "http://localhost:8080/KITEServer/command?id=" + GridId + "&ip=" + nodeIp + "&command=" + command;
-      result.append(this.KiteServerCommand(url));
-    } else if (instrumentUrl.startsWith("http://")) {
-      String url = instrumentUrl + GridId + "&ip=" + nodeIp + "&command=" + command;
-      result.append("via KiteServer ").append(this.KiteServerCommand(url));
-    } else {
-      result.append(" FAILED, check instrumentUrl !");
-    }
+    String GridId = networkInstrumentation.getKiteServerGridId();
+    String kiteServer = networkInstrumentation.getKiteServer();
+    String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&command=" + command;
+    result.append(this.KiteServerCommand(url));
+
     return result.toString();
   }
 
