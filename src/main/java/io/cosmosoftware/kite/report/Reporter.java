@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -131,7 +135,6 @@ public class Reporter {
       this.reportPath = verifyPathFormat(reportPath);
     }
     logger.info("Creating report folder if not exist at :" + this.reportPath);
-    createDirs(this.reportPath);
   }
   
   public void textAttachment(AllureStepReport report, String name, String value, String type) {
@@ -145,6 +148,7 @@ public class Reporter {
   }
   
   public synchronized void updateContainers() {
+    createDirs(this.reportPath);
     for (Container container : containers) {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
       printJsonTofile(container.toString(), fileName);

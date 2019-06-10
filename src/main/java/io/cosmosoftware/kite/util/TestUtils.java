@@ -325,7 +325,7 @@ public class TestUtils {
 
   /**
    * Process the step in the new TestRunner and Kite
-   * 
+   *
    * @param stepPhase        the StepPhase for this stepExecution
    * @param step             the test step to execute
    * @param parentStepReport the report of the parent step,
@@ -335,7 +335,7 @@ public class TestUtils {
     if (!stepPhase.shouldProcess(step)) {
       logger.info("Do not execute Step "+ step.getClassName() + " because the phase don't match. ");
       return;
-    }   
+    }
     step.init(stepPhase);
     if (!parentStepReport.failed() && !parentStepReport.broken()) {
       step.execute();
@@ -661,4 +661,28 @@ public class TestUtils {
     }
     return null;
   }
+  
+  /**
+   * Gets the json object.
+   *
+   * @param inputStream
+   *            the input stream
+   * @return the json object
+   */
+  public static JsonObject readJsonStream(InputStream inputStream) {
+    JsonObject jsonObject;
+    
+    JsonReader jsonReader = null;
+    try {
+      jsonReader = Json.createReader(inputStream);
+      jsonObject = jsonReader.readObject();
+    } finally {
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    
+    return jsonObject;
+  }
+  
 }

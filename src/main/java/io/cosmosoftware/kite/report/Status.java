@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.report;
 
 import com.fasterxml.jackson.annotation.JsonValue;

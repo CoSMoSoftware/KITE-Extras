@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -11,8 +15,9 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import static io.cosmosoftware.kite.steps.StepPhase.*;
+import static io.cosmosoftware.kite.steps.StepPhase.DEFAULT;
 import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
+import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
 
 public abstract class TestStep {
   
@@ -44,6 +49,12 @@ public abstract class TestStep {
       logger.info(currentStepPhase.getShortName() + "Executing step: " + stepDescription());
       step();
     } catch (Exception e) {
+      String screenshotName = "error_screenshot_"+this.getName();
+      try {
+        Reporter.getInstance().screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
+      } catch (KiteTestException ex) {
+        logger.warn("Could not attach screenshot to error of step: " + stepDescription());
+      }
       Reporter.getInstance().processException(this.report, e, optional);
     }
   }

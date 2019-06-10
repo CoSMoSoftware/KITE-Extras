@@ -2,7 +2,6 @@
  * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
-
 package io.cosmosoftware.kite.exception;
 
 import io.cosmosoftware.kite.report.Status;
