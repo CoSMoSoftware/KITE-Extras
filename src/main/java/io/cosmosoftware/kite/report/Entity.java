@@ -66,7 +66,11 @@ public class Entity {
       .add("stop", this.stop)
       ;
   }
-  
+
+  public String getStage() {
+    return stage;
+  }
+
   public JsonObject toJson() {
     return this.getJsonBuilder().build();
   }
