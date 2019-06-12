@@ -337,14 +337,18 @@ public class TestUtils {
       return;
     }
     step.init(stepPhase);
-    if (!parentStepReport.failed() && !parentStepReport.broken()) {
-      step.execute();
-    } else {
-      if (parentStepReport.canBeIgnore()) {
+    if (parentStepReport!=null) {
+      if (!parentStepReport.failed() && !parentStepReport.broken()) {
         step.execute();
       } else {
-        step.skip();
+        if (parentStepReport.canBeIgnore()) {
+          step.execute();
+        } else {
+          step.skip();
+        }
       }
+    } else {
+      step.execute();
     }
     step.finish();
     parentStepReport.addStepReport(step.getStepReport());
