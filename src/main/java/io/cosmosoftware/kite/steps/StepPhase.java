@@ -35,7 +35,7 @@ public enum StepPhase {
     StepPhase stepPhase = step.getStepPhase();
     switch(stepPhase) {
       case DEFAULT:
-        return this == RAMPUP;
+        return this == RAMPUP || stepPhase == this;
       case RAMPUP:
       case LOADREACHED:
         return stepPhase == this;
