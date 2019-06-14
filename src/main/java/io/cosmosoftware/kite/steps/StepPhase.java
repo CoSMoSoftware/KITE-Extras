@@ -34,12 +34,16 @@ public enum StepPhase {
   public boolean shouldProcess(TestStep step) {
     StepPhase stepPhase = step.getStepPhase();
     switch(stepPhase) {
+      case DEFAULT:
+        return this == RAMPUP || stepPhase == this;
       case RAMPUP:
       case LOADREACHED:
         return stepPhase == this;
-      default:
-        return true;        
+      case ALL:
+        return true;
     }
+    //should never reach here
+    return false;
   }
 
   public boolean isLastPhase() {

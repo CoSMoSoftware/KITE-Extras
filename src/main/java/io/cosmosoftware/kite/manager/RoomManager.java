@@ -189,5 +189,8 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     return Integer.toString((int) Math.floor(Math.random() * Math.pow(10, roomIdLen)));
   }
 
+  public static void init() {
+    roomManagers.clear();
+  }
 
 }
