@@ -689,4 +689,15 @@ public class TestUtils {
     return jsonObject;
   }
   
+  /**
+   * Gets the dir.
+   *
+   * @param dirkey
+   *            the dirkey
+   * @return the dir
+   */
+  public static String getDir(String dirkey) {
+    String dir = System.getProperty(dirkey);
+    return dir.charAt(dir.length() - 1) == File.separatorChar ? dir : dir + File.separator;
+  }
 }
