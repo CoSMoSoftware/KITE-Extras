@@ -337,14 +337,18 @@ public class TestUtils {
       return;
     }
     step.init(stepPhase);
-    if (!parentStepReport.failed() && !parentStepReport.broken()) {
-      step.execute();
-    } else {
-      if (parentStepReport.canBeIgnore()) {
+    if (parentStepReport!=null) {
+      if (!parentStepReport.failed() && !parentStepReport.broken()) {
         step.execute();
       } else {
-        step.skip();
+        if (parentStepReport.canBeIgnore()) {
+          step.execute();
+        } else {
+          step.skip();
+        }
       }
+    } else {
+      step.execute();
     }
     step.finish();
     parentStepReport.addStepReport(step.getStepReport());
@@ -685,4 +689,15 @@ public class TestUtils {
     return jsonObject;
   }
   
+  /**
+   * Gets the dir.
+   *
+   * @param dirkey
+   *            the dirkey
+   * @return the dir
+   */
+  public static String getDir(String dirkey) {
+    String dir = System.getProperty(dirkey);
+    return dir.charAt(dir.length() - 1) == File.separatorChar ? dir : dir + File.separator;
+  }
 }
