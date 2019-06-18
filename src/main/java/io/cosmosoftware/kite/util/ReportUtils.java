@@ -12,6 +12,9 @@ import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import java.io.PrintWriter;
@@ -20,6 +23,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
 
@@ -45,6 +49,18 @@ public class ReportUtils {
         : (capabilities.getCapability("deviceModel").toString().isEmpty() ?
         "DEVICE_X" : capabilities.getCapability("deviceModel").toString())
       : getBrowserShortName(capabilities.getBrowserName()));
+  }
+
+
+  /**
+   * Gets the browser name corresponding to the webdriver
+   * 
+   * @param webDriver
+   * 
+   * @return the browser name corresponding to the webdriver 
+   */
+  public static String getBrowserName(WebDriver webDriver) {
+    return getBrowserName(((RemoteWebDriver) webDriver).getCapabilities());
   }
   
   /**
@@ -214,4 +230,29 @@ public class ReportUtils {
     //must be file name safe (no /\?%*:|"<>)
     return new SimpleDateFormat("yyyy-MM-dd HHmmss").format(new Date(date));
   }
+
+
+
+  /**
+   * Gets the browser console logs. Works only on Chrome.
+   * 
+   * @param webDriver
+   * 
+   * @return the browser console log as a String
+   */
+  public static String consoleLogs(WebDriver webDriver) {
+    String log = "";
+    Set<String> logTypes = webDriver.manage().logs().getAvailableLogTypes();
+    if (logTypes.contains(LogType.BROWSER)) {
+      LogEntries logEntries = webDriver.manage().logs().get(LogType.BROWSER);
+      for (LogEntry entry : logEntries) {
+        log += entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
+      }
+    } else {
+      log += getBrowserName(webDriver) + " does not support getting console logs, it's only possible on Chrome.";
+    }
+    return log;
+  }
+  
+
 }

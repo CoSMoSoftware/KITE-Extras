@@ -6,6 +6,7 @@ package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ public abstract class TestStep {
   
   
   protected final WebDriver webDriver;
-  protected Logger logger = null;
+  protected KiteLogger logger = null;
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
@@ -95,7 +96,7 @@ public abstract class TestStep {
     return currentStepPhase.getShortName() + getLogHeader(webDriver);
   }
   
-  public void setLogger(Logger logger) {
+  public void setLogger(KiteLogger logger) {
     this.logger = logger;
   }
   
