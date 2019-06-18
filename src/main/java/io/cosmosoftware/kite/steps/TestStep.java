@@ -23,7 +23,7 @@ public abstract class TestStep {
   
   
   protected final WebDriver webDriver;
-  protected KiteLogger logger = null;
+  protected final KiteLogger logger;
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
@@ -34,14 +34,11 @@ public abstract class TestStep {
   private StepPhase currentStepPhase = DEFAULT;
 
   private LinkedHashMap<String, String> csvResult = null;
-
-  public TestStep(WebDriver webDriver) {
-    this.webDriver = webDriver;
-  }
   
-  public TestStep(WebDriver webDriver, StepPhase stepPhase) {
-    this.webDriver = webDriver;
-    this.stepPhase = stepPhase;
+  public TestStep(StepParams params) {
+    this.webDriver = params.getWebDriver();
+    this.stepPhase = params.getStepPhase();
+    this.logger = KiteLogger.getLogger(params.getLogger(), getClientID() + ": ");
   }
   
   public void execute() {
@@ -94,11 +91,7 @@ public abstract class TestStep {
   public String getClientID() {
     return currentStepPhase.getShortName() + getLogHeader(webDriver);
   }
-  
-  public void setLogger(KiteLogger logger) {
-    this.logger = KiteLogger.getLogger(logger, getClientID() + ": ");
-  }
-  
+    
   public void skip() {
     logger.warn(currentStepPhase.getShortName() + "Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
