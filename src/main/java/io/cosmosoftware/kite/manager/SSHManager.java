@@ -5,8 +5,8 @@
 package io.cosmosoftware.kite.manager;
 
 import com.jcraft.jsch.*;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class SSHManager implements Callable<SSHManager> {
   /**
    * The Constant logger.
    */
-  private static final Logger logger = Logger.getLogger(SSHManager.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(SSHManager.class.getName());
   
   static {
     JSch.setConfig("StrictHostKeyChecking", "no");

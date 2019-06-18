@@ -9,7 +9,6 @@ import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashSet;
@@ -97,7 +96,7 @@ public abstract class TestStep {
   }
   
   public void setLogger(KiteLogger logger) {
-    this.logger = logger;
+    this.logger = KiteLogger.getLogger(logger, getClientID() + ": ");
   }
   
   public void skip() {

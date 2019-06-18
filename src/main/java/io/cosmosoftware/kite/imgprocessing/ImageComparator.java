@@ -13,8 +13,8 @@ package io.cosmosoftware.kite.imgprocessing;
 
 import io.appium.java_client.MobileElement;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Rectangle;
 
@@ -38,7 +38,7 @@ import static io.cosmosoftware.kite.imgprocessing.ImageUtils.containRGBValue;
  */
 public class ImageComparator {
   
-  private static final Logger logger = Logger.getLogger(ImageComparator.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(ImageComparator.class.getName());
   
   private static boolean debug = false;
   

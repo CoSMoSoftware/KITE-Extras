@@ -4,12 +4,12 @@
 
 package io.cosmosoftware.kite.imgprocessing;
 
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import net.sourceforge.tess4j.util.LoadLibs;
-import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -20,7 +20,7 @@ import java.io.File;
  */
 public class OCR {
   
-  private static final Logger logger = Logger.getLogger(OCR.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(OCR.class.getName());
   
   /**
    * read characters on the crop of a given image

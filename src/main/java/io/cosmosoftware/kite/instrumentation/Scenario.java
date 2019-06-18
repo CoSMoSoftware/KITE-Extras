@@ -6,9 +6,9 @@ package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.manager.SSHManager;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -31,9 +31,9 @@ public class Scenario {
   private final Integer duration;
   private ArrayList<Integer> clientIds = new ArrayList<>();
   private final NetworkInstrumentation networkInstrumentation;
-  private final Logger logger;
+  private final KiteLogger logger;
 
-  public Scenario(JsonObject jsonObject, Logger logger, NetworkInstrumentation networkInstrumentation) throws Exception {
+  public Scenario(JsonObject jsonObject, KiteLogger logger, NetworkInstrumentation networkInstrumentation) throws Exception {
     this.logger = logger;
     String missingKey="";
     this.networkInstrumentation = networkInstrumentation;
