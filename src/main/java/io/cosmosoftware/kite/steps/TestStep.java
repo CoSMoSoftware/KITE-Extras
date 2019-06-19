@@ -5,11 +5,11 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 import java.util.HashSet;
@@ -24,7 +24,7 @@ public abstract class TestStep {
   
   
   protected final WebDriver webDriver;
-  protected KiteLogger logger = null;
+  protected final KiteLogger logger;
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
@@ -35,14 +35,11 @@ public abstract class TestStep {
   private StepPhase currentStepPhase = DEFAULT;
 
   private LinkedHashMap<String, String> csvResult = null;
-
-  public TestStep(WebDriver webDriver) {
-    this.webDriver = webDriver;
-  }
   
-  public TestStep(WebDriver webDriver, StepPhase stepPhase) {
-    this.webDriver = webDriver;
-    this.stepPhase = stepPhase;
+  public TestStep(Runner runner) {
+    this.webDriver = runner.getWebDriver();
+    this.stepPhase = runner.getStepPhase();
+    this.logger = KiteLogger.getLogger(runner.getLogger(), getClientID() + ": ");
   }
   
   public void execute() {
@@ -95,11 +92,7 @@ public abstract class TestStep {
   public String getClientID() {
     return currentStepPhase.getShortName() + getLogHeader(webDriver);
   }
-  
-  public void setLogger(KiteLogger logger) {
-    this.logger = logger;
-  }
-  
+    
   public void skip() {
     logger.warn(currentStepPhase.getShortName() + "Skipping step: " + stepDescription());
     this.report.setStatus(Status.SKIPPED);

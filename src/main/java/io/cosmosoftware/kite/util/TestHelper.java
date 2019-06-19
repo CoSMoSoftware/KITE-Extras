@@ -4,7 +4,7 @@
 
 package io.cosmosoftware.kite.util;
 
-import org.apache.log4j.Logger;
+import io.cosmosoftware.kite.report.KiteLogger;
 
 import javax.json.*;
 import javax.json.stream.JsonGenerator;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class TestHelper {
   
-  private static final Logger logger = Logger.getLogger(TestHelper.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(TestHelper.class.getName());
   private static HashMap<String, TestHelper> instance = new HashMap<String, TestHelper>();
   private static Map<String, String> keyValMap = new LinkedHashMap<String, String>();
   

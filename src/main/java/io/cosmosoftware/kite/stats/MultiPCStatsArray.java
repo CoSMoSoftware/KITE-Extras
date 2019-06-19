@@ -3,8 +3,8 @@
  */
 package io.cosmosoftware.kite.stats;
 
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
-import org.apache.log4j.Logger;
 
 import javax.json.JsonObject;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class MultiPCStatsArray extends BasePCStatsArray {
   
-  private static final Logger logger = Logger.getLogger(MultiPCStatsArray.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(MultiPCStatsArray.class.getName());
   
   public Map<String, String> getAVAvgBitrate(String mediaType) {
     Map<String, String> videosAvgBitrate = new HashMap<>();
