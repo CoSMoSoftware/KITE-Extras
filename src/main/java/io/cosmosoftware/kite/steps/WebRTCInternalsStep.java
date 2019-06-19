@@ -9,10 +9,10 @@ public class WebRTCInternalsStep extends TestStep {
 
   private final WebRTCInternalPage webRTCInternalPage;
 
-  public WebRTCInternalsStep(Runner params) {
-    super(params);
+  public WebRTCInternalsStep(Runner runner) {
+    super(runner);
     setStepPhase(StepPhase.ALL);
-    webRTCInternalPage = new WebRTCInternalPage(params);
+    webRTCInternalPage = new WebRTCInternalPage(runner);
   }
 
   @Override

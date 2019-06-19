@@ -28,10 +28,10 @@ public abstract class BasePage {
   protected boolean isAppium;
   
   
-  protected BasePage(Runner params) {
-    this.webDriver = params.getWebDriver();
+  protected BasePage(Runner runner) {
+    this.webDriver = runner.getWebDriver();
     this.isAppium = webDriver instanceof AppiumDriver;
-    this.logger = params.getLogger();
+    this.logger = runner.getLogger();
     this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
     PageFactory.initElements(webDriver, this);
   }

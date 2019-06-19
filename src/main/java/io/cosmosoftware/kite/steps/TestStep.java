@@ -36,10 +36,10 @@ public abstract class TestStep {
 
   private LinkedHashMap<String, String> csvResult = null;
   
-  public TestStep(Runner params) {
-    this.webDriver = params.getWebDriver();
-    this.stepPhase = params.getStepPhase();
-    this.logger = KiteLogger.getLogger(params.getLogger(), getClientID() + ": ");
+  public TestStep(Runner runner) {
+    this.webDriver = runner.getWebDriver();
+    this.stepPhase = runner.getStepPhase();
+    this.logger = KiteLogger.getLogger(runner.getLogger(), getClientID() + ": ");
   }
   
   public void execute() {

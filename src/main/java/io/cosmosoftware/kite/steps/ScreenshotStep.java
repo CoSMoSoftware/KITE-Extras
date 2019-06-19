@@ -9,8 +9,8 @@ import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
 
 public class ScreenshotStep extends TestStep {
 
-  public ScreenshotStep(Runner params) {
-    super(params);
+  public ScreenshotStep(Runner runner) {
+    super(runner);
     setStepPhase(StepPhase.ALL);
   }
 

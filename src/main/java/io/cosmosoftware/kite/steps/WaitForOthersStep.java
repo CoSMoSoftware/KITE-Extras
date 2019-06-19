@@ -25,12 +25,12 @@ public class WaitForOthersStep extends TestStep {
   /**
    * Instantiates a new Wait for others step.
    *
-   * @param params            the Runner
+   * @param runner            the Runner
    * @param stepSynchronizer  the StepSynchronizer (implemented by KiteBaseTest)
    * @param stepToWaitFor     the step to wait for
    */
-  public WaitForOthersStep(Runner params, StepSynchronizer stepSynchronizer, TestStep stepToWaitFor) {
-    super(params);
+  public WaitForOthersStep(Runner runner, StepSynchronizer stepSynchronizer, TestStep stepToWaitFor) {
+    super(runner);
     this.stepSynchronizer = stepSynchronizer;
     this.stepToWaitFor = stepToWaitFor;
     setStepPhase(StepPhase.ALL);

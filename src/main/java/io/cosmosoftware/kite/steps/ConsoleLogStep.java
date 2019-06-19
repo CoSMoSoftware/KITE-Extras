@@ -7,8 +7,8 @@ import io.cosmosoftware.kite.util.ReportUtils;
 
 public class ConsoleLogStep extends TestStep {
 
-  public ConsoleLogStep(Runner params) {
-    super(params);
+  public ConsoleLogStep(Runner runner) {
+    super(runner);
     setStepPhase(StepPhase.ALL);
   }
 

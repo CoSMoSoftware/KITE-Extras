@@ -9,8 +9,8 @@ public class StayInMeetingStep extends TestStep {
 
   private final int meetingDuration;
 
-  public StayInMeetingStep(Runner params, int meetingDuration) {
-    super(params);
+  public StayInMeetingStep(Runner runner, int meetingDuration) {
+    super(runner);
     this.meetingDuration = meetingDuration;
     setStepPhase(StepPhase.ALL);
   }

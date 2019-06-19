@@ -13,8 +13,8 @@ public abstract class TestCheck extends TestStep {
   protected int checkTimeout = DEFAULT_TIMEOUT;
   protected int checkInterval = ONE_SECOND_INTERVAL;
   
-  public TestCheck(Runner params) {
-    super(params);
+  public TestCheck(Runner runner) {
+    super(runner);
   }
   
   public void setCheckInterval(int checkInterval) {

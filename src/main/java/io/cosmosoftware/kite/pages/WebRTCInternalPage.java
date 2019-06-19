@@ -21,8 +21,8 @@ public class WebRTCInternalPage extends BasePage {
 
   
   
-  public WebRTCInternalPage(Runner params) {
-    super(params);
+  public WebRTCInternalPage(Runner runner) {
+    super(runner);
   }
 
 
