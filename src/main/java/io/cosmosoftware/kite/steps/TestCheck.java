@@ -4,7 +4,7 @@
 
 package io.cosmosoftware.kite.steps;
 
-import org.openqa.selenium.WebDriver;
+import io.cosmosoftware.kite.interfaces.Runner;
 
 import static io.cosmosoftware.kite.entities.Timeouts.DEFAULT_TIMEOUT;
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
@@ -13,8 +13,8 @@ public abstract class TestCheck extends TestStep {
   protected int checkTimeout = DEFAULT_TIMEOUT;
   protected int checkInterval = ONE_SECOND_INTERVAL;
   
-  public TestCheck(WebDriver webDriver) {
-    super(webDriver);
+  public TestCheck(Runner runner) {
+    super(runner);
   }
   
   public void setCheckInterval(int checkInterval) {

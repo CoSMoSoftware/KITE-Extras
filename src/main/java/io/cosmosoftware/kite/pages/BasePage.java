@@ -7,6 +7,7 @@ package io.cosmosoftware.kite.pages;
 import io.appium.java_client.AppiumDriver;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.WebDriverUtils;
 import org.openqa.selenium.By;
@@ -27,10 +28,10 @@ public abstract class BasePage {
   protected boolean isAppium;
   
   
-  protected BasePage(WebDriver webDriver, KiteLogger logger) {
-    this.webDriver = webDriver;
+  protected BasePage(Runner runner) {
+    this.webDriver = runner.getWebDriver();
     this.isAppium = webDriver instanceof AppiumDriver;
-    this.logger = logger;
+    this.logger = runner.getLogger();
     this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
     PageFactory.initElements(webDriver, this);
   }

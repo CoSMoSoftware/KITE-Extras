@@ -383,6 +383,16 @@ public class WebDriverUtils {
     Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
     return "chrome".equals(capabilities.getBrowserName()) && capabilities.getVersion().isEmpty();
   }
+
+  /**
+   * @return true if it is chrome
+   */
+  public static boolean isChrome(WebDriver webDriver) {
+    Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
+    return "chrome".equals(capabilities.getBrowserName());
+  }
+
+  
   
   /**
    * Is ios boolean.
