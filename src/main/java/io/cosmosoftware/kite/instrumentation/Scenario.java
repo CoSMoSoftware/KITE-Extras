@@ -169,7 +169,7 @@ public class Scenario {
       Instance instance = networkInstrumentation.getInstances().get(this.gateway);
       result.append(" via ssh ").append(this.sshCommand(instance, command));
     } else {
-      String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway + "&command=" + command;
+      String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway + "&cmd=" + command;
       result.append("via KiteServer ").append(this.KiteServerCommand(url));
     }
     return result.toString();
@@ -179,7 +179,7 @@ public class Scenario {
     StringBuilder result = new StringBuilder();
     String GridId = networkInstrumentation.getKiteServerGridId();
     String kiteServer = networkInstrumentation.getKiteServer();
-    String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&command=" + command;
+    String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&cmd=" + command;
     result.append(this.KiteServerCommand(url));
 
     return result.toString();
