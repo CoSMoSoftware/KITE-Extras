@@ -1,7 +1,7 @@
 package io.cosmosoftware.kite.pages;
 
 import io.cosmosoftware.kite.exception.KiteInteractionException;
-import io.cosmosoftware.kite.steps.StepParams;
+import io.cosmosoftware.kite.interfaces.Runner;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -21,7 +21,7 @@ public class WebRTCInternalPage extends BasePage {
 
   
   
-  public WebRTCInternalPage(StepParams params) {
+  public WebRTCInternalPage(Runner params) {
     super(params);
   }
 

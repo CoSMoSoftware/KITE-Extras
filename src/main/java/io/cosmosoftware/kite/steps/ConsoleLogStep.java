@@ -1,13 +1,13 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.util.ReportUtils;
-import org.openqa.selenium.WebDriver;
 
 public class ConsoleLogStep extends TestStep {
 
-  public ConsoleLogStep(StepParams params) {
+  public ConsoleLogStep(Runner params) {
     super(params);
     setStepPhase(StepPhase.ALL);
   }

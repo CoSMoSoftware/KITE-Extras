@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.steps;
 
+import io.cosmosoftware.kite.interfaces.Runner;
+
 import static io.cosmosoftware.kite.entities.Timeouts.DEFAULT_TIMEOUT;
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 
@@ -11,7 +13,7 @@ public abstract class TestCheck extends TestStep {
   protected int checkTimeout = DEFAULT_TIMEOUT;
   protected int checkInterval = ONE_SECOND_INTERVAL;
   
-  public TestCheck(StepParams params) {
+  public TestCheck(Runner params) {
     super(params);
   }
   

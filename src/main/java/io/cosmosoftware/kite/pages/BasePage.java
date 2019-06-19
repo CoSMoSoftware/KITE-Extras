@@ -7,8 +7,8 @@ package io.cosmosoftware.kite.pages;
 import io.appium.java_client.AppiumDriver;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.KiteLogger;
-import io.cosmosoftware.kite.steps.StepParams;
 import io.cosmosoftware.kite.util.WebDriverUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
@@ -28,7 +28,7 @@ public abstract class BasePage {
   protected boolean isAppium;
   
   
-  protected BasePage(StepParams params) {
+  protected BasePage(Runner params) {
     this.webDriver = params.getWebDriver();
     this.isAppium = webDriver instanceof AppiumDriver;
     this.logger = params.getLogger();

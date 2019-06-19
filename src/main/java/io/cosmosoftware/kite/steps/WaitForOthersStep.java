@@ -1,9 +1,9 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
-import org.openqa.selenium.WebDriver;
 
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT_IN_SECONDS;
@@ -25,11 +25,11 @@ public class WaitForOthersStep extends TestStep {
   /**
    * Instantiates a new Wait for others step.
    *
-   * @param params            the StepParams
+   * @param params            the Runner
    * @param stepSynchronizer  the StepSynchronizer (implemented by KiteBaseTest)
    * @param stepToWaitFor     the step to wait for
    */
-  public WaitForOthersStep(StepParams params, StepSynchronizer stepSynchronizer, TestStep stepToWaitFor) {
+  public WaitForOthersStep(Runner params, StepSynchronizer stepSynchronizer, TestStep stepToWaitFor) {
     super(params);
     this.stepSynchronizer = stepSynchronizer;
     this.stepToWaitFor = stepToWaitFor;

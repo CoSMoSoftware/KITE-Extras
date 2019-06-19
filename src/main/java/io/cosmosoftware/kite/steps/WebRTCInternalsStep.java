@@ -1,6 +1,7 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.pages.WebRTCInternalPage;
 import io.cosmosoftware.kite.report.Reporter;
 
@@ -8,7 +9,7 @@ public class WebRTCInternalsStep extends TestStep {
 
   private final WebRTCInternalPage webRTCInternalPage;
 
-  public WebRTCInternalsStep(StepParams params) {
+  public WebRTCInternalsStep(Runner params) {
     super(params);
     setStepPhase(StepPhase.ALL);
     webRTCInternalPage = new WebRTCInternalPage(params);

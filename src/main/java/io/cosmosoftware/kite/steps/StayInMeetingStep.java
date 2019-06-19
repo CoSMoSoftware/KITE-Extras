@@ -1,7 +1,7 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
-import org.openqa.selenium.WebDriver;
+import io.cosmosoftware.kite.interfaces.Runner;
 
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 
@@ -9,7 +9,7 @@ public class StayInMeetingStep extends TestStep {
 
   private final int meetingDuration;
 
-  public StayInMeetingStep(StepParams params, int meetingDuration) {
+  public StayInMeetingStep(Runner params, int meetingDuration) {
     super(params);
     this.meetingDuration = meetingDuration;
     setStepPhase(StepPhase.ALL);

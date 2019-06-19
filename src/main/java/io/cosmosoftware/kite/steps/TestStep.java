@@ -5,6 +5,7 @@
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Reporter;
@@ -35,7 +36,7 @@ public abstract class TestStep {
 
   private LinkedHashMap<String, String> csvResult = null;
   
-  public TestStep(StepParams params) {
+  public TestStep(Runner params) {
     this.webDriver = params.getWebDriver();
     this.stepPhase = params.getStepPhase();
     this.logger = KiteLogger.getLogger(params.getLogger(), getClientID() + ": ");
