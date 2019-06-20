@@ -24,7 +24,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
-import org.apache.log4j.Logger;
+import io.cosmosoftware.kite.report.KiteLogger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -43,7 +43,7 @@ import static io.cosmosoftware.kite.util.TestUtils.waitAround;
  */
 public class WebDriverUtils {
   
-  private static final Logger logger = Logger.getLogger(WebDriverUtils.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(WebDriverUtils.class.getName());
   
   /**
    * Finds and clicks an element with given description and a selector.
@@ -383,6 +383,16 @@ public class WebDriverUtils {
     Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
     return "chrome".equals(capabilities.getBrowserName()) && capabilities.getVersion().isEmpty();
   }
+
+  /**
+   * @return true if it is chrome
+   */
+  public static boolean isChrome(WebDriver webDriver) {
+    Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
+    return "chrome".equals(capabilities.getBrowserName());
+  }
+
+  
   
   /**
    * Is ios boolean.

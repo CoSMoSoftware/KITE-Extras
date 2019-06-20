@@ -8,6 +8,7 @@ import io.cosmosoftware.kite.action.JSActionScript;
 import io.cosmosoftware.kite.entities.Timeouts;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.steps.StepPhase;
 import io.cosmosoftware.kite.steps.TestStep;
@@ -16,7 +17,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -39,7 +39,7 @@ public class TestUtils {
   
   static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
   
-  private static final Logger logger = Logger.getLogger(TestUtils.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(TestUtils.class.getName());
   
   /**
    * Create a directory if not existing
@@ -158,7 +158,7 @@ public class TestUtils {
    * @return the string
    * @throws Exception the exception
    */
-  public static String executeCommand(String workingDir, List<String> command, Logger logger, String logHeader) throws Exception {
+  public static String executeCommand(String workingDir, List<String> command, KiteLogger logger, String logHeader) throws Exception {
     ProcessBuilder builder =
       new ProcessBuilder(command);
     builder.directory(

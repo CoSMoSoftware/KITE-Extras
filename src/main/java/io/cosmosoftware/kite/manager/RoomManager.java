@@ -5,8 +5,8 @@
 package io.cosmosoftware.kite.manager;
 
 import io.cosmosoftware.kite.entities.MeetingStatus;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
 
-  private static final Logger logger = Logger.getLogger(RoomManager.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(RoomManager.class.getName());
   private static HashMap<String, RoomManager> roomManagers = new HashMap<>();
   private final String baseURL;
   private final int usersPerRoom;

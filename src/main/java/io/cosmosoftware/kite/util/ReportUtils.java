@@ -5,9 +5,9 @@
 package io.cosmosoftware.kite.util;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.usrmgmt.TypeRole;
-import org.apache.log4j.Logger;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -31,7 +31,7 @@ import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
  * The type Report utils.
  */
 public class ReportUtils {
-  private static final Logger logger = Logger.getLogger(ReportUtils.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(ReportUtils.class.getName());
   
   /**
    * Gets the browser name from Capabilities

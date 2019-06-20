@@ -3,8 +3,8 @@
  */
 package io.cosmosoftware.kite.stats;
 
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
-import org.apache.log4j.Logger;
 
 import javax.json.JsonObject;
 import java.text.DecimalFormat;
@@ -28,7 +28,7 @@ public abstract class BasePCStatsArray extends ArrayList<JsonObject> {
    * The constant df.
    */
   protected static final DecimalFormat df = new DecimalFormat("#0.0000");
-  private static final Logger logger = Logger.getLogger(BasePCStatsArray.class.getName());
+  private static final KiteLogger logger = KiteLogger.getLogger(BasePCStatsArray.class.getName());
   
   /**
    * Compute avg bitrate long.

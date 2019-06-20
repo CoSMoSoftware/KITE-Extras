@@ -5,7 +5,6 @@
 package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
-import org.apache.log4j.Logger;
 
 import javax.json.JsonObject;
 import javax.json.JsonValue;
@@ -22,7 +21,7 @@ public class Reporter {
   
   private static Reporter instance = new Reporter();
   private final String DEFAULT_REPORT_FOLDER = System.getProperty("user.dir") + "/kite-allure-reports/";
-  protected Logger logger = Logger.getLogger(this.getClass().getName());
+  protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private String reportPath = DEFAULT_REPORT_FOLDER;
@@ -126,7 +125,7 @@ public class Reporter {
     addAttachment(report, attachment);
   }
   
-  public void setLogger(Logger logger) {
+  public void setLogger(KiteLogger logger) {
     this.logger = logger;
   }
   

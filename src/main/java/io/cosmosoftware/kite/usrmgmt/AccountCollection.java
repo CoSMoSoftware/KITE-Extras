@@ -4,7 +4,7 @@
 
 package io.cosmosoftware.kite.usrmgmt;
 
-import org.apache.log4j.Logger;
+import io.cosmosoftware.kite.report.KiteLogger;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -20,7 +20,7 @@ public class AccountCollection extends Entity {
   
   
   private final Map<AccountType, List<Account>> accountMap = new HashMap<>();
-  private final Logger logger = Logger.getLogger(this.getClass().getName());
+  private final KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private final int timeout;
   
   /**

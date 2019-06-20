@@ -4,14 +4,14 @@
 
 package io.cosmosoftware.kite.entities;
 
-import org.apache.log4j.Logger;
+import io.cosmosoftware.kite.report.KiteLogger;
 
 /**
  * The type Meeting status.
  */
 public class MeetingStatus {
   
-  private final Logger logger = Logger.getLogger(this.getClass().getName());
+  private final KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   
   private final String meetingID;
   private long lastCheck = System.currentTimeMillis();
