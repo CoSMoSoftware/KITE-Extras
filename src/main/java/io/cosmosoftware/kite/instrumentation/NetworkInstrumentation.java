@@ -22,7 +22,8 @@ public class NetworkInstrumentation {
   private final String kiteServerGridId;
   private final  HashMap<String, NetworkProfile> networkProfiles;
   private final String kiteServer;
-
+  private final JsonObject jsonObject;
+  
   /**
    * Constructor for the KITE Engine Test Manager.
    *
@@ -32,6 +33,7 @@ public class NetworkInstrumentation {
     this.remoteAddress = remoteAddress;
     this.kiteServerGridId = null;
     this.kiteServer = null;
+    this.jsonObject = jsonObject;
     JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "instances");
     this.instances = new HashMap<>();
     for (int i = 0; i < jsonArray.size(); i++) {
@@ -67,6 +69,7 @@ public class NetworkInstrumentation {
     this.kiteServerGridId = kiteServerGridId;
     this.remoteAddress = remoteAddress;
     System.out.println("NetworkInstrumentation recu par KiteExtras : " + jsonObject.toString());
+    this.jsonObject = jsonObject;
     this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
     JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
     this.networkProfiles = new HashMap<>();
@@ -106,4 +109,9 @@ public class NetworkInstrumentation {
   public String getKiteServer() {
     return this.kiteServer;
   }
+  
+  public JsonObject getJsonObject() {
+    return this.jsonObject;
+  }
+  
 }
