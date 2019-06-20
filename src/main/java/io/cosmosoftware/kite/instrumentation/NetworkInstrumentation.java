@@ -62,19 +62,20 @@ public class NetworkInstrumentation {
   /**
    * Constructor for the KITE Server Test Manager
    */
-  public NetworkInstrumentation(JsonObject jsonObject, String remoteAddress, String kiteServerGridId) throws KiteTestException {
+  public NetworkInstrumentation(JsonArray jsonArray, String remoteAddress, String kiteServerGridId) throws KiteTestException {
     this.instances = null;
     this.kiteServerGridId = kiteServerGridId;
     this.remoteAddress = remoteAddress;
-    this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
-    JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
+    //this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
+    //JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
+    this.kiteServer =  "http://localhost:8080/KITEServer";
     this.networkProfiles = new HashMap<>();
     for (int i = 0; i < jsonArray.size(); i++) {
       String missingKey = "";
       try {
         missingKey = "name";
         String name = jsonArray.getJsonObject(i).getString(missingKey);
-        missingKey = "networkProfile";
+        missingKey = "profile";
         NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
         this.networkProfiles.put(name, networkProfile);
 
