@@ -22,6 +22,7 @@ public class NetworkProfile {
   private static final String INTERFACE_1_NAME = "enp0s9";
 
   public NetworkProfile(JsonObject jsonObject) throws Exception {
+    System.out.println("Profile recu dans NetworkProfile : " + jsonObject.toString());
     this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);
     this.corrupt = jsonObject.getInt("corrupt", 0);

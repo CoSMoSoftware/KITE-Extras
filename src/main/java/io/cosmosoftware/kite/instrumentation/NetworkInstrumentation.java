@@ -52,7 +52,7 @@ public class NetworkInstrumentation {
         missingKey = "networkProfile";
         NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
         this.networkProfiles.put(name, networkProfile);
-
+        System.out.println("NetworkInstrumentation in KiteExtras : \n networkProfiles : " + this.networkProfiles.toString() + " \n remoteAddress : " + this.remoteAddress );
       } catch (Exception e) {
         throw new KiteTestException("Error in json config networkProfiles, the key " + missingKey + " is missing.", Status.BROKEN, e);
       }
@@ -62,23 +62,24 @@ public class NetworkInstrumentation {
   /**
    * Constructor for the KITE Server Test Manager
    */
-  public NetworkInstrumentation(JsonArray jsonArray, String remoteAddress, String kiteServerGridId) throws KiteTestException {
+  public NetworkInstrumentation(JsonObject jsonObject, String remoteAddress, String kiteServerGridId) throws KiteTestException {
     this.instances = null;
     this.kiteServerGridId = kiteServerGridId;
     this.remoteAddress = remoteAddress;
-    //this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
-    //JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
-    this.kiteServer =  "http://localhost:8080/KITEServer";
+    System.out.println("NetworkInstrumentation recu par KiteExtras : " + jsonObject.toString());
+    this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
+    JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
     this.networkProfiles = new HashMap<>();
     for (int i = 0; i < jsonArray.size(); i++) {
       String missingKey = "";
       try {
         missingKey = "name";
         String name = jsonArray.getJsonObject(i).getString(missingKey);
-        missingKey = "profile";
+        missingKey = "networkProfile";
         NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i).getJsonObject(missingKey));
+        System.out.println("NetworkProfile created : " + networkProfile.toString());
         this.networkProfiles.put(name, networkProfile);
-
+        System.out.println("NetworkInstrumentation in KiteExtras from KiteServer : \n networkProfiles : " + this.networkProfiles.toString() + " \n kiteServer url : " + this.kiteServer + " \n remoteAddress : " + this.remoteAddress + " \n gridId : " + this.kiteServerGridId);
       } catch (Exception e) {
         throw new KiteTestException("Error in json config networkProfiles, the key " + missingKey + " is missing.", Status.BROKEN, e);
       }

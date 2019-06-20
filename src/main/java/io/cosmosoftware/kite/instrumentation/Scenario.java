@@ -149,6 +149,7 @@ public class Scenario {
   }
 
   private String KiteServerCommand(String url) {
+    System.out.println("URL called on KiteServer : " + url);
     String result;
     try {
       URLConnection connection = new URL(url).openConnection();
