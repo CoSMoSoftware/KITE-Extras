@@ -560,7 +560,7 @@ public class TestUtils {
    *
    * @return the private ip
    */
-  public static String getPrivateIp(String hupIpOrDns, String sessionId, String ...port) {
+  public static String getPrivateIp(String hupIpOrDns, String sessionId, String... port) {
 
     String privateIp = null;
     String usedPort = port.length > 0 ? port[0] : "4444";
