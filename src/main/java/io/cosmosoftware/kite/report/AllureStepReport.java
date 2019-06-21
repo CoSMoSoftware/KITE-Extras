@@ -14,7 +14,7 @@ import javax.json.JsonObjectBuilder;
 /**
  * This class is a wrapper of the Allure's StepResult.
  */
-public class AllureStepReport extends Entity {
+public class AllureStepReport extends ReportEntity {
 
   private List<CustomAttachment> attachments;
   private String description = "N/C";
@@ -100,7 +100,7 @@ public class AllureStepReport extends Entity {
 
   public void setDetails(StatusDetails details) {
     this.details = details;
-    // Reporter.getInstance().textAttachment(this, "statusDetail", details.toJson().toString(), "json");
+    // reporter.textAttachment(this, "statusDetail", details.toJson().toString(), "json");
   }
 
   @Override

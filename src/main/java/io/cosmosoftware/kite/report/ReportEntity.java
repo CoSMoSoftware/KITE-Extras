@@ -10,8 +10,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-public class Entity {
-
+public class ReportEntity {
+  protected Reporter reporter;
   protected String name;
   protected String uuid;
   protected long start = 0;
@@ -19,7 +19,7 @@ public class Entity {
   protected String stage;
 
 
-  protected Entity(String name) {
+  protected ReportEntity(String name) {
     this.name = name;
     this.stage = Stage.SCHEDULED;
     this.uuid = UUID.randomUUID().toString();
@@ -78,5 +78,14 @@ public class Entity {
   @Override
   public String toString() {
     return toJson().toString();
+  }
+
+  /**
+   * Sets reporter.
+   *
+   * @param reporter the reporter
+   */
+  public void setReporter(Reporter reporter) {
+    this.reporter = reporter;
   }
 }
