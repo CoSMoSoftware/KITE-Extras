@@ -4,30 +4,33 @@
 
 package io.cosmosoftware.kite.manager;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.MDC;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
+import org.apache.log4j.MDC;
 
 /**
  * Class handling SSH command running.
  */
 public class SSHManager implements Callable<SSHManager> {
-  
+
   /**
    * The Constant logger.
    */
   private static final KiteLogger logger = KiteLogger.getLogger(SSHManager.class.getName());
-  
+
   static {
     JSch.setConfig("StrictHostKeyChecking", "no");
   }
-  
+
   /**
    * The command line.
    */
@@ -51,15 +54,15 @@ public class SSHManager implements Callable<SSHManager> {
    * The username.
    */
   private String username;
-  
-  
+
+
   /**
    * Instantiates a new Ssh manager.
    *
-   * @param keyFilePath  the key file path
-   * @param username     the username
+   * @param keyFilePath the key file path
+   * @param username the username
    * @param hostIpOrName the host ip or name
-   * @param commandLine  the command line
+   * @param commandLine the command line
    */
   public SSHManager(String keyFilePath, String username, String hostIpOrName, String commandLine) {
     this.keyFilePath = TestUtils.filePath(keyFilePath);
@@ -67,20 +70,20 @@ public class SSHManager implements Callable<SSHManager> {
     this.hostIpOrName = hostIpOrName;
     this.commandLine = commandLine;
   }
-  
+
   /**
    * Instantiates a new Ssh manager.
    *
-   * @param keyFilePath  the key file path
-   * @param username     the username
-   * @param password     the password
+   * @param keyFilePath the key file path
+   * @param username the username
+   * @param password the password
    * @param hostIpOrName the host ip or name
-   * @param commandLine  the command line
-   * @param index        the index
-   * @param count        the count
+   * @param commandLine the command line
+   * @param index the index
+   * @param count the count
    */
   public SSHManager(String keyFilePath, String username, String password, String hostIpOrName,
-                    String commandLine, int index, int count) {
+      String commandLine, int index, int count) {
     this.keyFilePath = TestUtils.filePath(keyFilePath);
     this.username = username;
     this.password = password;
@@ -89,14 +92,14 @@ public class SSHManager implements Callable<SSHManager> {
     this.index = index;
     this.count = count;
   }
-  
+
   /**
    * Call.
    *
    * @return The same object in case of successful run
-   * @throws Exception of KiteInsufficientValueException type if username and
-   *                   keyFileAddress is not given and of SSHManagerException type if
-   *                   there found an error while connecting to the host using SSH
+   * @throws Exception of KiteInsufficientValueException type if username and keyFileAddress is not
+   * given and of SSHManagerException type if there found an error while connecting to the host
+   * using SSH
    */
   @Override
   public SSHManager call() throws Exception {
@@ -117,7 +120,7 @@ public class SSHManager implements Callable<SSHManager> {
         session.setPassword(this.password);
       }
       session.connect();
-      
+
       // run stuff
       String command = this.commandLine;
       channel = session.openChannel("exec");
@@ -125,18 +128,19 @@ public class SSHManager implements Callable<SSHManager> {
       ((ChannelExec) channel).setErrStream(System.err);
       if (count > 0) {
         logger.debug(
-          "Running ("
-            + (this.index + 1)
-            + "/"
-            + this.count
-            + ")' on \" + this.hostIpOrName + \" : "
-            + this.commandLine);
+            "Running ("
+                + (this.index + 1)
+                + "/"
+                + this.count
+                + ")' on \" + this.hostIpOrName + \" : "
+                + this.commandLine);
       } else {
-        logger.debug("Running the following command on " + this.hostIpOrName + " : " + this.commandLine);
+        logger.debug(
+            "Running the following command on " + this.hostIpOrName + " : " + this.commandLine);
       }
       exitStatus = -1;
       channel.connect();
-      
+
       inputStream = channel.getInputStream();
       // setStartTimestamp reading the input from the executed commands on the shell
       int maxLines = 10;
@@ -145,8 +149,9 @@ public class SSHManager implements Callable<SSHManager> {
         Thread.sleep(1000);
         while (inputStream.available() > 0) {
           int l = inputStream.read(tmp, 0, 1024);
-          if (l < 0)
+          if (l < 0) {
             break;
+          }
           logger.info(new String(tmp, 0, l));
         }
         if (channel.isClosed()) {
@@ -161,12 +166,13 @@ public class SSHManager implements Callable<SSHManager> {
       logger.warn(e.getClass().getSimpleName() + " in SSHManager: " + e.getLocalizedMessage());
       // throw new SSHManagerException(this, e);
     } finally {
-      if (inputStream != null)
+      if (inputStream != null) {
         try {
           inputStream.close();
         } catch (IOException e) {
           logger.warn(e);
         }
+      }
       if (channel != null) {
         channel.disconnect();
       }
@@ -174,10 +180,10 @@ public class SSHManager implements Callable<SSHManager> {
         session.disconnect();
       }
     }
-    
+
     return this;
   }
-  
+
   /**
    * Command successful boolean.
    *
@@ -186,7 +192,7 @@ public class SSHManager implements Callable<SSHManager> {
   public boolean commandSuccessful() {
     return this.exitStatus == 0;
   }
-  
+
   /*
    * (non-Javadoc)
    *
@@ -196,7 +202,7 @@ public class SSHManager implements Callable<SSHManager> {
   protected void finalize() throws Throwable {
     MDC.remove("tag");
   }
-  
+
   /**
    * Gets the host ip or name.
    *
@@ -205,6 +211,6 @@ public class SSHManager implements Callable<SSHManager> {
   public String getHostIpOrName() {
     return hostIpOrName;
   }
-  
-  
+
+
 }

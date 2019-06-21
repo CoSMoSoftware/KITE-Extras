@@ -15,7 +15,7 @@ public enum StepPhase {
   private StepPhase(String value) {
     name = value;
   }
-  
+
   public String getName() {
     return this.name;
   }
@@ -30,10 +30,10 @@ public enum StepPhase {
         return "";
     }
   }
-  
+
   public boolean shouldProcess(TestStep step) {
     StepPhase stepPhase = step.getStepPhase();
-    switch(stepPhase) {
+    switch (stepPhase) {
       case DEFAULT:
         return this == RAMPUP || stepPhase == this;
       case RAMPUP:
@@ -49,5 +49,5 @@ public enum StepPhase {
   public boolean isLastPhase() {
     return this != RAMPUP;
   }
-  
+
 }

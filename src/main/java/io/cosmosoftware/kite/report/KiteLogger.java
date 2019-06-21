@@ -29,7 +29,8 @@ public class KiteLogger {
   }
 
   public static KiteLogger getLogger(KiteLogger kiteLogger, String prefix) {
-    return new KiteLogger(kiteLogger.logger.getLogger(kiteLogger.getName()), String.valueOf(prefix));
+    return new KiteLogger(kiteLogger.logger.getLogger(kiteLogger.getName()),
+        String.valueOf(prefix));
   }
 
   public static KiteLogger getLogger(String name) {
@@ -52,7 +53,7 @@ public class KiteLogger {
   public void info(Object msg) {
     logger.info(prefix + msg);
   }
-  
+
   public void info(Object msg, Throwable t) {
     logger.info(prefix + msg, t);
   }
@@ -88,7 +89,7 @@ public class KiteLogger {
   public void fatal(Object msg, Throwable t) {
     logger.fatal(prefix + msg, t);
   }
-  
+
   public boolean isDebugEnabled() {
     return logger.isDebugEnabled();
   }
@@ -96,9 +97,9 @@ public class KiteLogger {
   public synchronized void addAppender(Appender appender) {
     this.logger.addAppender(appender);
   }
-  
+
   public final String getName() {
     return logger.getName();
   }
-  
+
 }

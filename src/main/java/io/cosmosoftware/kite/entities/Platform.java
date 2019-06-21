@@ -20,12 +20,11 @@ public enum Platform {
    * Browser platform.
    */
   BROWSER;
-  
+
   /**
    * Gets platform.
    *
    * @param value the value
-   *
    * @return the platform
    */
   public static Platform getPlatform(String value) {
@@ -36,7 +35,7 @@ public enum Platform {
     if (valueLowerCase.contains("ios")) {
       return IOS;
     }
-    
+
     return BROWSER;
   }
 }

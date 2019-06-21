@@ -18,14 +18,13 @@ public class WebRTCInternalsStep extends TestStep {
   @Override
   protected void step() throws KiteTestException {
     Reporter.getInstance().textAttachment(report, "webrtc-internals dump",
-      webRTCInternalPage.downloadDump(), "plain");
+        webRTCInternalPage.downloadDump(), "plain");
   }
 
   @Override
   public String stepDescription() {
     return "Gets the webrtc-internals dump.";
   }
-
 
 
 }
