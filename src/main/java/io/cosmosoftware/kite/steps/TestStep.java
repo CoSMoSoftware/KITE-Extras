@@ -139,6 +139,8 @@ public abstract class TestStep {
     this.report = new AllureStepReport(getClientID() + ": " + stepDescription());
     this.report.setDescription(currentStepPhase.getShortName() + stepDescription());
     this.report.setStartTimestamp();
+    this.report.setReporter(this.reporter);
+
   }
 
   /**
@@ -206,7 +208,6 @@ public abstract class TestStep {
    */
   public void setReporter(Reporter reporter) {
     this.reporter = reporter;
-    this.report.setReporter(reporter);
   }
 
   /**

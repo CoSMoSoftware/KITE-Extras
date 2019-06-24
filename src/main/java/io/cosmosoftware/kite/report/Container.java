@@ -21,6 +21,11 @@ public class Container extends ReportEntity {
   public Container(String name) {
     super(name);
     this.setStartTimestamp();
+  }
+
+  @Override
+  public void setReporter(Reporter reporter) {
+    super.setReporter(reporter);
     reporter.addContainer(this);
   }
 
