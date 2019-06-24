@@ -87,5 +87,11 @@ public class ReportEntity {
    */
   public void setReporter(Reporter reporter) {
     this.reporter = reporter;
+    if (this instanceof Container) {
+      reporter.addContainer((Container)this);
+    }
+    if (this instanceof AllureTestReport){
+      reporter.addTest((AllureTestReport)this);
+    }
   }
 }

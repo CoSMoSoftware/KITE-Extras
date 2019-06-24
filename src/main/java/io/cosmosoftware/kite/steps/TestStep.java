@@ -24,22 +24,9 @@ import org.openqa.selenium.WebDriver;
  */
 public abstract class TestStep {
 
-
-  /**
-   * The Web driver.
-   */
   protected final WebDriver webDriver;
-  /**
-   * The Logger.
-   */
   protected final KiteLogger logger;
-  /**
-   * The Reporter.
-   */
   protected Reporter reporter;
-  /**
-   * The Report.
-   */
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
@@ -202,15 +189,6 @@ public abstract class TestStep {
   }
 
   /**
-   * Sets reporter.
-   *
-   * @param reporter the reporter
-   */
-  public void setReporter(Reporter reporter) {
-    this.reporter = reporter;
-  }
-
-  /**
    * Translate class name string.
    *
    * @return the string
@@ -272,5 +250,9 @@ public abstract class TestStep {
    */
   public void setOptional(boolean optional) {
     this.optional = optional;
+  }
+
+  public void setReporter(Reporter reporter) {
+    this.reporter = reporter;
   }
 }

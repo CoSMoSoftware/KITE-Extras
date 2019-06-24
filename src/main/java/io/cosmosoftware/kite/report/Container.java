@@ -23,12 +23,6 @@ public class Container extends ReportEntity {
     this.setStartTimestamp();
   }
 
-  @Override
-  public void setReporter(Reporter reporter) {
-    super.setReporter(reporter);
-    reporter.addContainer(this);
-  }
-
   public void setParentSuite(String parentSuite) {
     this.parentSuite = parentSuite;
   }

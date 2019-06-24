@@ -30,12 +30,6 @@ public class AllureTestReport extends AllureStepReport {
     this.historyId = UUID.randomUUID().toString();
   }
 
-  @Override
-  public void setReporter(Reporter reporter) {
-    super.setReporter(reporter);
-    reporter.addTest(this);
-  }
-
   public void setFullName(String fullName) {
     this.fullName = fullName;
   }

@@ -23,7 +23,6 @@ import javax.json.JsonValue;
  */
 public class Reporter {
 
-  private static Reporter instance = new Reporter();
   private final String DEFAULT_REPORT_FOLDER =
       System.getProperty("user.dir") + "/kite-allure-reports/";
   /**
