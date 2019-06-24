@@ -25,18 +25,18 @@ public class SSHManagerException extends Exception {
    * The exception.
    */
   private Exception exception;
-  
+
   /**
    * Instantiates a new Ssh manager exception.
    *
    * @param sshManager the command runner
-   * @param exception  the exception
+   * @param exception the exception
    */
   public SSHManagerException(SSHManager sshManager, Exception exception) {
     this.sshManager = sshManager;
     this.exception = exception;
   }
-  
+
   /**
    * Gets command runner.
    *
@@ -45,7 +45,7 @@ public class SSHManagerException extends Exception {
   public SSHManager getSSHManager() {
     return sshManager;
   }
-  
+
   /**
    * Gets exception.
    *

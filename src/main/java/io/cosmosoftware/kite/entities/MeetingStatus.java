@@ -10,14 +10,14 @@ import io.cosmosoftware.kite.report.KiteLogger;
  * The type Meeting status.
  */
 public class MeetingStatus {
-  
+
   private final KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
-  
+
   private final String meetingID;
   private long lastCheck = System.currentTimeMillis();
   private boolean meetingEnded = false;
-  
-  
+
+
   /**
    * Constructor
    *
@@ -26,14 +26,14 @@ public class MeetingStatus {
   public MeetingStatus(String id) {
     this.meetingID = id;
   }
-  
+
   /**
-   * The meeting will end with a probability of 1/chanceOfMeetingEnded.
-   * This check is done every checkStatusPeriod seconds.
+   * The meeting will end with a probability of 1/chanceOfMeetingEnded. This check is done every
+   * checkStatusPeriod seconds.
    *
-   * @param chanceOfMeetingEnded denomitator of the probability. Probability of meeting ended                             = 1 / chanceOfMeetingEnded
-   * @param checkStatusPeriod    how often to check if the meeting should be ended (in seconds)
-   *
+   * @param chanceOfMeetingEnded denomitator of the probability. Probability of meeting ended
+   * = 1 / chanceOfMeetingEnded
+   * @param checkStatusPeriod how often to check if the meeting should be ended (in seconds)
    * @return boolean boolean
    */
   public synchronized boolean meetingEnded(int chanceOfMeetingEnded, int checkStatusPeriod) {
@@ -49,5 +49,5 @@ public class MeetingStatus {
     }
     return meetingEnded;
   }
-  
+
 }

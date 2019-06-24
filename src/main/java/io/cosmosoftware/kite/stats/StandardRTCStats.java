@@ -4,363 +4,361 @@
 
 package io.cosmosoftware.kite.stats;
 
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 
 /**
- * Standard stats take from
- * https://www.w3.org/TR/webrtc-stats/
+ * Standard stats take from https://www.w3.org/TR/webrtc-stats/
  */
 public class StandardRTCStats {
-  
+
   private static String[] RTCAudioHandlerStats() {
     final String[] keys = {
-      "audioLevel",
-      "totalAudioEnergy",
-      "voiceActivityFlag",
-      "totalSamplesDuration"
+        "audioLevel",
+        "totalAudioEnergy",
+        "voiceActivityFlag",
+        "totalSamplesDuration"
     };
     return merge(RTCMediaHandlerStats(), keys);
   }
-  
+
   private static String[] RTCAudioReceiverStats() {
     final String[] keys = {
-      "estimatedPlayoutTimestamp",
-      "jitterBufferDelay",
-      "jitterBufferEmittedCount",
-      "totalSamplesReceived",
-      "concealedSamples",
-      "concealmentEvents"
+        "estimatedPlayoutTimestamp",
+        "jitterBufferDelay",
+        "jitterBufferEmittedCount",
+        "totalSamplesReceived",
+        "concealedSamples",
+        "concealmentEvents"
     };
     return merge(RTCAudioHandlerStats(), keys);
   }
-  
+
   private static String[] RTCAudioSenderStats() {
     final String[] keys = {
-      "echoReturnLoss",
-      "echoReturnLossEnhancement",
-      "totalSamplesSent"
+        "echoReturnLoss",
+        "echoReturnLossEnhancement",
+        "totalSamplesSent"
     };
     return merge(RTCAudioHandlerStats(), keys);
   }
-  
+
   // certificate
   private static String[] RTCCertificateStats() {
     final String[] keys = {
-      "fingerprint",
-      "fingerprintAlgorithm",
-      "base64Certificate",
-      "issuerCertificateId"
+        "fingerprint",
+        "fingerprintAlgorithm",
+        "base64Certificate",
+        "issuerCertificateId"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // codec
   private static String[] RTCCodecStats() {
     String[] keys = {
-      "payloadType",
-      "codecType",
-      "transportId",
-      "mimeType",
-      "clockRate",
-      "channels",
-      "sdpFmtpLine",
-      "implementation"
+        "payloadType",
+        "codecType",
+        "transportId",
+        "mimeType",
+        "clockRate",
+        "channels",
+        "sdpFmtpLine",
+        "implementation"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // data-channel
   private static String[] RTCDataChannelStats() {
     final String[] keys = {
-      "label",
-      "protocol",
-      "dataChannelIdentifier",
-      "transportId",
-      "state",
-      "messagesSent",
-      "bytesSent",
-      "messagesReceived",
-      "bytesReceived"
+        "label",
+        "protocol",
+        "dataChannelIdentifier",
+        "transportId",
+        "state",
+        "messagesSent",
+        "bytesSent",
+        "messagesReceived",
+        "bytesReceived"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // candidate-pair
   private static String[] RTCIceCandidatePairStats() {
     final String[] keys = {
-      "transportId",
-      "localCandidateId",
-      "remoteCandidateId",
-      "state",
-      "nominated",
-      "packetsSent",
-      "packetsReceived",
-      "bytesSent",
-      "bytesReceived",
-      "lastPacketSentTimestamp",
-      "lastPacketReceivedTimestamp",
-      "firstRequestTimestamp",
-      "lastRequestTimestamp",
-      "lastResponseTimestamp",
-      "totalRoundTripTime",
-      "currentRoundTripTime",
-      "availableOutgoingBitrate",
-      "availableIncomingBitrate",
-      "circuitBreakerTriggerCount",
-      "requestsReceived",
-      "requestsSent",
-      "responsesReceived",
-      "responsesSent",
-      "retransmissionsReceived",
-      "retransmissionsSent",
-      "consentRequestsSent",
-      "consentExpiredTimestamp"
+        "transportId",
+        "localCandidateId",
+        "remoteCandidateId",
+        "state",
+        "nominated",
+        "packetsSent",
+        "packetsReceived",
+        "bytesSent",
+        "bytesReceived",
+        "lastPacketSentTimestamp",
+        "lastPacketReceivedTimestamp",
+        "firstRequestTimestamp",
+        "lastRequestTimestamp",
+        "lastResponseTimestamp",
+        "totalRoundTripTime",
+        "currentRoundTripTime",
+        "availableOutgoingBitrate",
+        "availableIncomingBitrate",
+        "circuitBreakerTriggerCount",
+        "requestsReceived",
+        "requestsSent",
+        "responsesReceived",
+        "responsesSent",
+        "retransmissionsReceived",
+        "retransmissionsSent",
+        "consentRequestsSent",
+        "consentExpiredTimestamp"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // local-candidate + remote-candidate
   private static String[] RTCIceCandidateStats() {
     final String[] keys = {
-      "transportId",
-      "networkType",
-      "ip",
-      "port",
-      "protocol",
-      "candidateType",
-      "priority",
-      "url",
-      "relayProtocol",
-      "deleted"
+        "transportId",
+        "networkType",
+        "ip",
+        "port",
+        "protocol",
+        "candidateType",
+        "priority",
+        "url",
+        "relayProtocol",
+        "deleted"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   private static String[] RTCInboundRtpStreamStats() {
     final String[] keys = {
-      "trackId",
-      "receiverId",
-      "remoteId",
-      "framesDecoded",
-      "lastPacketReceivedTimestamp",
-      "averageRtcpInterval",
-      "fecPacketsReceived",
-      "bytesReceived",
-      "packetsFailedDecryption",
-      "packetsDuplicated",
-      "perDscpPacketsReceived"
+        "trackId",
+        "receiverId",
+        "remoteId",
+        "framesDecoded",
+        "lastPacketReceivedTimestamp",
+        "averageRtcpInterval",
+        "fecPacketsReceived",
+        "bytesReceived",
+        "packetsFailedDecryption",
+        "packetsDuplicated",
+        "perDscpPacketsReceived"
     };
     return merge(RTCReceivedRtpStreamStats(), keys);
   }
-  
+
   // track
   private static String[] RTCMediaHandlerStats() {
     final String[] keys = {
-      "trackIdentifier",
-      "remoteSource",
-      "ended",
-      "kind",
-      "priority"
+        "trackIdentifier",
+        "remoteSource",
+        "ended",
+        "kind",
+        "priority"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // stream
   private static String[] RTCMediaStreamStats() {
     final String[] keys = {
-      "streamIdentifier",
-      "trackIds",
+        "streamIdentifier",
+        "trackIds",
     };
     return merge(RTCStats(), keys);
   }
-  
+
   private static String[] RTCOutboundRtpStreamStats() {
     final String[] keys = {
-      "trackId",
-      "senderId",
-      "remoteId",
-      "lastPacketSentTimestamp",
-      "targetBitrate",
-      "framesEncoded",
-      "totalEncodeTime",
-      "averageRtcpInterval",
-      "qualityLimitationReason",
-      "qualityLimitationDurations",
-      "perDscpPacketsSent"
+        "trackId",
+        "senderId",
+        "remoteId",
+        "lastPacketSentTimestamp",
+        "targetBitrate",
+        "framesEncoded",
+        "totalEncodeTime",
+        "averageRtcpInterval",
+        "qualityLimitationReason",
+        "qualityLimitationDurations",
+        "perDscpPacketsSent"
     };
     return merge(RTCSentRtpStreamStats(), keys);
   }
-  
+
   // peer-connection
   private static String[] RTCPeerConnectionStats() {
     final String[] keys = {
-      "dataChannelsOpened",
-      "dataChannelsClosed",
-      "dataChannelsRequested",
-      "dataChannelsAccepted"
+        "dataChannelsOpened",
+        "dataChannelsClosed",
+        "dataChannelsRequested",
+        "dataChannelsAccepted"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // inbound-rtp
   private static String[] RTCReceivedRtpStreamStats() {
     final String[] keys = {
-      "packetsReceived",
-      "packetsLost",
-      "jitter",
-      "packetsDiscarded",
-      "packetsRepaired",
-      "burstPacketsLost",
-      "burstPacketsDiscarded",
-      "burstLossCount",
-      "burstDiscardCount",
-      "burstLossRate",
-      "burstDiscardRate",
-      "gapLossRate",
-      "gapDiscardRate"
+        "packetsReceived",
+        "packetsLost",
+        "jitter",
+        "packetsDiscarded",
+        "packetsRepaired",
+        "burstPacketsLost",
+        "burstPacketsDiscarded",
+        "burstLossCount",
+        "burstDiscardCount",
+        "burstLossRate",
+        "burstDiscardRate",
+        "gapLossRate",
+        "gapDiscardRate"
     };
     return merge(RTCRtpStreamStats(), keys);
   }
-  
+
   // remote-inbound-rtp
   private static String[] RTCRemoteInboundRtpStreamStats() {
     final String[] keys = {
-      "localId",
-      "roundTripTime",
-      "fractionLost"
+        "localId",
+        "roundTripTime",
+        "fractionLost"
     };
     return merge(RTCReceivedRtpStreamStats(), keys);
   }
-  
+
   // remote-outbound-rtp
   private static String[] RTCRemoteOutboundRtpStreamStats() {
     final String[] keys = {
-      "localId",
-      "remoteTimestamp"
+        "localId",
+        "remoteTimestamp"
     };
     return merge(RTCSentRtpStreamStats(), keys);
   }
-  
+
   // csrc
   private static String[] RTCRtpContributingSourceStats() {
     final String[] keys = {
-      "contributorSsrc",
-      "inboundRtpStreamId",
-      "packetsContributedTo",
-      "audioLevel"
+        "contributorSsrc",
+        "inboundRtpStreamId",
+        "packetsContributedTo",
+        "audioLevel"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   // RTCRtpStreamStats
   private static String[] RTCRtpStreamStats() {
     final String[] keys = {
-      "ssrc",
-      "kind",
-      "transportId",
-      "codecId",
-      "firCount",
-      "pliCount",
-      "nackCount",
-      "sliCount",
-      "qpSum"
+        "ssrc",
+        "kind",
+        "transportId",
+        "codecId",
+        "firCount",
+        "pliCount",
+        "nackCount",
+        "sliCount",
+        "qpSum"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   private static String[] RTCSenderAudioTrackAttachmentStats() {
     return RTCAudioSenderStats();
   }
-  
+
   private static String[] RTCSenderVideoTrackAttachmentStats() {
     return RTCVideoSenderStats();
   }
-  
+
   // outbound-rtp
   private static String[] RTCSentRtpStreamStats() {
     final String[] keys = {
-      "packetsSent",
-      "packetsDiscardedOnSend",
-      "fecPacketsSent",
-      "bytesSent",
-      "bytesDiscardedOnSend"
+        "packetsSent",
+        "packetsDiscardedOnSend",
+        "fecPacketsSent",
+        "bytesSent",
+        "bytesDiscardedOnSend"
     };
     return merge(RTCRtpStreamStats(), keys);
   }
-  
+
   // RTCStats type
   private static String[] RTCStats() {
     final String[] keys = {
-      "timestamp",
-      "type",
-      "id"
+        "timestamp",
+        "type",
+        "id"
     };
     return keys;
   }
-  
+
   // transport
   private static String[] RTCTransportStats() {
     final String[] keys = {
-      "packetsSent",
-      "packetsReceived",
-      "bytesSent",
-      "bytesReceived",
-      "rtcpTransportStatsId",
-      "iceRole",
-      "dtlsState",
-      "selectedCandidatePairId",
-      "localCertificateId",
-      "remoteCertificateId",
-      "dtlsCipher",
-      "srtpCipher"
+        "packetsSent",
+        "packetsReceived",
+        "bytesSent",
+        "bytesReceived",
+        "rtcpTransportStatsId",
+        "iceRole",
+        "dtlsState",
+        "selectedCandidatePairId",
+        "localCertificateId",
+        "remoteCertificateId",
+        "dtlsCipher",
+        "srtpCipher"
     };
     return merge(RTCStats(), keys);
   }
-  
+
   private static String[] RTCVideoHandlerStats() {
     final String[] keys = {
-      "frameWidth",
-      "frameHeight",
-      "framesPerSecond"
+        "frameWidth",
+        "frameHeight",
+        "framesPerSecond"
     };
     return merge(RTCMediaHandlerStats(), keys);
   }
-  
+
   private static String[] RTCVideoReceiverStats() {
     final String[] keys = {
-      "estimatedPlayoutTimestamp",
-      "jitterBufferDelay",
-      "jitterBufferEmittedCount",
-      "framesReceived",
-      "keyFramesReceived",
-      "framesDecoded",
-      "framesDropped",
-      "partialFramesLost",
-      "fullFramesLost"
+        "estimatedPlayoutTimestamp",
+        "jitterBufferDelay",
+        "jitterBufferEmittedCount",
+        "framesReceived",
+        "keyFramesReceived",
+        "framesDecoded",
+        "framesDropped",
+        "partialFramesLost",
+        "fullFramesLost"
     };
     return merge(RTCVideoHandlerStats(), keys);
   }
-  
+
   private static String[] RTCVideoSenderStats() {
     final String[] keys = {
-      "framesCaptured",
-      "framesSent",
-      "hugeFramesSent",
-      "keyFramesSent",
+        "framesCaptured",
+        "framesSent",
+        "hugeFramesSent",
+        "keyFramesSent",
     };
     return merge(RTCVideoHandlerStats(), keys);
   }
-  
+
   /**
    * Gets standard get stats.
    *
    * @param dataChannleEnabled the data channle enabled
-   * @param audioVideo         the audio video
-   *
+   * @param audioVideo the audio video
    * @return the standard get stats
    */
   public static JsonObjectBuilder getStandardGetStats(boolean dataChannleEnabled, int audioVideo) {
@@ -425,10 +423,10 @@ public class StandardRTCStats {
         tmpJsonObjectBuilder.add(enumType, Arrays.toString(retval));
       }
     }
-    
+
     return tmpJsonObjectBuilder;
   }
-  
+
   // RTCStatsType enum
   // audio = 01
   // video = 10
@@ -437,48 +435,48 @@ public class StandardRTCStats {
     String[] rtcStatsType = null;
     if (dataChannelEnabled) {
       rtcStatsType = new String[]{
-        "codec",
-        "inbound-rtp",
-        "outbound-rtp",
-        "remote-inbound-rtp",
-        "remote-outbound-rtp",
-        "csrc",
-        "peer-connection",
-        /*"data-channel",*/
-        "stream",
-        "track",
-        "sender",
-        "receiver",
-        "transport",
-        "candidate-pair",
-        "local-candidate",
-        "remote-candidate",
-        "certificate"
+          "codec",
+          "inbound-rtp",
+          "outbound-rtp",
+          "remote-inbound-rtp",
+          "remote-outbound-rtp",
+          "csrc",
+          "peer-connection",
+          /*"data-channel",*/
+          "stream",
+          "track",
+          "sender",
+          "receiver",
+          "transport",
+          "candidate-pair",
+          "local-candidate",
+          "remote-candidate",
+          "certificate"
       };
     } else {
       rtcStatsType = new String[]{
-        "codec",
-        "inbound-rtp",
-        "outbound-rtp",
-        "remote-inbound-rtp",
-        "remote-outbound-rtp",
-        "csrc",
-        "peer-connection",
-        /*"data-channel",*/
-        "stream",
-        "track",
-        "sender",
-        "receiver",
-        "transport",
-        "candidate-pair",
-        "local-candidate",
-        "remote-candidate",
-        "certificate"
+          "codec",
+          "inbound-rtp",
+          "outbound-rtp",
+          "remote-inbound-rtp",
+          "remote-outbound-rtp",
+          "csrc",
+          "peer-connection",
+          /*"data-channel",*/
+          "stream",
+          "track",
+          "sender",
+          "receiver",
+          "transport",
+          "candidate-pair",
+          "local-candidate",
+          "remote-candidate",
+          "certificate"
       };
     }
     return rtcStatsType;
   }
-  
+
   private static String[] merge(final String[] a, final String[] b) {
     List<String> lst = new ArrayList<>();
     for (String ele : a) {
@@ -493,15 +491,15 @@ public class StandardRTCStats {
     }
     return lst.toArray(new String[lst.size()]);
   }
-  
+
   // receiver
   // audio = 01
   // video = 10
   // audio + video = 11
   private static String[] receiver(int receiverScore) {
     final String[] keys = {
-      "streamIdentifier",
-      "trackIds",
+        "streamIdentifier",
+        "trackIds",
     };
     String[] retval = new String[0];
     if ((receiverScore & (1 << 0)) > 0) {
@@ -513,15 +511,15 @@ public class StandardRTCStats {
     retval = merge(retval, keys);
     return retval;
   }
-  
+
   // sender
   // audio = 01
   // video = 10
   // audio + video = 11
   private static String[] sender(int senderScore) {
     final String[] keys = {
-      "streamIdentifier",
-      "trackIds",
+        "streamIdentifier",
+        "trackIds",
     };
     String[] retval = new String[0];
     if ((senderScore & (1 << 0)) > 0) {
@@ -533,7 +531,7 @@ public class StandardRTCStats {
     retval = merge(retval, keys);
     return retval;
   }
-  
+
   /**
    * Returns JavaScript to collect browser stats using getStats() API
    *
@@ -541,56 +539,56 @@ public class StandardRTCStats {
    */
   private static final String stashStatsScript() {
     return "function getAllStats() {\n"
-      + "    return new Promise( (resolve, reject) => {\n"
-      + "        try{\n"
-      + "            appController.call_.pcClient_.pc_.getStats().then((report) => {\n"
-      + "                let statTypes = new Set();\n"
-      + "                // type -> stat1, stat2, stat3\n"
-      + "                let statTree = new Map();\n"
-      + "                for (let stat of report.values()) {\n"
-      + "                    const curType = stat.type;\n"
-      + "                    const prvStat = statTree.get(curType);\n"
-      + "                    if(prvStat) {\n"
-      + "                        const _tmp = [...prvStat, stat];\n"
-      + "                        statTree.set(curType, _tmp)\n"
-      + "                    }else{\n"
-      + "                        const _tmp = [stat];\n"
-      + "                        statTree.set(curType, _tmp)\n"
-      + "                    }\n"
-      + "                }\n"
-      + "                let retval = {};\n"
-      + "                for (const [key, statsArr] of statTree) {\n"
-      + "                    let keysArr = [];\n"
-      + "                    for(const curStat of statsArr){\n"
-      + "                        const keys = Object.keys(curStat);\n"
-      + "                        keysArr = [ ...keysArr, ...keys ];\n"
-      + "                    }\n"
-      + "                    retval[key] = keysArr;\n"
-      + "                }\n"
-      + "                resolve(retval);\n"
-      + "        });\n"
-      + "        } catch(err) {\n"
-      + "            reject(err);\n"
-      + "        }\n"
-      + "    });\n"
-      + "}\n"
-      + "function stashStats() {\n"
-      + "    getAllStats().then( (data)=> {\n"
-      + "        window.KITEStatsDiff = data;\n"
-      + "    }, err => {\n"
-      + "        console.log('error',err);\n"
-      + "    });\n"
-      + "}\n"
-      + "stashStats()\n";
+        + "    return new Promise( (resolve, reject) => {\n"
+        + "        try{\n"
+        + "            appController.call_.pcClient_.pc_.getStats().then((report) => {\n"
+        + "                let statTypes = new Set();\n"
+        + "                // type -> stat1, stat2, stat3\n"
+        + "                let statTree = new Map();\n"
+        + "                for (let stat of report.values()) {\n"
+        + "                    const curType = stat.type;\n"
+        + "                    const prvStat = statTree.get(curType);\n"
+        + "                    if(prvStat) {\n"
+        + "                        const _tmp = [...prvStat, stat];\n"
+        + "                        statTree.set(curType, _tmp)\n"
+        + "                    }else{\n"
+        + "                        const _tmp = [stat];\n"
+        + "                        statTree.set(curType, _tmp)\n"
+        + "                    }\n"
+        + "                }\n"
+        + "                let retval = {};\n"
+        + "                for (const [key, statsArr] of statTree) {\n"
+        + "                    let keysArr = [];\n"
+        + "                    for(const curStat of statsArr){\n"
+        + "                        const keys = Object.keys(curStat);\n"
+        + "                        keysArr = [ ...keysArr, ...keys ];\n"
+        + "                    }\n"
+        + "                    retval[key] = keysArr;\n"
+        + "                }\n"
+        + "                resolve(retval);\n"
+        + "        });\n"
+        + "        } catch(err) {\n"
+        + "            reject(err);\n"
+        + "        }\n"
+        + "    });\n"
+        + "}\n"
+        + "function stashStats() {\n"
+        + "    getAllStats().then( (data)=> {\n"
+        + "        window.KITEStatsDiff = data;\n"
+        + "    }, err => {\n"
+        + "        console.log('error',err);\n"
+        + "    });\n"
+        + "}\n"
+        + "stashStats()\n";
   }
-  
+
   // audio = 01
   // video = 10
   // audio + video = 11
   private static String[] track(int trackScore) {
     final String[] keys = {
-      "streamIdentifier",
-      "trackIds",
+        "streamIdentifier",
+        "trackIds",
     };
     String[] retval = new String[0];
     if ((trackScore & (1 << 0)) > 0) {
@@ -602,5 +600,5 @@ public class StandardRTCStats {
     retval = merge(retval, keys);
     return retval;
   }
-  
+
 }

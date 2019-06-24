@@ -10,7 +10,7 @@ import javax.json.JsonObject;
  * The type Rc account.
  */
 public class Account extends Entity {
-  
+
   /**
    * The Account type.
    */
@@ -36,14 +36,14 @@ public class Account extends Entity {
    * The Username.
    */
   protected String username;
-  
+
   /**
    * Instantiates a new Rc account.
    */
   public Account() {
-  
+
   }
-  
+
   /**
    * Instantiates a new Rc account.
    *
@@ -56,14 +56,14 @@ public class Account extends Entity {
     this.password = jsonObject.getString("password");
     this.email = jsonObject.getString("email");
   }
-  
+
   /**
    * Constructor for a Ring Central user, account accountType is free user by default
    *
-   * @param username   account's username, displayed to other users
+   * @param username account's username, displayed to other users
    * @param credential account's credential, can be an email or a phone number
-   * @param password   account's password
-   * @param email      account's email
+   * @param password account's password
+   * @param email account's email
    */
   public Account(String username, String credential, String password, String email) {
     this.username = username;
@@ -73,14 +73,14 @@ public class Account extends Entity {
     this.accountType = AccountType.FREE_ACCOUNT;
     this.role = AccountRole.CALLEE;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     Account otherAcc = (Account) obj;
     return (this.username.equals(otherAcc.getUserName()) &&
-      this.email.equals(otherAcc.getEmail()));
+        this.email.equals(otherAcc.getEmail()));
   }
-  
+
   /**
    * Returns type of the account.
    *
@@ -89,7 +89,7 @@ public class Account extends Entity {
   public AccountType getAccountType() {
     return accountType;
   }
-  
+
   /**
    * Sets account's type
    *
@@ -98,7 +98,7 @@ public class Account extends Entity {
   public void setAccountType(AccountType accountType) {
     this.accountType = accountType;
   }
-  
+
   /**
    * Returns account credential.
    *
@@ -107,7 +107,7 @@ public class Account extends Entity {
   public String getCredential() {
     return credential;
   }
-  
+
   /**
    * Returns account email.
    *
@@ -116,7 +116,7 @@ public class Account extends Entity {
   public String getEmail() {
     return email;
   }
-  
+
   /**
    * Sets account's email
    *
@@ -125,11 +125,11 @@ public class Account extends Entity {
   public void setEmail(String email) {
     this.email = email;
   }
-  
+
   public JsonObject getJsonObject() {
     return jsonObject;
   }
-  
+
   /**
    * Returns account password.
    *
@@ -138,7 +138,7 @@ public class Account extends Entity {
   public String getPassword() {
     return password;
   }
-  
+
   /**
    * Returns role of the tester.
    *
@@ -147,7 +147,7 @@ public class Account extends Entity {
   public AccountRole getRole() {
     return role;
   }
-  
+
   /**
    * Sets account's role
    *
@@ -156,7 +156,7 @@ public class Account extends Entity {
   public void setRole(AccountRole role) {
     this.role = role;
   }
-  
+
   /**
    * Returns username.
    *
@@ -165,11 +165,11 @@ public class Account extends Entity {
   public String getUserName() {
     return username;
   }
-  
+
   public boolean isCaller() {
     return this.role.equals(AccountRole.CALLER);
   }
-  
+
   /**
    * Sets account's username
    *
@@ -178,10 +178,10 @@ public class Account extends Entity {
   public void setUsername(String username) {
     this.username = username;
   }
-  
+
   @Override
   public String toString() {
     return "[" + this.username
-      + "; " + this.email + "]";
+        + "; " + this.email + "]";
   }
 }

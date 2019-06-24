@@ -4,25 +4,25 @@
 
 package io.cosmosoftware.kite.usrmgmt;
 
-import javax.json.JsonObject;
 import java.util.Objects;
+import javax.json.JsonObject;
 
 /**
  * The type Rc type role.
  */
 public class TypeRole extends Entity {
-  
+
   private AccountRole role = AccountRole.CALLEE;
   private AccountType type;
-  
+
   /**
    * Instantiates a new Rc type role.
    */
   public TypeRole() {
-  
+
   }
-  
-  
+
+
   /**
    * Instantiates a new Rc type role.
    *
@@ -32,7 +32,7 @@ public class TypeRole extends Entity {
     this.type = AccountType.valueOf(jsonObject.getString("type"));
     this.role = AccountRole.valueOf(jsonObject.getString("role"));
   }
-  
+
   /**
    * Instantiates a new Rc type role.
    *
@@ -42,7 +42,7 @@ public class TypeRole extends Entity {
     this.type = typeRole.type;
     this.role = typeRole.role;
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -54,7 +54,7 @@ public class TypeRole extends Entity {
     TypeRole that = (TypeRole) o;
     return type == that.type;
   }
-  
+
   /**
    * Gets role.
    *
@@ -63,7 +63,7 @@ public class TypeRole extends Entity {
   public AccountRole getRole() {
     return role;
   }
-  
+
   /**
    * Sets role.
    *
@@ -72,7 +72,7 @@ public class TypeRole extends Entity {
   public void setRole(AccountRole role) {
     this.role = role;
   }
-  
+
   /**
    * Gets short name.
    *
@@ -96,7 +96,7 @@ public class TypeRole extends Entity {
     }
     return getRole() + "_" + str;
   }
-  
+
   /**
    * Gets type.
    *
@@ -105,7 +105,7 @@ public class TypeRole extends Entity {
   public AccountType getType() {
     return type;
   }
-  
+
   /**
    * Sets type.
    *
@@ -114,10 +114,10 @@ public class TypeRole extends Entity {
   public void setType(AccountType type) {
     this.type = type;
   }
-  
+
   @Override
   public int hashCode() {
     return Objects.hash(type);
   }
-  
+
 }

@@ -9,33 +9,33 @@ import io.cosmosoftware.kite.manager.SSHManager;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-
-import javax.json.JsonArray;
-import javax.json.JsonObject;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Scenario {
 
   private static final int DEFAULT_SCENARIO_DURATION = 10000;
-  
+
   private final String type;
   private final String name;
   private final String command;
   private final String gateway;
   private final String nit;
   private final Integer duration;
-  private ArrayList<Integer> clientIds = new ArrayList<>();
   private final NetworkInstrumentation networkInstrumentation;
   private final KiteLogger logger;
+  private ArrayList<Integer> clientIds = new ArrayList<>();
 
-  public Scenario(JsonObject jsonObject, KiteLogger logger, NetworkInstrumentation networkInstrumentation) throws Exception {
+  public Scenario(JsonObject jsonObject, KiteLogger logger,
+      NetworkInstrumentation networkInstrumentation) throws Exception {
     this.logger = logger;
-    String missingKey="";
+    String missingKey = "";
     this.networkInstrumentation = networkInstrumentation;
     try {
       missingKey = "type";
@@ -56,7 +56,8 @@ public class Scenario {
       }
       missingKey = "network";
       String network = jsonObject.getString("network");
-      this.command =  this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
+      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand()
+          .trim();
       this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
@@ -86,7 +87,9 @@ public class Scenario {
     return type;
   }
 
-  public Integer getDuration() { return duration; }
+  public Integer getDuration() {
+    return duration;
+  }
 
   public String sendCommand(WebDriver webDriver) {
     StringBuilder result = new StringBuilder();
@@ -98,9 +101,11 @@ public class Scenario {
     }
     if (this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
+      String nodeIp = TestUtils
+          .getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
-      if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
+      if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString()
+          .equalsIgnoreCase("LINUX")) {
         result.append(this.runCommandClient(this.command, this.networkInstrumentation, nodeIp));
       } else {
         result.append("Node ").append(nodeIp).append(" is not Linux");
@@ -111,18 +116,22 @@ public class Scenario {
 
   public String cleanUp(WebDriver webDriver) {
     StringBuilder result = new StringBuilder();
-    String cleanUpCommand = "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root ||true ";
-    result.append("Doing CleanUp for ").append(this.command).append( " on ");
-    if ( this.type.equals("gateway")) {
+    String cleanUpCommand =
+        "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " + this.nit
+            + " ingress || true && sudo tc qdisc del dev ifb0 root ||true ";
+    result.append("Doing CleanUp for ").append(this.command).append(" on ");
+    if (this.type.equals("gateway")) {
       result.append(this.gateway);
       logger.info(result.toString());
       result.append(this.runCommandGateway(cleanUpCommand, this.networkInstrumentation));
     }
-    if ( this.type.equals("client")) {
+    if (this.type.equals("client")) {
       String sessionId = ((RemoteWebDriver) webDriver).getSessionId().toString();
-      String nodeIp = TestUtils.getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
+      String nodeIp = TestUtils
+          .getPrivateIp(this.networkInstrumentation.getRemoteAddress(), sessionId);
       result.append("client ").append(nodeIp);
-      if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString().equalsIgnoreCase("LINUX")) {
+      if (((RemoteWebDriver) webDriver).getCapabilities().getPlatform().toString()
+          .equalsIgnoreCase("LINUX")) {
         result.append(this.runCommandClient(cleanUpCommand, this.networkInstrumentation, nodeIp));
       } else {
         result.append(" FAILED, check instrumentUrl !");
@@ -176,7 +185,8 @@ public class Scenario {
     return result.toString();
   }
 
-  private String runCommandClient(String command, NetworkInstrumentation networkInstrumentation, String nodeIp) {
+  private String runCommandClient(String command, NetworkInstrumentation networkInstrumentation,
+      String nodeIp) {
     StringBuilder result = new StringBuilder();
     String GridId = networkInstrumentation.getKiteServerGridId();
     String kiteServer = networkInstrumentation.getKiteServer();
@@ -187,6 +197,7 @@ public class Scenario {
   }
 
   public boolean shouldExecute(int clientId) {
-    return (this.getType().equals("gateway") && clientId == 0) || (this.getType().equals("client") && this.getClientIds().contains(clientId));
+    return (this.getType().equals("gateway") && clientId == 0) || (this.getType().equals("client")
+        && this.getClientIds().contains(clientId));
   }
 }

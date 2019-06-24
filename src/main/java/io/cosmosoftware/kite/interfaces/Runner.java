@@ -11,7 +11,9 @@ import org.openqa.selenium.WebDriver;
 public interface Runner {
 
   WebDriver getWebDriver();
+
   KiteLogger getLogger();
+
   StepPhase getStepPhase();
-  
+
 }
