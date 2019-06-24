@@ -3,7 +3,6 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <artifactId>kite-extras</artifactId>
-
   <build>
     <plugins>
       <plugin>
@@ -192,6 +191,6 @@
 
   </properties>
 
-  <version>0.1.26</version>
+  <version>0.1.27</version>
 
 </project>
