@@ -6,18 +6,17 @@ package io.cosmosoftware.kite.stats;
 
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
-
-import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
+import javax.json.JsonObject;
 
 /**
  * The type Single pc stats array.
  */
 public class SinglePCStatsArray extends BasePCStatsArray {
-  
+
   private static final KiteLogger logger = KiteLogger.getLogger(SinglePCStatsArray.class.getName());
-  
+
   public Map<String, String> getAVAvgBitrate(String mediaType) {
     Map<String, String> videosAvgBitrateMap = new HashMap<>();
     if (this.size() <= 1) {
@@ -44,7 +43,7 @@ public class SinglePCStatsArray extends BasePCStatsArray {
     }
     return videosAvgBitrateMap;
   }
-  
+
   public Map<String, String> getAVPacketLoss(String mediaType) {
     JsonObject lastStatObject = this.getLastObject();
     Map<String, String> packetLossMap = new HashMap<>();
@@ -54,17 +53,17 @@ public class SinglePCStatsArray extends BasePCStatsArray {
         JsonObject jsonObject = localStats.getJsonObject(itemKey);
         boolean sent = isSendAV(jsonObject, mediaType);
         if (localStats.containsKey(itemKey)
-          && (isRecvAV(jsonObject, mediaType)
-          || sent)) {
+            && (isRecvAV(jsonObject, mediaType)
+            || sent)) {
           double loss = -1.0;
           try {
             double packetsLost = (double) Long.parseLong(jsonObject.getString("packetsLost"));
             double packetsCount = (double) Long.parseLong(jsonObject.getString(
-              sent ? "packetsSent" : "packetsReceived"));
+                sent ? "packetsSent" : "packetsReceived"));
             loss = (100 * packetsLost) / (packetsCount + packetsLost);
           } catch (NullPointerException e) {
             logger.warn("getAVPacketLoss(" + mediaType + ") " + (sent ? "sent" : "recv")
-              + " packetsLost not present in " + itemKey);
+                + " packetsLost not present in " + itemKey);
           }
           packetLossMap.put(itemKey, df.format(loss));
         }
@@ -72,10 +71,9 @@ public class SinglePCStatsArray extends BasePCStatsArray {
     }
     return packetLossMap;
   }
-  
+
   /**
-   * Get the list of googJitterReceived values as Map
-   * Map<String, String>
+   * Get the list of googJitterReceived values as Map Map<String, String>
    *
    * @return a Map object with the googJitterReceived
    */
@@ -97,7 +95,7 @@ public class SinglePCStatsArray extends BasePCStatsArray {
             }
           } catch (NullPointerException e) {
             logger.error("Error in getAudiosJitter(): "
-              + " googJitterReceived not present in " + itemKey);
+                + " googJitterReceived not present in " + itemKey);
           }
           if (!jitterMap.containsKey(itemKey) || "-1".equals(jitterMap.get(itemKey))) {
             jitterMap.put(itemKey, jitter);
@@ -107,24 +105,23 @@ public class SinglePCStatsArray extends BasePCStatsArray {
     }
     return jitterMap;
   }
-  
+
   private JsonObject getFirstAppearanceOf(String itemKey, String mediaType) {
     for (int i = 0; i < this.size(); i++) {
       if (this.get(i).containsKey("localStats")) {
         JsonObject localStats = this.get(i).getJsonObject("localStats");
         if (localStats != null && localStats.containsKey(itemKey)
-          && (isRecvAV(localStats.getJsonObject(itemKey), mediaType)
-          || isSendAV(localStats.getJsonObject(itemKey), mediaType))) {
+            && (isRecvAV(localStats.getJsonObject(itemKey), mediaType)
+            || isSendAV(localStats.getJsonObject(itemKey), mediaType))) {
           return localStats.getJsonObject(itemKey);
         }
       }
     }
     return null;
   }
-  
+
   /**
-   * Get the list of googFrameRateReceived/googFrameRateSent values as Map
-   * Map<String, String>
+   * Get the list of googFrameRateReceived/googFrameRateSent values as Map Map<String, String>
    *
    * @return a Map object with the googFrameRateReceived
    */
@@ -146,7 +143,7 @@ public class SinglePCStatsArray extends BasePCStatsArray {
             }
           } catch (NullPointerException e) {
             logger.error("Error in getFrameRate(): "
-              + " googFrameRateReceived/googFrameRateSent not present in " + itemKey);
+                + " googFrameRateReceived/googFrameRateSent not present in " + itemKey);
           }
           if (!resultMap.containsKey(itemKey) || "-1".equals(resultMap.get(itemKey))) {
             resultMap.put(itemKey, frameRate);
@@ -156,10 +153,9 @@ public class SinglePCStatsArray extends BasePCStatsArray {
     }
     return resultMap;
   }
-  
+
   /**
-   * Get the sender's googRtt from the PC's
-   * ssrc_4030852498_send object with mediaType = "video"
+   * Get the sender's googRtt from the PC's ssrc_4030852498_send object with mediaType = "video"
    *
    * @return the sender's video googRtt value (as a String)
    */
@@ -175,7 +171,7 @@ public class SinglePCStatsArray extends BasePCStatsArray {
     }
     return "";
   }
-  
+
   public Map<String, String> getTotalAVBytes(String mediaType) {
     JsonObject lastStatObject = this.getLastObject();
     Map<String, String> totalVideosBytesMap = new HashMap<>();
@@ -184,11 +180,11 @@ public class SinglePCStatsArray extends BasePCStatsArray {
       for (String itemKey : localStats.keySet()) {
         if (isRecvAV(localStats.getJsonObject(itemKey), mediaType)) {
           totalVideosBytesMap.put(
-            itemKey, localStats.getJsonObject(itemKey).getString("bytesReceived"));
+              itemKey, localStats.getJsonObject(itemKey).getString("bytesReceived"));
         }
         if (isSendAV(localStats.getJsonObject(itemKey), mediaType)) {
           totalVideosBytesMap.put(
-            itemKey, localStats.getJsonObject(itemKey).getString("bytesSent"));
+              itemKey, localStats.getJsonObject(itemKey).getString("bytesSent"));
         }
       }
     }

@@ -3,39 +3,39 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-  <appender name="debugFileAppender" class="org.apache.log4j.FileAppender">
-    <param name="File" value="logs/kite_debug_${current.date}.log" />
-    <param name="Threshold" value="DEBUG" />
-    <param name="ImmediateFlush" value="true" />
-    <param name="Append" value="false" />
+  <appender class="org.apache.log4j.FileAppender" name="debugFileAppender">
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d [%t] %c %x %-5p - %m%n" />
+      <param name="ConversionPattern" value="%d [%t] %c %x %-5p - %m%n"/>
     </layout>
+    <param name="Threshold" value="DEBUG"/>
+    <param name="ImmediateFlush" value="true"/>
+    <param name="Append" value="false"/>
+    <param name="File" value="logs/kite_debug_${current.date}.log"/>
   </appender>
 
 
-  <appender name="infoFileAppender" class="org.apache.log4j.FileAppender">
-    <param name="File" value="logs/kite_info_${current.date}.log" />
-    <param name="Threshold" value="INFO" />
-    <param name="ImmediateFlush" value="true" />
-    <param name="Append" value="false" />
+  <appender class="org.apache.log4j.FileAppender" name="infoFileAppender">
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d %-5p - %m%n" />
+      <param name="ConversionPattern" value="%d %-5p - %m%n"/>
     </layout>
+    <param name="Threshold" value="INFO"/>
+    <param name="ImmediateFlush" value="true"/>
+    <param name="Append" value="false"/>
+    <param name="File" value="logs/kite_info_${current.date}.log"/>
   </appender>
 
-  <appender name="console" class="org.apache.log4j.ConsoleAppender">
-    <param name="Threshold" value="INFO" />
+  <appender class="org.apache.log4j.ConsoleAppender" name="console">
     <layout class="org.apache.log4j.PatternLayout">
-      <param name="ConversionPattern" value="%d %-5p - %m%n" />
+      <param name="ConversionPattern" value="%d %-5p - %m%n"/>
     </layout>
+    <param name="Threshold" value="INFO"/>
   </appender>
 
 
   <root>
-    <appender-ref ref="debugFileAppender" />
-    <appender-ref ref="infoFileAppender" />
-    <appender-ref ref="console" />
+    <appender-ref ref="debugFileAppender"/>
+    <appender-ref ref="infoFileAppender"/>
+    <appender-ref ref="console"/>
   </root>
 
 </log4j:configuration>

@@ -10,10 +10,10 @@ import org.json.JSONObject;
  * The type Rc entity.
  */
 public class Entity implements Cloneable {
-  
+
   @Override
   public String toString() {
     return new JSONObject(this).toString();
   }
-  
+
 }

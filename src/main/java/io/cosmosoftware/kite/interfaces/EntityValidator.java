@@ -11,12 +11,11 @@ import io.cosmosoftware.kite.exception.BadEntityException;
  */
 public interface EntityValidator {
 
-	/**
-	 * Validate.
-	 *
-	 * @throws BadEntityException
-	 *             the bad entity exception
-	 */
-	public void validate() throws BadEntityException;
+  /**
+   * Validate.
+   *
+   * @throws BadEntityException the bad entity exception
+   */
+  public void validate() throws BadEntityException;
 
 }
