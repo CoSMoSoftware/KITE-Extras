@@ -28,7 +28,6 @@ public class AllureTestReport extends AllureStepReport {
     this.labels = new ParamList();
     this.links = new ArrayList<>();
     this.historyId = UUID.randomUUID().toString();
-    Reporter.getInstance().addTest(this);
   }
 
   public void setFullName(String fullName) {

@@ -583,10 +583,10 @@ public class TestUtils {
    * @param sessionId the session id
    * @return the private ip
    */
-  public static String getPrivateIp(String hupIpOrDns, String sessionId) {
+  public static String getPrivateIp(String hupIpOrDns, String sessionId, String... port) {
 
     String privateIp = null;
-
+    String usedPort = port.length > 0 ? port[0] : "4444";
     CloseableHttpClient client = null;
     CloseableHttpResponse response = null;
     InputStream stream = null;
@@ -595,7 +595,7 @@ public class TestUtils {
     try {
       client = HttpClients.createDefault();
       HttpGet httpGet =
-          new HttpGet("http://" + hupIpOrDns + ":4444/grid/api/testsession?session=" + sessionId);
+          new HttpGet("http://" + hupIpOrDns + ":"+ usedPort +"/grid/api/testsession?session=" + sessionId);
       response = client.execute(httpGet);
       stream = response.getEntity().getContent();
       reader = Json.createReader(stream);
