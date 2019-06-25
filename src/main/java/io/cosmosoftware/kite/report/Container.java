@@ -11,28 +11,22 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
-public class Container extends ReportEntity {
+public class Container extends Entity {
 
   private List<String> childrenId = Collections.synchronizedList(new ArrayList<>());
   private List<AllureStepReport> befores = Collections.synchronizedList(new ArrayList<>());
   private List<AllureStepReport> afters = Collections.synchronizedList(new ArrayList<>());
-  private String parentSuite;
 
   public Container(String name) {
     super(name);
     this.setStartTimestamp();
-  }
-
-  public void setParentSuite(String parentSuite) {
-    this.parentSuite = parentSuite;
-  }
-
-  public String getParentSuite() {
-    return parentSuite;
+    Reporter.getInstance().addContainer(this);
+//    Reporter.getInstance().updateContainers();
   }
 
   public void addChild(String childId) {
     this.childrenId.add(childId);
+//    Reporter.getInstance().updateContainers();
   }
 
   public void addBeforeStep(AllureStepReport step) {

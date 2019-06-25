@@ -58,7 +58,7 @@ public class WaitForOthersStep extends TestStep {
             Status.FAILED);
       }
     }
-    reporter.textAttachment(report, "All runners completed",
+    Reporter.getInstance().textAttachment(report, "All runners completed",
         "" + stepToWaitFor.getName() + " within " + i + "s.", "plain");
   }
 

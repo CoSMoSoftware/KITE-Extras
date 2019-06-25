@@ -10,12 +10,11 @@ public class ConsoleLogStep extends TestStep {
   public ConsoleLogStep(Runner runner) {
     super(runner);
     setStepPhase(StepPhase.ALL);
-    setOptional(true);
   }
 
   @Override
   protected void step() throws KiteTestException {
-    reporter.textAttachment(report, "Console Logs",
+    Reporter.getInstance().textAttachment(report, "Console Logs",
         ReportUtils.consoleLogs(webDriver), "plain");
   }
 

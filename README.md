@@ -93,7 +93,7 @@ public class GoogleFirstResultCheck extends TestCheck {
       throw new KiteTestException("The title of the first Google result was not correct: \n" +
         "Expected: " + EXPECTED_RESULT + " but found " + found, Status.FAILED);
     }
-    reporter.screenshotAttachment(report, saveScreenshotPNG(webDriver));
+    Reporter.getInstance().screenshotAttachment(report, saveScreenshotPNG(webDriver));
   }
 }
 ```

@@ -12,12 +12,11 @@ public class ScreenshotStep extends TestStep {
   public ScreenshotStep(Runner runner) {
     super(runner);
     setStepPhase(StepPhase.ALL);
-    setOptional(true);
   }
 
   @Override
   protected void step() throws KiteTestException {
-    reporter
+    Reporter.getInstance()
         .screenshotAttachment(
             report, "ScreenshotStep_" + timestamp(), saveScreenshotPNG(webDriver));
   }
