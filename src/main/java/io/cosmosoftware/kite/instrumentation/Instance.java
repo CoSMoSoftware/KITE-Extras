@@ -6,23 +6,13 @@ package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.Status;
-
 import javax.json.JsonObject;
 
 /**
- * The type Instance: represents a selenium node or a gateway for network instrumentation.
- *     {
- *       "_id": "gw1",
- * 	  "type": "gateway",
- *       "name": "Alice Gateway",
- *       "ipAddress": "11.222.33.238",
- *       "username": "gw-user",
- *       "password": "optional",
- *       "keyFilePath": "file://path/to/privatekey.pem",
- * 	  "nit0": "eth0",
- * 	  "nit1": "eth1",
- * 	  "nit2": "eth2",
- *     },
+ * The type Instance: represents a selenium node or a gateway for network instrumentation. { "_id":
+ * "gw1", "type": "gateway", "name": "Alice Gateway", "ipAddress": "11.222.33.238", "username":
+ * "gw-user", "password": "optional", "keyFilePath": "file://path/to/privatekey.pem", "nit0":
+ * "eth0", "nit1": "eth1", "nit2": "eth2", },
  */
 public class Instance {
 
@@ -72,7 +62,9 @@ public class Instance {
       missingKey = "nit2";
       this.nit2 = jsonObject.getString("nit2");
     } catch (NullPointerException e) {
-      throw new KiteTestException("Error in json config instrumentation, the key " + missingKey + " is missing.", Status.BROKEN, e);
+      throw new KiteTestException(
+          "Error in json config instrumentation, the key " + missingKey + " is missing.",
+          Status.BROKEN, e);
     }
     this.name = jsonObject.getString("name", this.id);
     this.password = jsonObject.getString("password", null);

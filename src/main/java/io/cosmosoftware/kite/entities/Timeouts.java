@@ -8,7 +8,7 @@ package io.cosmosoftware.kite.entities;
  * This class contains the common values used in various tests and classes.
  */
 public class Timeouts {
-  
+
   /**
    * The constant HALF_SECOND_INTERVAL.
    */
@@ -45,7 +45,7 @@ public class Timeouts {
    * The constant EXTENDED_TIMEOUT.
    */
   public static final int EXTENDED_TIMEOUT = DEFAULT_TIMEOUT * 5;
-  
+
   /**
    * The constant TEN_SECOND_INTERVAL_IN_SECONDS.
    */
@@ -62,5 +62,5 @@ public class Timeouts {
    * The constant EXTENDED_TIMEOUT_IN_SECONDS.
    */
   public static final int EXTENDED_TIMEOUT_IN_SECONDS = DEFAULT_TIMEOUT_IN_SECONDS * 5;
-  
+
 }

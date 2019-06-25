@@ -15,8 +15,8 @@ public class ConsoleLogStep extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
-    Reporter.getInstance().textAttachment(report, "Console Logs", 
-      ReportUtils.consoleLogs(webDriver), "plain");
+    reporter.textAttachment(report, "Console Logs",
+        ReportUtils.consoleLogs(webDriver), "plain");
   }
 
   @Override
@@ -24,5 +24,5 @@ public class ConsoleLogStep extends TestStep {
     return "Get the browser console logs.";
   }
 
-  
+
 }

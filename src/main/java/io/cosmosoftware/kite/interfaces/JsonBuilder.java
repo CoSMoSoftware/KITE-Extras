@@ -10,10 +10,11 @@ import javax.json.JsonObjectBuilder;
  * The Interface JsonBuilder.
  */
 public interface JsonBuilder {
-	/**
-	 * Builds the json object builder.
-	 *
-	 * @return the json object builder
-	 */
-	public JsonObjectBuilder buildJsonObjectBuilder();
+
+  /**
+   * Builds the json object builder.
+   *
+   * @return the json object builder
+   */
+  public JsonObjectBuilder buildJsonObjectBuilder();
 }
