@@ -26,7 +26,7 @@ public abstract class TestStep {
 
   protected final WebDriver webDriver;
   protected final KiteLogger logger;
-  protected Reporter reporter;
+  protected final Reporter reporter;
   protected AllureStepReport report;
   private String name = getClassName();
   private boolean stepCompleted = false;
@@ -46,6 +46,7 @@ public abstract class TestStep {
   public TestStep(Runner runner) {
     this.webDriver = runner.getWebDriver();
     this.stepPhase = runner.getStepPhase();
+    this.reporter = runner.getReporter();
     this.logger = KiteLogger.getLogger(runner.getLogger(), getClientID() + ": ");
   }
 
@@ -251,8 +252,5 @@ public abstract class TestStep {
   public void setOptional(boolean optional) {
     this.optional = optional;
   }
-
-  public void setReporter(Reporter reporter) {
-    this.reporter = reporter;
-  }
+  
 }
