@@ -1,6 +1,7 @@
 package io.cosmosoftware.kite.interfaces;
 
 import io.cosmosoftware.kite.report.KiteLogger;
+import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.steps.StepPhase;
 import org.openqa.selenium.WebDriver;
 
@@ -15,5 +16,7 @@ public interface Runner {
   KiteLogger getLogger();
 
   StepPhase getStepPhase();
+
+  Reporter getReporter();
 
 }
