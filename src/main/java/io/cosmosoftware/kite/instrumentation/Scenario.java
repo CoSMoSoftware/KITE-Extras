@@ -4,21 +4,26 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
+import io.cosmosoftware.kite.config.KiteEntity;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.manager.SSHManager;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
-import java.io.InputStream;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-public class Scenario {
+public class Scenario extends KiteEntity {
 
   private static final int DEFAULT_SCENARIO_DURATION = 10000;
 
@@ -30,6 +35,7 @@ public class Scenario {
   private final Integer duration;
   private final NetworkInstrumentation networkInstrumentation;
   private final KiteLogger logger;
+  private final String network;
   private ArrayList<Integer> clientIds = new ArrayList<>();
 
   public Scenario(JsonObject jsonObject, KiteLogger logger,
@@ -55,7 +61,7 @@ public class Scenario {
         throw new KiteTestException("The type specified doesn't exist", Status.FAILED);
       }
       missingKey = "network";
-      String network = jsonObject.getString("network");
+      this.network = jsonObject.getString("network");
       this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand()
           .trim();
       this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
@@ -86,6 +92,8 @@ public class Scenario {
   public String getType() {
     return type;
   }
+
+  public String getNetwork() { return network; }
 
   public Integer getDuration() {
     return duration;
@@ -157,13 +165,26 @@ public class Scenario {
     return result;
   }
 
-  private String KiteServerCommand(String url) {
-    System.out.println("URL called on KiteServer : " + url);
+  private String KiteServerCommand(String encodeUrl) {
     String result;
     try {
-      URLConnection connection = new URL(url).openConnection();
-      connection.setRequestProperty("Accept-Charset", "UTF-8");
-      InputStream response = connection.getInputStream();
+      System.out.println("URL after encoding : " + encodeUrl);
+      URL url = new URL(encodeUrl);
+      System.out.println("URL called on KiteServer : " + url);
+      HttpURLConnection con = (HttpURLConnection) url.openConnection();
+      con.setRequestMethod("GET");
+      con.setRequestProperty("User-Agent", "Mozilla/5.0");
+      int responseCode = con.getResponseCode();
+      System.out.println("Response Code : " + responseCode);
+      BufferedReader in = new BufferedReader(
+          new InputStreamReader(con.getInputStream()));
+      String inputLine;
+      StringBuffer response = new StringBuffer();
+
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      in.close();
       result = "SUCCEEDED and got response : " + response.toString();
     } catch (Exception e) {
       result = "thrown ERROR : " + e.getLocalizedMessage();
@@ -179,7 +200,12 @@ public class Scenario {
       Instance instance = networkInstrumentation.getInstances().get(this.gateway);
       result.append(" via ssh ").append(this.sshCommand(instance, command));
     } else {
-      String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway + "&cmd=" + command;
+      try {
+        command = URLEncoder.encode(command, "UTF-8");
+      } catch (Exception e) {
+        System.out.println("Erreur while encoding command");
+      }
+      String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway.split("w")[1] + "&cmd=" + command;
       result.append("via KiteServer ").append(this.KiteServerCommand(url));
     }
     return result.toString();
@@ -190,6 +216,11 @@ public class Scenario {
     StringBuilder result = new StringBuilder();
     String GridId = networkInstrumentation.getKiteServerGridId();
     String kiteServer = networkInstrumentation.getKiteServer();
+    try {
+      command = URLEncoder.encode(command, "UTF-8");
+    } catch (Exception e) {
+      System.out.println("Erreur while encoding command");
+    }
     String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&cmd=" + command;
     result.append(this.KiteServerCommand(url));
 
