@@ -10,6 +10,7 @@ public class ConsoleLogStep extends TestStep {
   public ConsoleLogStep(Runner runner) {
     super(runner);
     setStepPhase(StepPhase.ALL);
+    setOptional(true);
   }
 
   @Override
