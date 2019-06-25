@@ -7,7 +7,6 @@ package io.cosmosoftware.kite.manager;
 import io.cosmosoftware.kite.entities.MeetingStatus;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.TestUtils;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -20,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
 
   private static final KiteLogger logger = KiteLogger.getLogger(RoomManager.class.getName());
-  private static HashMap<String, RoomManager> roomManagers = new HashMap<>();
   private final String baseURL;
   private final int usersPerRoom;
   private int roomId = 0;
@@ -29,65 +27,15 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   private boolean loopRooms;
 
 
-  private RoomManager(String baseURL, int usersPerRoom, boolean loop) {
+  public RoomManager(String baseURL, int usersPerRoom, boolean loop) {
     this.baseURL = baseURL;
     this.usersPerRoom = usersPerRoom;
     this.loopRooms = loop;
     logger.info("new RoomManager(" + usersPerRoom + ") for " + baseURL);
   }
 
-  /**
-   * Gets instance.
-   *
-   * @param name the name of the roomManager
-   * @return the instance
-   * @throws Exception the exception
-   */
-  public static RoomManager getInstance(String name) throws Exception {
-    RoomManager roomManager = roomManagers.get(name);
-    if (roomManager == null) {
-      throw new Exception(
-          "RoomManager has not been instanciated yet, please call getInstance(String baseURL, int numberOfRooms, int usersPerRoom) first.");
-    }
-    return roomManager;
-  }
 
-  /**
-   * Gets instance.
-   *
-   * @param name the name of the roomManager
-   * @param baseURL the base url
-   * @param usersPerRoom the users per room
-   * @return the instance
-   */
-  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom) {
-    return RoomManager.getInstance(name, baseURL, usersPerRoom, false);
-  }
-
-  /**
-   * Gets instance.
-   *
-   * @param name the name of the roomManager
-   * @param baseURL the base url
-   * @param usersPerRoom the users per room
-   * @param loop whether to start from first room when all the rooms have been used.
-   * @return the instance
-   */
-  public static RoomManager getInstance(String name, String baseURL, int usersPerRoom,
-      boolean loop) {
-    RoomManager roomManager = roomManagers.get(name);
-    if (roomManager == null) {
-      roomManager = new RoomManager(baseURL, usersPerRoom, loop);
-      roomManagers.put(name, roomManager);
-    }
-    return roomManager;
-  }
-
-  public static void init() {
-    roomManagers.clear();
-  }
-
-  private String getHubId(String hubIpOrDns) {
+  private synchronized String getHubId(String hubIpOrDns) {
     if (hubIpOrDns == null) {
       return "";
     }
@@ -111,7 +59,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * @return the room name correspoding to index i in the array
    * @throws Exception if i > roomNames.length - 1
    */
-  public String getRoomName(int i) throws Exception {
+  public synchronized String getRoomName(int i) throws Exception {
     if (i > roomNames.length - 1 && !loopRooms) {
       logger.error(
           "Error: only " + roomNames.length + " rooms in the room list, unable to create the "
