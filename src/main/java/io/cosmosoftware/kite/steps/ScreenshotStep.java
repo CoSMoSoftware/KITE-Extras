@@ -16,7 +16,7 @@ public class ScreenshotStep extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
-    Reporter.getInstance()
+    reporter
         .screenshotAttachment(
             report, "ScreenshotStep_" + timestamp(), saveScreenshotPNG(webDriver));
   }
