@@ -73,7 +73,7 @@ public class TestHelper {
    */
   private static Map<String, String> jsonToHashMap(JsonObject json) throws JsonException {
     Map<String, Object> retMap = new LinkedHashMap<String, Object>();
-    keyValMap = new LinkedHashMap<String, String>(); // re-initialise it in case.
+    keyValMap = new LinkedHashMap<>(); // re-initialise it in case.
     StringBuilder keyBuilder = new StringBuilder();
     if (json != JsonObject.NULL) {
       retMap = toMap(json, "");
@@ -105,7 +105,7 @@ public class TestHelper {
   }
 
   /**
-   * Recursively browse the jsonObject and returns a List<Object1> where Object is either a
+   * Recursively browse the jsonObject and returns a List<Object> where Object is either a
    * List<Object> or another Map<String, Object> (see toMap)
    *
    * @param array JsonArray

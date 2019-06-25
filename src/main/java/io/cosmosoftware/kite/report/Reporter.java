@@ -29,6 +29,7 @@ public class Reporter {
    * The Logger.
    */
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
+  private boolean csvReport = false;
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private String reportPath = DEFAULT_REPORT_FOLDER;
@@ -40,6 +41,9 @@ public class Reporter {
   public Reporter() {
   }
 
+  public void setCsvReport(boolean csvReport) {
+    this.csvReport = csvReport;
+  }
 
   private void addAttachment(AllureStepReport report, CustomAttachment attachment) {
     this.attachments.add(attachment);
