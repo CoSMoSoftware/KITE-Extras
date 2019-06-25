@@ -4,6 +4,7 @@
 
 package io.cosmosoftware.kite.report;
 
+import io.cosmosoftware.kite.util.TestHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ public class AllureTestReport extends AllureStepReport {
   private String fullName;
   private ParamList labels;
   private List<String> links;
+  private TestHelper testHelper;
 
   /**
    * Instantiates a new AllureStepReport report.
@@ -28,6 +30,7 @@ public class AllureTestReport extends AllureStepReport {
     this.labels = new ParamList();
     this.links = new ArrayList<>();
     this.historyId = UUID.randomUUID().toString();
+    this.testHelper = new TestHelper(name);
   }
 
   public void setFullName(String fullName) {
@@ -60,5 +63,15 @@ public class AllureTestReport extends AllureStepReport {
         .add("links", linkArray)
         .add("labels", labels.toJson())
         ;
+  }
+
+  public void generateCSVReportFiles() {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    for (AllureStepReport stepReport: this.getSteps()) {
+      if (stepReport.getCsvJsonAttachment() != null) {
+        builder.add(stepReport.getName(), stepReport.getCsvJsonAttachment());
+      }
+    }
+    testHelper.println(builder.build(), reporter.getReportPath() + "csv-reports/");
   }
 }

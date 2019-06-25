@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 
@@ -17,6 +18,7 @@ import javax.json.JsonObjectBuilder;
 public class AllureStepReport extends ReportEntity {
 
   private List<CustomAttachment> attachments;
+  private JsonObject csvJsonAttachment;
   private String description = "N/C";
   private StatusDetails details;
   private boolean ignore = false;
@@ -164,4 +166,11 @@ public class AllureStepReport extends ReportEntity {
     this.ignore = ignore;
   }
 
+  public void addCSVJsonAttachment(JsonObject csvJsonAttachment) {
+    this.csvJsonAttachment = csvJsonAttachment;
+  }
+
+  public JsonObject getCsvJsonAttachment() {
+    return csvJsonAttachment;
+  }
 }

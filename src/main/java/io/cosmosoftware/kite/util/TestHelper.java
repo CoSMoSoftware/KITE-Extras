@@ -33,35 +33,16 @@ import javax.json.stream.JsonGenerator;
 public class TestHelper {
 
   private static final KiteLogger logger = KiteLogger.getLogger(TestHelper.class.getName());
-  private static HashMap<String, TestHelper> instance = new HashMap<String, TestHelper>();
   private static Map<String, String> keyValMap = new LinkedHashMap<String, String>();
 
   private final String filename;
   private FileOutputStream fout = null;
   private boolean initialized = false;
   private PrintWriter pw = null;
-  private int testID = 1; // setStartTimestamp count at 1
 
-  private TestHelper(String prefix) {
+  public TestHelper(String prefix) {
     filename =
         prefix + "report_" + new SimpleDateFormat("yyyyMMdd_hhmmss").format(new Date()) + ".csv";
-  }
-
-  /**
-   * Gets instance.
-   *
-   * @param prefix the prefix
-   * @return and instance of TestHelper
-   */
-  public static TestHelper getInstance(String prefix) {
-    try {
-      if (!instance.containsKey(prefix)) {
-        instance.put(prefix, new TestHelper(prefix));
-      }
-    } catch (Exception e) {
-      logger.error("\r\n" + ReportUtils.getStackTrace(e));
-    }
-    return instance.get(prefix);
   }
 
   /**

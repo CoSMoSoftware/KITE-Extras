@@ -25,9 +25,6 @@ public class Reporter {
 
   private final String DEFAULT_REPORT_FOLDER =
       System.getProperty("user.dir") + "/kite-allure-reports/";
-  /**
-   * The Logger.
-   */
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private boolean csvReport = false;
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
@@ -86,6 +83,9 @@ public class Reporter {
     for (AllureTestReport test : tests) {
       String fileName = this.reportPath + test.getUuid() + "-result.json";
       printJsonTofile(test.toString(), fileName);
+      if (this.csvReport) {
+        test.generateCSVReportFiles();
+      }
     }
 
     for (CustomAttachment attachment : attachments) {
@@ -115,6 +115,9 @@ public class Reporter {
     String value = jsonToString(jsonObject);
     CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
     attachment.setText(value);
+    if (this.csvReport) {
+      report.addCSVJsonAttachment(jsonObject);
+    }
     addAttachment(report, attachment);
   }
 
