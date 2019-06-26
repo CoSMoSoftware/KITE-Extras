@@ -76,7 +76,6 @@ public class NetworkInstrumentation {
       String missingKey = "networkProfiles";
       try {
         if (networkProfiles.get(i).getCommand() == null) {
-          System.out.println("Command is null");
           networkProfiles.get(i).setCommand();
         } else {
           networkProfiles.get(i).setNit("eth9");

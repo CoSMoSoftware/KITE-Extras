@@ -168,14 +168,14 @@ public class Scenario extends KiteEntity {
   private String KiteServerCommand(String encodeUrl) {
     String result;
     try {
-      System.out.println("URL after encoding : " + encodeUrl);
+      logger.info("URL after encoding : " + encodeUrl);
       URL url = new URL(encodeUrl);
-      System.out.println("URL called on KiteServer : " + url);
+      logger.info("URL called on KiteServer : " + url);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("GET");
       con.setRequestProperty("User-Agent", "Mozilla/5.0");
       int responseCode = con.getResponseCode();
-      System.out.println("Response Code : " + responseCode);
+      logger.info("Response Code : " + responseCode);
       BufferedReader in = new BufferedReader(
           new InputStreamReader(con.getInputStream()));
       String inputLine;
@@ -203,7 +203,7 @@ public class Scenario extends KiteEntity {
       try {
         command = URLEncoder.encode(command, "UTF-8");
       } catch (Exception e) {
-        System.out.println("Erreur while encoding command");
+        logger.info("Erreur while encoding command");
       }
       String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway.split("w")[1] + "&cmd=" + command;
       result.append("via KiteServer ").append(this.KiteServerCommand(url));
@@ -219,7 +219,7 @@ public class Scenario extends KiteEntity {
     try {
       command = URLEncoder.encode(command, "UTF-8");
     } catch (Exception e) {
-      System.out.println("Erreur while encoding command");
+      logger.info("Erreur while encoding command");
     }
     String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&cmd=" + command;
     result.append(this.KiteServerCommand(url));
