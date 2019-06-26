@@ -4,24 +4,42 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
+import io.cosmosoftware.kite.config.KiteEntity;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.SampleData;
 import io.cosmosoftware.kite.report.Status;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
 import javax.json.JsonObject;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
-public class NetworkProfile {
 
-  private static final String INTERFACE_0_NAME = "enp0s8";
+@Entity(name = NetworkProfile.TABLE_NAME)
+public class NetworkProfile extends KiteEntity implements SampleData {
+
+  final static String TABLE_NAME = "networkprofiles";
+  private String id;
+  private static final String INTERFACE_0_NAME = "eth9";
   private static final String INTERFACE_1_NAME = "enp0s9";
-  private final String nit;
-  private final String command;
-  private final int delay;
-  private final int packetloss;
-  private final int corrupt;
-  private final int duplicate;
-  private final int bandwidth;
+  private String nit;
+  private String command;
+  private int delay;
+  private int packetloss;
+  private int corrupt;
+  private int duplicate;
+  private int bandwidth;
+  private String name;
+
+  public NetworkProfile() {
+    super();
+  }
 
   public NetworkProfile(JsonObject jsonObject) throws Exception {
-    this.delay = jsonObject.getInt("delay", 0);
+    this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
@@ -29,9 +47,10 @@ public class NetworkProfile {
     this.command =
         jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
     this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
+    this.name = jsonObject.getString("name");
   }
 
-  private String setCommand() throws Exception {
+  protected String setCommand() throws Exception {
     String command;
     String egress_command = ""; // command for traffic going out
     String ingress_command = ""; // command for traffic going in
@@ -65,13 +84,19 @@ public class NetworkProfile {
     if (egress_command.equals("") && ingress_command.equals("")) {
       throw new KiteTestException("No command to run.", Status.BROKEN);
     }
+    this.command = command;
     return command;
   }
-
+  
   public String getCommand() {
     return this.command;
   }
 
+  public void setCommand(String command) {
+    this.command = command;
+  }
+
+  @Transient
   public String getInterface() {
     return this.nit;
   }
@@ -83,5 +108,107 @@ public class NetworkProfile {
       command += info;
     }
     return command;
+  }
+
+  /**
+   * Gets id.
+   *
+   * @return the id
+   */
+  @Id
+  @GeneratedValue(generator = NetworkProfile.TABLE_NAME)
+  @GenericGenerator(name = NetworkProfile.TABLE_NAME, strategy = "io.cosmosoftware.kite.dao.KiteIdGenerator", parameters = {
+      @Parameter(name = "prefix", value = "NWPR")})
+  public String getId() {
+    return this.id;
+  }
+
+  /**
+   * Sets id.
+   *
+   * @param id the id
+   */
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public int getBandwidth() {
+    return bandwidth;
+  }
+
+  public void setBandwidth(int bandwidth) {
+    this.bandwidth = bandwidth;
+  }
+
+  public int getCorrupt() {
+    return corrupt;
+  }
+
+  public void setCorrupt(int corrupt) {
+    this.corrupt = corrupt;
+  }
+
+  public int getDelay() {
+    return delay;
+  }
+
+  public void setDelay(int delay) {
+    this.delay = delay;
+  }
+
+  public int getDuplicate() {
+    return duplicate;
+  }
+
+  public void setDuplicate(int duplicate) {
+    this.duplicate = duplicate;
+  }
+
+  public int getPacketloss() {
+    return packetloss;
+  }
+
+  public void setPacketloss(int packetloss) {
+    this.packetloss = packetloss;
+  }
+
+  @Transient
+  public String getNit() {
+    return nit;
+  }
+
+  public void setNit(String nit) {
+    this.nit = nit;
+  }
+
+  /**
+   * Make sample data.
+   *
+   * @return the sample data
+   */
+  /*
+   * (non-Javadoc)
+   *
+   * @see io.cosmosoftware.kite.dao.SampleData#makeSampleData()
+   */
+  @Override
+  public SampleData makeSampleData() {
+    this.name = "Delay 10 ms";
+    this.delay = 10;
+    this.bandwidth = 0;
+    this.corrupt = 0;
+    this.duplicate = 0;
+    this.packetloss = 0;
+
+    return this;
   }
 }
