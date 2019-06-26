@@ -93,6 +93,10 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     return this.command;
   }
 
+  public void setCommand(String command) {
+    this.command = command;
+  }
+
   @Transient
   public String getInterface() {
     return this.nit;
