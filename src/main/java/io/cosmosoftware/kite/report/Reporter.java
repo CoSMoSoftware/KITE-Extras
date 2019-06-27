@@ -39,6 +39,7 @@ public class Reporter {
   }
 
   public void setCsvReport(boolean csvReport) {
+    logger.info("CSV report enabled for this test.");
     this.csvReport = csvReport;
   }
 
@@ -84,6 +85,7 @@ public class Reporter {
       String fileName = this.reportPath + test.getUuid() + "-result.json";
       printJsonTofile(test.toString(), fileName);
       if (this.csvReport) {
+        logger.info("Generating CSV files at: " + this.reportPath + "csv-report/");
         test.generateCSVReportFiles();
       }
     }
