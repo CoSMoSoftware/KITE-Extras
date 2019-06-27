@@ -27,6 +27,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +44,7 @@ import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -712,6 +714,17 @@ public class TestUtils {
     }
 
     return jsonObject;
+  }
+
+  /**
+   * Gets the json object.
+   *
+   * @param objectString the object string
+   * @return the json object
+   */
+  public static JsonObject readJsonString(String objectString) {
+    InputStream inputStream = IOUtils.toInputStream(objectString, Charset.forName("UTF-16"));
+    return readJsonStream(inputStream);
   }
 
   /**

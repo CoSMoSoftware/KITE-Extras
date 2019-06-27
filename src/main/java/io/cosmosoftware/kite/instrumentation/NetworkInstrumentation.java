@@ -8,6 +8,7 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
 import java.util.HashMap;
+import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
@@ -49,13 +50,10 @@ public class NetworkInstrumentation {
     for (int i = 0; i < jsonArray.size(); i++) {
       String missingKey = "";
       try {
-        missingKey = "name";
-        String name = jsonArray.getJsonObject(i).getString(missingKey);
         missingKey = "networkProfile";
         NetworkProfile networkProfile = new NetworkProfile(
-            jsonArray.getJsonObject(i).getJsonObject(missingKey));
-        this.networkProfiles.put(name, networkProfile);
-
+            jsonArray.getJsonObject(i));
+        this.networkProfiles.put(networkProfile.getName(), networkProfile);
       } catch (Exception e) {
         throw new KiteTestException(
             "Error in json config networkProfiles, the key " + missingKey + " is missing.",
@@ -67,25 +65,22 @@ public class NetworkInstrumentation {
   /**
    * Constructor for the KITE Server Test Manager
    */
-  public NetworkInstrumentation(JsonObject jsonObject, String remoteAddress,
-      String kiteServerGridId) throws KiteTestException {
+  public NetworkInstrumentation(List<NetworkProfile> networkProfiles, String kiteServer, String remoteAddress, String kiteServerGridId) throws KiteTestException {
     this.instances = null;
+    this.jsonObject = null;
     this.kiteServerGridId = kiteServerGridId;
     this.remoteAddress = remoteAddress;
-    this.jsonObject = jsonObject;
-    this.kiteServer = jsonObject.getString("kiteServer", "http://localhost:8080/KITEServer");
-    JsonArray jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
+    this.kiteServer = kiteServer;
     this.networkProfiles = new HashMap<>();
-    for (int i = 0; i < jsonArray.size(); i++) {
-      String missingKey = "";
+    for (int i = 0; i < networkProfiles.size(); i++) {
+      String missingKey = "networkProfiles";
       try {
-        missingKey = "name";
-        String name = jsonArray.getJsonObject(i).getString(missingKey);
-        missingKey = "networkProfile";
-        NetworkProfile networkProfile = new NetworkProfile(
-            jsonArray.getJsonObject(i).getJsonObject(missingKey));
-        this.networkProfiles.put(name, networkProfile);
-
+        if (networkProfiles.get(i).getCommand() == null) {
+          networkProfiles.get(i).setCommand();
+        } else {
+          networkProfiles.get(i).setNit("eth9");
+        }
+        this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
       } catch (Exception e) {
         throw new KiteTestException(
             "Error in json config networkProfiles, the key " + missingKey + " is missing.",
