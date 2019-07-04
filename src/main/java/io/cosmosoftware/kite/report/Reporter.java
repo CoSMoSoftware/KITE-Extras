@@ -29,6 +29,7 @@ public class Reporter {
       System.getProperty("user.dir") + "/kite-allure-reports/";
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private final Map<String, CSVHelper> csvWriterMap = new HashMap();
+  private final String testName;
   private boolean csvReport = false;
   private String reportPath = DEFAULT_REPORT_FOLDER;
   private String timestamp = timestamp();
@@ -40,7 +41,8 @@ public class Reporter {
   /**
    * Instantiates a new Reporter.
    */
-  public Reporter() {
+  public Reporter(String testName) {
+    this.testName = testName;
   }
 
   public void setCsvReport(boolean csvReport) {
@@ -135,13 +137,13 @@ public class Reporter {
 
   
   private void updateCSVReport(AllureStepReport report, CustomAttachment attachment) {
-    String attachmentName = attachment.getName();
+    String attachmentName = report.getPhase().getShortName().trim() + attachment.getName();
     if (!csvWriterMap.keySet().contains(attachmentName)) {
-      String CSVFileName = report.getPhase().getShortName() + "_" + attachmentName + "_"
-          +  this.timestamp + ".csv";
+      String CSVFileName = attachmentName + "_"
+        +  this.timestamp + ".csv";
       csvWriterMap.put(attachmentName, new CSVHelper(CSVFileName));
     }
-    csvWriterMap.get(attachmentName).println(attachment.getJsonText(), this.reportPath + "csv-report/", report.getClientId());
+    csvWriterMap.get(attachmentName).println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/", report.getClientId());
   }
   
   private void closeCSVWriter() {

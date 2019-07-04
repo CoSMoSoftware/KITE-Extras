@@ -175,7 +175,9 @@ public class CSVHelper {
         pw = new PrintWriter(fout, true);
       }
       Map<String, String> map = new LinkedHashMap<>();
-      map.put("clientId", clientId);
+      if (clientId != null) {
+        map.put("clientId", clientId);
+      }
       if (o instanceof LinkedHashMap) {
         map.putAll((LinkedHashMap) o);
       } else if (o instanceof JsonObject) {
