@@ -6,7 +6,7 @@ package io.cosmosoftware.kite.report;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
-import static io.cosmosoftware.kite.util.TestHelper.jsonToString;
+import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
 import static io.cosmosoftware.kite.util.TestUtils.createDirs;
 import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
 import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
@@ -14,7 +14,9 @@ import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
@@ -26,12 +28,15 @@ public class Reporter {
   private final String DEFAULT_REPORT_FOLDER =
       System.getProperty("user.dir") + "/kite-allure-reports/";
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
+  private final Map<String, CSVHelper> csvWriterMap = new HashMap();
   private boolean csvReport = false;
+  private String reportPath = DEFAULT_REPORT_FOLDER;
+  private String timestamp = timestamp();
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
-  private String reportPath = DEFAULT_REPORT_FOLDER;
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
 
+  
   /**
    * Instantiates a new Reporter.
    */
@@ -39,13 +44,20 @@ public class Reporter {
   }
 
   public void setCsvReport(boolean csvReport) {
-    logger.info("CSV report enabled for this test.");
     this.csvReport = csvReport;
   }
 
+  public boolean csvReport() {
+    return this.csvReport;
+  }
+
+  public String getTimestamp() {
+    return timestamp;
+  }
+
   private void addAttachment(AllureStepReport report, CustomAttachment attachment) {
-    this.attachments.add(attachment);
     report.addAttachment(attachment);
+    this.attachments.add(attachment);
   }
 
   /**
@@ -82,16 +94,14 @@ public class Reporter {
     updateContainers();
 
     for (AllureTestReport test : tests) {
-      String fileName = this.reportPath + test.getUuid() + "-result.json";
-      printJsonTofile(test.toString(), fileName);
-      if (this.csvReport) {
-        logger.info("Generating CSV files at: " + this.reportPath + "csv-report/");
-        test.generateCSVReportFiles();
-      }
+      test.generateReport();
     }
 
     for (CustomAttachment attachment : attachments) {
       attachment.saveToFile(reportPath);
+    }
+    if (this.csvReport) {
+      closeCSVWriter();
     }
   }
 
@@ -117,12 +127,29 @@ public class Reporter {
     String value = jsonToString(jsonObject);
     CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
     attachment.setText(value);
-    if (this.csvReport) {
-      report.addCSVJsonAttachment(jsonObject);
-    }
     addAttachment(report, attachment);
+    if (csvReport) {
+      updateCSVReport(report, attachment);
+    }
   }
 
+  
+  private void updateCSVReport(AllureStepReport report, CustomAttachment attachment) {
+    String attachmentName = attachment.getName();
+    if (!csvWriterMap.keySet().contains(attachmentName)) {
+      String CSVFileName = report.getPhase().getShortName() + "_" + attachmentName + "_"
+          +  this.timestamp + ".csv";
+      csvWriterMap.put(attachmentName, new CSVHelper(CSVFileName));
+    }
+    csvWriterMap.get(attachmentName).println(attachment.getJsonText(), this.reportPath + "csv-report/", report.getClientId());
+  }
+  
+  private void closeCSVWriter() {
+    for (String attachmentName : csvWriterMap.keySet()) {
+      csvWriterMap.get(attachmentName).close();
+    }
+  }
+  
   /**
    * Process exception.
    *

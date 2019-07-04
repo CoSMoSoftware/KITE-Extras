@@ -4,11 +4,11 @@
 
 package io.cosmosoftware.kite.report;
 
+import io.cosmosoftware.kite.steps.StepPhase;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 
@@ -18,28 +18,45 @@ import javax.json.JsonObjectBuilder;
 public class AllureStepReport extends ReportEntity {
 
   private List<CustomAttachment> attachments;
-  private JsonObject csvJsonAttachment;
   private String description = "N/C";
+  private String clientId = "N/C";
   private StatusDetails details;
   private boolean ignore = false;
   private ParamList parameters;
   private Status status = Status.PASSED;
   private List<AllureStepReport> steps;
+  private StepPhase phase;
 
   /**
    * Instantiates a new AllureStepReport report.
    *
-   * @param name the name
+   * @param clientId the id of the client's webdriver
+   * @param description the description for this report
    */
-  public AllureStepReport(String name) {
-    super(name);
+  public AllureStepReport(String clientId, String description) {
+    super((clientId == null ? "" : (clientId + ": ")) + description);
+    this.clientId = clientId;
+    this.description = description;
     this.attachments = new ArrayList<>();
     this.steps = new ArrayList<>();
     this.parameters = new ParamList();
   }
 
+  /**
+   * Instantiates a new AllureStepReport report.
+   *
+   * @param description the description for this report
+   */
+  public AllureStepReport(String description) {
+    this(null, description);
+  }
+
   public synchronized void addAttachment(CustomAttachment attachment) {
     this.attachments.add(attachment);
+  }
+
+  public String getClientId() {
+    return clientId;
   }
 
   public void addParam(String name, String value) {
@@ -105,6 +122,18 @@ public class AllureStepReport extends ReportEntity {
     // reporter.textAttachment(this, "statusDetail", details.toJson().toString(), "json");
   }
 
+  /**
+   * Set the phase for this report
+   * @param phase the phase that the step is in.
+   */
+  public void setPhase(StepPhase phase) {
+    this.phase = phase;
+  }
+
+  public StepPhase getPhase() {
+    return phase;
+  }
+
   @Override
   public JsonObjectBuilder getJsonBuilder() {
     this.status = getActualStatus();
@@ -166,11 +195,4 @@ public class AllureStepReport extends ReportEntity {
     this.ignore = ignore;
   }
 
-  public void addCSVJsonAttachment(JsonObject csvJsonAttachment) {
-    this.csvJsonAttachment = csvJsonAttachment;
-  }
-
-  public JsonObject getCsvJsonAttachment() {
-    return csvJsonAttachment;
-  }
 }

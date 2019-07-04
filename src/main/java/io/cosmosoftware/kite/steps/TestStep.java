@@ -28,7 +28,8 @@ public abstract class TestStep {
   protected final KiteLogger logger;
   protected final Reporter reporter;
   protected AllureStepReport report;
-  private String name = getClassName();
+
+  private String name = this.getClass().getSimpleName();
   private boolean stepCompleted = false;
 
   private boolean optional = false;
@@ -83,11 +84,12 @@ public abstract class TestStep {
    * @return the class name
    */
   public String getClassName() {
-    String s = this.getClass().getSimpleName();
-    if (s.contains(".")) {
-      s = s.substring(s.lastIndexOf(".") + 1);
-    }
-    return s;
+//    String s = this.getClass().getSimpleName();
+//    if (s.contains(".")) {
+//      s = s.substring(s.lastIndexOf(".") + 1);
+//    }
+//    return s;
+    return this.name;
   }
 
   /**
@@ -124,11 +126,11 @@ public abstract class TestStep {
    */
   public void init(StepPhase stepPhase) {
     this.currentStepPhase = stepPhase;
-    this.report = new AllureStepReport(getClientID() + ": " + stepDescription());
+    this.report = new AllureStepReport(getClientID(), stepDescription());
+    this.report.setReporter(this.reporter);
     this.report.setDescription(currentStepPhase.getShortName() + stepDescription());
     this.report.setStartTimestamp();
-    this.report.setReporter(this.reporter);
-
+    this.report.setPhase(stepPhase);
   }
 
   /**
@@ -195,22 +197,20 @@ public abstract class TestStep {
    * @return the string
    */
   protected String translateClassName() {
-
-    String name = this.getClass().getSimpleName();
+    String res = name;
     Set<String> upperLetters = new HashSet<>();
 
-    for (char letter : name.toCharArray()) {
+    for (char letter : res.toCharArray()) {
       String letterString = Character.toString(letter);
       if (letterString.matches("[A-Z]") || letterString.matches("[0-9]")) {
         upperLetters.add(letterString);
       }
     }
-
     for (String letterString : upperLetters) {
-      name = name.replaceAll(letterString, " " + letterString.toLowerCase());
+      res = res.replaceAll(letterString, " " + letterString.toLowerCase());
     }
 
-    return name;
+    return res;
   }
 
   /**
