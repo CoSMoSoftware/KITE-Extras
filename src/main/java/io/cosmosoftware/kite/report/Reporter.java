@@ -136,7 +136,7 @@ public class Reporter {
   }
 
   
-  private void updateCSVReport(AllureStepReport report, CustomAttachment attachment) {
+  private synchronized void updateCSVReport(AllureStepReport report, CustomAttachment attachment) {
     String attachmentName = report.getPhase().getShortName().trim() + attachment.getName();
     if (!csvWriterMap.keySet().contains(attachmentName)) {
       String CSVFileName = attachmentName + "_"
