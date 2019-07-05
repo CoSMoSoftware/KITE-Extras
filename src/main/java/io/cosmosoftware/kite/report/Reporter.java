@@ -130,7 +130,7 @@ public class Reporter {
     CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
     attachment.setText(value);
     addAttachment(report, attachment);
-    if (csvReport) {
+    if (!attachment.getName().contains("payload") && csvReport) {
       updateCSVReport(report, attachment);
     }
   }

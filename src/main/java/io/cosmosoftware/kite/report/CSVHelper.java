@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.report;
 
+import static io.cosmosoftware.kite.util.TestUtils.readJsonFile;
+
 import io.cosmosoftware.kite.util.ReportUtils;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +20,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
@@ -114,12 +117,12 @@ public class CSVHelper {
     while (keysItr.hasNext()) {
       String key = keysItr.next();
       Object value = object.get(key);
+      String keyFull = parent + (parent.length() > 0 ? "." : "") + key;
       if (value instanceof JsonArray) {
-        value = toList((JsonArray) value, key);
+        value = toList((JsonArray) value, keyFull);
       } else if (value instanceof JsonObject) {
-        value = toMap((JsonObject) value, key);
+        value = toMap((JsonObject) value, keyFull);
       } else {
-        String keyFull = parent + (parent.length() > 0 ? "." : "") + key;
         keyValMap.put(keyFull, value.toString());
       }
       map.put(key, value);
@@ -147,7 +150,7 @@ public class CSVHelper {
    *
    * @return line String to be printed in the CSV file
    */
-  private String keysLine(Map<String, String> map) {
+  private static String keysLine(Map<String, String> map) {
     String line = "";
     int i = 0;
     for (String key : map.keySet()) {
