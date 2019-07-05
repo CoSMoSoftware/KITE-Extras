@@ -27,6 +27,7 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   private static final String INTERFACE_1_NAME = "enp0s9";
   private String nit;
   private String command;
+  private String cleanUpCommand;
   private int delay;
   private int packetloss;
   private int corrupt;
@@ -39,15 +40,18 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   }
 
   public NetworkProfile(JsonObject jsonObject) throws Exception {
+    this.name = jsonObject.getString("name");
     this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
     this.bandwidth = jsonObject.getInt("bandwidth", 0);
-    this.command =
-        jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
+    this.command = jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
     this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
-    this.name = jsonObject.getString("name");
+    
+    final String defaultCleanUp = "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " 
+        + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
+    this.cleanUpCommand = jsonObject.getString("cleanUpCommand", defaultCleanUp);
   }
 
   protected String setCommand() throws Exception {
@@ -87,9 +91,13 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.command = command;
     return command;
   }
-  
+
   public String getCommand() {
     return this.command;
+  }
+
+  public String getCleanUpCommand() {
+    return this.cleanUpCommand;
   }
 
   public void setCommand(String command) {

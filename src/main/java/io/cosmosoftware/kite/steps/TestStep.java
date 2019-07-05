@@ -32,6 +32,7 @@ public abstract class TestStep {
   private boolean stepCompleted = false;
 
   private boolean optional = false;
+  private boolean silent = false;
 
   private StepPhase stepPhase = DEFAULT;
   private StepPhase currentStepPhase = DEFAULT;
@@ -59,9 +60,10 @@ public abstract class TestStep {
       step();
     } catch (Exception e) {
       String screenshotName = "error_screenshot_" + this.getName();
+      //force silent to false in case of error, so the failure appears in the report in all cases.
+      silent = false;
       try {
-        reporter
-            .screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
+        reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
       } catch (KiteTestException ex) {
         logger.warn("Could not attach screenshot to error of step: " + stepDescription());
       }
@@ -251,6 +253,23 @@ public abstract class TestStep {
    */
   public void setOptional(boolean optional) {
     this.optional = optional;
+  }
+
+  /**
+   * 
+   * @return true if this step is silent
+   */
+  public boolean isSilent() {
+    return silent;
+  }
+
+  /**
+   * Sets the step to be silent (no report generated)
+   *
+   * @param silent 
+   */
+  public void setSilent(boolean silent) {
+    this.silent = silent;
   }
   
 }
