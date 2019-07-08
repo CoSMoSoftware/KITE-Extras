@@ -86,11 +86,6 @@ public abstract class TestStep {
    * @return the class name
    */
   public String getClassName() {
-//    String s = this.getClass().getSimpleName();
-//    if (s.contains(".")) {
-//      s = s.substring(s.lastIndexOf(".") + 1);
-//    }
-//    return s;
     return this.name;
   }
 
