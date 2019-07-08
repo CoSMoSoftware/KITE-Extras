@@ -378,7 +378,9 @@ public class TestUtils {
       step.execute();
     }
     step.finish();
-    parentStepReport.addStepReport(step.getStepReport());
+    if (!step.isSilent()) {
+      parentStepReport.addStepReport(step.getStepReport());
+    }
   }
 
   /**
