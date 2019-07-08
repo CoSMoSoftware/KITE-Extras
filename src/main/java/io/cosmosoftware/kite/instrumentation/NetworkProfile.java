@@ -24,7 +24,7 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   final static String TABLE_NAME = "networkprofiles";
   private String id;
   private static final String INTERFACE_0_NAME = "eth9";
-  private static final String INTERFACE_1_NAME = "enp0s9";
+  private static final String INTERFACE_1_NAME = "eth10";
   private String nit;
   private String command;
   private String cleanUpCommand;
@@ -92,12 +92,13 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     return command;
   }
 
-  public String getCommand() {
-    return this.command;
+  protected void setCleanUpCommand() {
+    this.cleanUpCommand =  "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev "
+        + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
   }
 
-  public String getCleanUpCommand() {
-    return this.cleanUpCommand;
+  public String getCommand() {
+    return this.command;
   }
 
   public void setCommand(String command) {
@@ -187,6 +188,14 @@ public class NetworkProfile extends KiteEntity implements SampleData {
 
   public void setPacketloss(int packetloss) {
     this.packetloss = packetloss;
+  }
+
+  public String getCleanUpCommand() {
+    return this.cleanUpCommand;
+  }
+
+  public void setCleanUpCommand(String cleanUpCommand) {
+    this.cleanUpCommand = cleanUpCommand;
   }
 
   @Transient

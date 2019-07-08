@@ -77,8 +77,10 @@ public class NetworkInstrumentation {
       try {
         if (networkProfiles.get(i).getCommand() == null) {
           networkProfiles.get(i).setCommand();
-        } else {
-          networkProfiles.get(i).setNit("eth9");
+        }
+        networkProfiles.get(i).setNit("eth9");
+        if (networkProfiles.get(i).getCleanUpCommand() == null) {
+          networkProfiles.get(i).setCleanUpCommand();
         }
         this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
       } catch (Exception e) {
