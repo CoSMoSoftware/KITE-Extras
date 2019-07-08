@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.report;
 
+import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -72,6 +74,10 @@ public class CustomAttachment {
     this.text = text;
   }
 
+  public boolean isJson () {
+    return this.type.contains("json");
+  }
+
   public JsonObject toJson() {
     return Json.createObjectBuilder()
         .add("name", name)
@@ -115,6 +121,13 @@ public class CustomAttachment {
       }
 
     }
+  }
+
+  public JsonObject getJsonText() {
+    if (this.isJson()) {
+      return readJsonString(this.text);
+    }
+    return null;
   }
 
 }
