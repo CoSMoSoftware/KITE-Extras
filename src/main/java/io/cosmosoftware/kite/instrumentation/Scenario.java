@@ -30,6 +30,7 @@ public class Scenario extends KiteEntity {
   private final String type;
   private final String name;
   private final String command;
+  private final String cleanUpCommand;
   private final String gateway;
   private final String nit;
   private final Integer duration;
@@ -62,8 +63,8 @@ public class Scenario extends KiteEntity {
       }
       missingKey = "network";
       this.network = jsonObject.getString("network");
-      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand()
-          .trim();
+      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
+      this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
       this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
@@ -123,10 +124,7 @@ public class Scenario extends KiteEntity {
   }
 
   public String cleanUp(WebDriver webDriver) {
-    StringBuilder result = new StringBuilder();
-    String cleanUpCommand =
-        "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " + this.nit
-            + " ingress || true && sudo tc qdisc del dev ifb0 root ||true ";
+    StringBuilder result = new StringBuilder();    
     result.append("Doing CleanUp for ").append(this.command).append(" on ");
     if (this.type.equals("gateway")) {
       result.append(this.gateway);
@@ -203,7 +201,7 @@ public class Scenario extends KiteEntity {
       try {
         command = URLEncoder.encode(command, "UTF-8");
       } catch (Exception e) {
-        logger.info("Erreur while encoding command");
+        logger.info("Error while encoding command: " + command);
       }
       String url = kiteServer + "/command?id=" + GridId + "&gw=" + this.gateway.split("w")[1] + "&cmd=" + command;
       result.append("via KiteServer ").append(this.KiteServerCommand(url));
@@ -219,7 +217,7 @@ public class Scenario extends KiteEntity {
     try {
       command = URLEncoder.encode(command, "UTF-8");
     } catch (Exception e) {
-      logger.info("Erreur while encoding command");
+      logger.info("Error while encoding command: " + command);
     }
     String url = kiteServer + "/command?id=" + GridId + "&ip=" + nodeIp + "&cmd=" + command;
     result.append(this.KiteServerCommand(url));

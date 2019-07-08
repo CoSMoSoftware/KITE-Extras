@@ -31,10 +31,20 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
+import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import io.cosmosoftware.kite.report.Status;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Dimension;
@@ -807,4 +817,22 @@ public class WebDriverUtils {
         "Timeout waiting for " + expectedNumber + " elements: " + selector.toString());
   }
 
+  /**
+   * Gets the my public ip.
+   *
+   * @return the my public ip
+   *
+   * @throws IOException Signals that an I/O exception has occurred.
+   */
+  public static String getPublicIp(WebDriver webDriver) throws KiteTestException {
+    String publicIpURL = "http://bot.whatismyipaddress.com";
+    webDriver.get(publicIpURL);
+    String pageSource = webDriver.getPageSource();
+    try {
+      return pageSource.split("<body>")[1].split("</body>")[0];
+    } catch (Exception e) {
+      throw new KiteTestException("Could not get public IP for webdriver session: "
+              + ((RemoteWebDriver)webDriver).getSessionId(), Status.BROKEN);
+    }
+  }
 }
