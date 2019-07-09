@@ -2,17 +2,16 @@
  * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
  */
 
-package io.cosmosoftware.kite.util;
+package io.cosmosoftware.kite.report;
 
-import io.cosmosoftware.kite.report.KiteLogger;
+import static io.cosmosoftware.kite.util.TestUtils.readJsonFile;
+
+import io.cosmosoftware.kite.util.ReportUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,47 +20,25 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonException;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 
 // XXX todo:  move to KITE engine, then extend this for individual tests
 
-/**
- * TestHelper is a Singleton class that collects and save KITE load testing stats into a CSV file.
- */
-public class TestHelper {
+public class CSVHelper {
 
-  private static final KiteLogger logger = KiteLogger.getLogger(TestHelper.class.getName());
-  private static HashMap<String, TestHelper> instance = new HashMap<String, TestHelper>();
+  private static final KiteLogger logger = KiteLogger.getLogger(CSVHelper.class.getName());
   private static Map<String, String> keyValMap = new LinkedHashMap<String, String>();
 
-  private final String filename;
+  private String filename;
   private FileOutputStream fout = null;
   private boolean initialized = false;
   private PrintWriter pw = null;
-  private int testID = 1; // setStartTimestamp count at 1
 
-  private TestHelper(String prefix) {
-    filename =
-        prefix + "report_" + new SimpleDateFormat("yyyyMMdd_hhmmss").format(new Date()) + ".csv";
-  }
-
-  /**
-   * Gets instance.
-   *
-   * @param prefix the prefix
-   * @return and instance of TestHelper
-   */
-  public static TestHelper getInstance(String prefix) {
-    try {
-      if (!instance.containsKey(prefix)) {
-        instance.put(prefix, new TestHelper(prefix));
-      }
-    } catch (Exception e) {
-      logger.error("\r\n" + ReportUtils.getStackTrace(e));
-    }
-    return instance.get(prefix);
+  public CSVHelper(String filename) {
+    this.filename = filename;
   }
 
   /**
@@ -72,11 +49,9 @@ public class TestHelper {
    * @return Map<String key, Object: either json value or another Map < String, Object>
    */
   private static Map<String, String> jsonToHashMap(JsonObject json) throws JsonException {
-    Map<String, Object> retMap = new LinkedHashMap<String, Object>();
-    keyValMap = new LinkedHashMap<String, String>(); // re-initialise it in case.
-    StringBuilder keyBuilder = new StringBuilder();
+    keyValMap = new LinkedHashMap<>(); // re-initialise it in case.
     if (json != JsonObject.NULL) {
-      retMap = toMap(json, "");
+      toMap(json, "");
     }
     if (logger.isDebugEnabled()) {
       logger.debug("jsonToHashMap() dump");
@@ -105,7 +80,7 @@ public class TestHelper {
   }
 
   /**
-   * Recursively browse the jsonObject and returns a List<Object1> where Object is either a
+   * Recursively browse the jsonObject and returns a List<Object> where Object is either a
    * List<Object> or another Map<String, Object> (see toMap)
    *
    * @param array JsonArray
@@ -142,12 +117,12 @@ public class TestHelper {
     while (keysItr.hasNext()) {
       String key = keysItr.next();
       Object value = object.get(key);
+      String keyFull = parent + (parent.length() > 0 ? "." : "") + key;
       if (value instanceof JsonArray) {
-        value = toList((JsonArray) value, key);
+        value = toList((JsonArray) value, keyFull);
       } else if (value instanceof JsonObject) {
-        value = toMap((JsonObject) value, key);
+        value = toMap((JsonObject) value, keyFull);
       } else {
-        String keyFull = parent + (parent.length() > 0 ? "." : "") + key;
         keyValMap.put(keyFull, value.toString());
       }
       map.put(key, value);
@@ -175,7 +150,7 @@ public class TestHelper {
    *
    * @return line String to be printed in the CSV file
    */
-  private String keysLine(Map<String, String> map) {
+  private static String keysLine(Map<String, String> map) {
     String line = "";
     int i = 0;
     for (String key : map.keySet()) {
@@ -190,8 +165,9 @@ public class TestHelper {
    * @param o Object object containing the test results. Either a JsonObject or any Object with a
    * toString() method
    * @param path the file path where to save the file.
+   * @param clientId the id of the client to whom the data belongs to
    */
-  public synchronized void println(Object o, String path) {
+  public synchronized void println(Object o, String path, String clientId) {
     try {
       if (!initialized) {
         File dir = new File(path);
@@ -201,11 +177,14 @@ public class TestHelper {
         fout = new FileOutputStream(path + filename);
         pw = new PrintWriter(fout, true);
       }
-      Map<String, String> map = null;
+      Map<String, String> map = new LinkedHashMap<>();
+      if (clientId != null) {
+        map.put("clientId", clientId);
+      }
       if (o instanceof LinkedHashMap) {
-        map = (LinkedHashMap) o;
+        map.putAll((LinkedHashMap) o);
       } else if (o instanceof JsonObject) {
-        map = TestHelper.jsonToHashMap((JsonObject) o);
+        map.putAll(jsonToHashMap((JsonObject) o));
       } else {
         pw.println(o.toString());
         return;

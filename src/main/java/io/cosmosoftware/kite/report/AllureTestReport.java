@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.report;
 
+import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,7 +26,7 @@ public class AllureTestReport extends AllureStepReport {
    * @param name the name
    */
   public AllureTestReport(String name) {
-    super(name);
+    super(null , name);
     this.labels = new ParamList();
     this.links = new ArrayList<>();
     this.historyId = UUID.randomUUID().toString();
@@ -60,5 +62,10 @@ public class AllureTestReport extends AllureStepReport {
         .add("links", linkArray)
         .add("labels", labels.toJson())
         ;
+  }
+
+  public void generateReport() {
+    String fileName = this.reporter.getReportPath() + this.uuid + "-result.json";
+    printJsonTofile(this.toString(), fileName);
   }
 }
