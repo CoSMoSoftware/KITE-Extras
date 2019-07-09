@@ -97,14 +97,25 @@ public class NetworkProfile extends KiteEntity implements SampleData {
         + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
   }
 
+  
   public String getCommand() {
     return this.command;
   }
-
+    
   public void setCommand(String command) {
     this.command = command;
   }
 
+
+  public String getCleanUpCommand() {
+    return this.cleanUpCommand;
+    
+  }
+
+  public void setCleanUpCommand(String cleanUpCommand) {
+    this.cleanUpCommand = cleanUpCommand;
+  }
+  
   @Transient
   public String getInterface() {
     return this.nit;
