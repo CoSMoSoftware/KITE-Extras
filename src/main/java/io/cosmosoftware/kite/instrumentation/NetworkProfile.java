@@ -96,14 +96,19 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     return this.command;
   }
 
-  public String getCleanUpCommand() {
-    return this.cleanUpCommand;
-  }
-
   public void setCommand(String command) {
     this.command = command;
   }
 
+
+  public String getCleanUpCommand() {
+    return this.cleanUpCommand;
+  }
+
+  public void setCleanUpCommand(String cleanUpCommand) {
+    this.cleanUpCommand = cleanUpCommand;
+  }
+  
   @Transient
   public String getInterface() {
     return this.nit;
