@@ -28,11 +28,11 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   private String nit;
   private String command;
   private String cleanUpCommand;
-  private int delay;
-  private int packetloss;
-  private int corrupt;
-  private int duplicate;
-  private int bandwidth;
+  private Integer delay;
+  private Integer packetloss;
+  private Integer corrupt;
+  private Integer duplicate;
+  private Integer bandwidth;
   private String name;
 
   public NetworkProfile() {
@@ -142,43 +142,43 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.name = name;
   }
 
-  public int getBandwidth() {
+  public Integer getBandwidth() {
     return bandwidth;
   }
 
-  public void setBandwidth(int bandwidth) {
+  public void setBandwidth(Integer bandwidth) {
     this.bandwidth = bandwidth;
   }
 
-  public int getCorrupt() {
+  public Integer getCorrupt() {
     return corrupt;
   }
 
-  public void setCorrupt(int corrupt) {
+  public void setCorrupt(Integer corrupt) {
     this.corrupt = corrupt;
   }
 
-  public int getDelay() {
+  public Integer getDelay() {
     return delay;
   }
 
-  public void setDelay(int delay) {
+  public void setDelay(Integer delay) {
     this.delay = delay;
   }
 
-  public int getDuplicate() {
+  public Integer getDuplicate() {
     return duplicate;
   }
 
-  public void setDuplicate(int duplicate) {
+  public void setDuplicate(Integer duplicate) {
     this.duplicate = duplicate;
   }
 
-  public int getPacketloss() {
+  public Integer getPacketloss() {
     return packetloss;
   }
 
-  public void setPacketloss(int packetloss) {
+  public void setPacketloss(Integer packetloss) {
     this.packetloss = packetloss;
   }
 
