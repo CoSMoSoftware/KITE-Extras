@@ -700,7 +700,7 @@ public class TestUtils {
    * Reads a json file into a JsonArray
    *
    * @param jsonFile the file to read
-   * @return the jsonObject
+   * @return the json array
    */
   public static JsonArray readJsonArrayFile(String jsonFile) {
     FileReader fileReader = null;
@@ -751,10 +751,10 @@ public class TestUtils {
   }
 
   /**
-   * Gets the json object.
+   * Gets the json array.
    *
    * @param inputStream the input stream
-   * @return the json object
+   * @return the json array
    */
   public static JsonArray readJsonArrayStream(InputStream inputStream) {
     JsonArray jsonArray;
@@ -784,10 +784,10 @@ public class TestUtils {
   }
 
   /**
-   * Gets the json object.
+   * Gets the json array.
    *
    * @param objectString the object string
-   * @return the json object
+   * @return the json array
    */
   public static JsonArray readJsonArrayString(String objectString) {
     InputStream inputStream = IOUtils.toInputStream(objectString, Charset.forName("UTF-16"));
