@@ -6,6 +6,7 @@ package io.cosmosoftware.kite.stats;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -478,7 +479,7 @@ public class StandardRTCStats {
   }
 
   private static String[] merge(final String[] a, final String[] b) {
-    List<String> lst = new ArrayList<>();
+    List<String> lst = Collections.synchronizedList(new ArrayList<>());;
     for (String ele : a) {
       if (!lst.contains(ele)) {
         lst.add(ele);

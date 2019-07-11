@@ -84,9 +84,9 @@ public class Reporter {
    * Clear lists.
    */
   public void clearLists() {
-    this.containers = new ArrayList<>();
-    this.tests = new ArrayList<>();
-    this.attachments = new ArrayList<>();
+    this.containers = Collections.synchronizedList(new ArrayList<>());;
+    this.tests = Collections.synchronizedList(new ArrayList<>());;
+    this.attachments = Collections.synchronizedList(new ArrayList<>());;
   }
 
   /**

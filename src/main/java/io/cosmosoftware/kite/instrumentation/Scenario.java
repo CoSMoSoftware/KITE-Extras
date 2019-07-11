@@ -10,18 +10,19 @@ import io.cosmosoftware.kite.manager.SSHManager;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import javax.json.JsonArray;
-import javax.json.JsonObject;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
+import java.util.Collections;
+import java.util.List;
 
 public class Scenario extends KiteEntity {
 
@@ -37,7 +38,7 @@ public class Scenario extends KiteEntity {
   private final NetworkInstrumentation networkInstrumentation;
   private final KiteLogger logger;
   private final String network;
-  private ArrayList<Integer> clientIds = new ArrayList<>();
+  private List<Integer> clientIds = Collections.synchronizedList(new ArrayList<>());;
 
   public Scenario(JsonObject jsonObject, KiteLogger logger,
       NetworkInstrumentation networkInstrumentation) throws Exception {
@@ -78,7 +79,7 @@ public class Scenario extends KiteEntity {
     return name;
   }
 
-  public ArrayList<Integer> getClientIds() {
+  public List<Integer> getClientIds() {
     return clientIds;
   }
 

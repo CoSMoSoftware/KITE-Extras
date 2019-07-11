@@ -5,10 +5,8 @@
 package io.cosmosoftware.kite.usrmgmt;
 
 import io.cosmosoftware.kite.report.KiteLogger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
@@ -35,7 +33,7 @@ public class AccountCollection extends Entity {
     for (AccountType accountType : AccountType.values()) {
       jsonArray = jsonObject.getJsonArray(accountType.name());
       if (jsonArray != null) {
-        accountList = new ArrayList<>();
+        accountList = Collections.synchronizedList(new ArrayList<>());;
         for (int i = 0; i < jsonArray.size(); i++) {
           accountList.add(new Account(jsonArray.getJsonObject(i)));
         }

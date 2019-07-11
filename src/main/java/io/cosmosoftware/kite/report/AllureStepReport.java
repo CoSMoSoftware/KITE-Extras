@@ -6,6 +6,7 @@ package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.steps.StepPhase;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -37,8 +38,8 @@ public class AllureStepReport extends ReportEntity {
     super((clientId == null ? "" : (clientId + ": ")) + description);
     this.clientId = clientId;
     this.description = description;
-    this.attachments = new ArrayList<>();
-    this.steps = new ArrayList<>();
+    this.attachments = Collections.synchronizedList(new ArrayList<>());;
+    this.steps = Collections.synchronizedList(new ArrayList<>());;
     this.parameters = new ParamList();
   }
 

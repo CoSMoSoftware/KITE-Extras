@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
@@ -65,7 +66,7 @@ public class ImageComparator {
   }
 
   private static List<Integer> bufferWithZero(List<Integer> array, int finalSize) {
-    List<Integer> res = new ArrayList<>();
+    List<Integer> res = Collections.synchronizedList(new ArrayList<>());;
     int arraySize = array.size();
     int bufferCount = Math.abs(arraySize - finalSize);
     if (arraySize < finalSize) {
@@ -234,7 +235,7 @@ public class ImageComparator {
         ImageComparator.getBufferedImageList(screenShot2, windowSize, rectangleList, offset);
 
     // Compute and accumulate results
-    List<Boolean> result = new ArrayList<>();
+    List<Boolean> result = Collections.synchronizedList(new ArrayList<>());;
     for (int index = 0; index < bufferedImageList1.size(); index++) {
       result.add(
           ImageComparator.areEqual(bufferedImageList1.get(index), bufferedImageList2.get(index)));
@@ -275,7 +276,7 @@ public class ImageComparator {
             .getBufferedImageList(createImageFromBytes(screenShot), windowSize, rectangleList,
                 offset);
 
-    List<Boolean> result = new ArrayList<>();
+    List<Boolean> result = Collections.synchronizedList(new ArrayList<>());;
     for (BufferedImage bufferedImage : bufferedImageList) {
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try {
@@ -328,7 +329,7 @@ public class ImageComparator {
             .getBufferedImageList(createImageFromBytes(screenShot), windowSize, rectangleList,
                 offset);
 
-    List<Boolean> result = new ArrayList<>();
+    List<Boolean> result = Collections.synchronizedList(new ArrayList<>());;
     for (BufferedImage bufferedImage : bufferedImageList) {
       result.add(containRGBValue(bufferedImage, expectedValue));
     }
@@ -543,7 +544,7 @@ public class ImageComparator {
    * @return list of element's rectangles.
    */
   private static List<Rectangle> getRectangleList(List<MobileElement> mobileElementList) {
-    List<Rectangle> srcRectangleList = new ArrayList<>();
+    List<Rectangle> srcRectangleList = Collections.synchronizedList(new ArrayList<>());;
     for (MobileElement mobileElement : mobileElementList) {
       srcRectangleList.add(mobileElement.getRect());
     }
@@ -577,7 +578,7 @@ public class ImageComparator {
    * @return int array values in [0->255]
    */
   private static List<Integer> normalize(byte[] bytes) {
-    List<Integer> res = new ArrayList<>();
+    List<Integer> res = Collections.synchronizedList(new ArrayList<>());;
     for (byte index : bytes) {
       if (index < 0) {
         res.add(128 + Math.abs(index));
