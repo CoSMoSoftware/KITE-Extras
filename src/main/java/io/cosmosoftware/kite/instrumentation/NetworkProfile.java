@@ -22,18 +22,18 @@ import javax.persistence.Transient;
 public class NetworkProfile extends KiteEntity implements SampleData {
 
   final static String TABLE_NAME = "networkprofiles";
-  private String id;
+  private String id = "";
   private static final String INTERFACE_0_NAME = "eth9";
   private static final String INTERFACE_1_NAME = "eth10";
-  private String nit;
-  private String command;
-  private String cleanUpCommand;
-  private Integer delay;
-  private Integer packetloss;
-  private Integer corrupt;
-  private Integer duplicate;
-  private Integer bandwidth;
-  private String name;
+  private String nit = "";
+  private String command = "";
+  private String cleanUpCommand = "";
+  private Integer delay = 0;
+  private Integer packetloss = 0;
+  private Integer corrupt = 0;
+  private Integer duplicate = 0;
+  private Integer bandwidth = 0;
+  private String name = "";
 
   public NetworkProfile() {
     super();

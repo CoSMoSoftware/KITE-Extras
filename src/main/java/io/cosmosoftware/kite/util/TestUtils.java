@@ -757,18 +757,18 @@ public class TestUtils {
    * @return the json array
    */
   public static JsonArray readJsonArrayStream(InputStream inputStream) {
-    JsonArray jsonArray;
-
+    JsonArray jsonArray = null;
     JsonReader jsonReader = null;
     try {
       jsonReader = Json.createReader(inputStream);
       jsonArray = jsonReader.readArray();
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
     } finally {
       if (jsonReader != null) {
         jsonReader.close();
       }
     }
-
     return jsonArray;
   }
 
