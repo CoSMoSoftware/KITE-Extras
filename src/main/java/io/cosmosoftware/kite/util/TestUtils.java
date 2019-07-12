@@ -674,11 +674,12 @@ public class TestUtils {
   public static JsonObject readJsonFile(String jsonFile) {
     FileReader fileReader = null;
     JsonReader jsonReader = null;
+    JsonObject jsonObject = null;
     try {
       logger.info("Reading '" + jsonFile + "' ...");
       fileReader = new FileReader(new File(jsonFile));
       jsonReader = Json.createReader(fileReader);
-      return jsonReader.readObject();
+      jsonObject =  jsonReader.readObject();
     } catch (Exception e) {
       logger.error(getStackTrace(e));
     } finally {
@@ -693,7 +694,38 @@ public class TestUtils {
         jsonReader.close();
       }
     }
-    return null;
+    return jsonObject;
+  }
+  /**
+   * Reads a json file into a JsonArray
+   *
+   * @param jsonFile the file to read
+   * @return the json array
+   */
+  public static JsonArray readJsonArrayFile(String jsonFile) {
+    FileReader fileReader = null;
+    JsonReader jsonReader = null;
+    JsonArray jsonArray = null;
+    try {
+      logger.info("Reading '" + jsonFile + "' ...");
+      fileReader = new FileReader(new File(jsonFile));
+      jsonReader = Json.createReader(fileReader);
+      jsonArray =  jsonReader.readArray();
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
+    } finally {
+      if (fileReader != null) {
+        try {
+          fileReader.close();
+        } catch (IOException e) {
+          logger.warn(e.getMessage(), e);
+        }
+      }
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    return jsonArray;
   }
 
   /**
@@ -719,6 +751,28 @@ public class TestUtils {
   }
 
   /**
+   * Gets the json array.
+   *
+   * @param inputStream the input stream
+   * @return the json array
+   */
+  public static JsonArray readJsonArrayStream(InputStream inputStream) {
+    JsonArray jsonArray = null;
+    JsonReader jsonReader = null;
+    try {
+      jsonReader = Json.createReader(inputStream);
+      jsonArray = jsonReader.readArray();
+    } catch (Exception e) {
+      logger.error(getStackTrace(e));
+    } finally {
+      if (jsonReader != null) {
+        jsonReader.close();
+      }
+    }
+    return jsonArray;
+  }
+
+  /**
    * Gets the json object.
    *
    * @param objectString the object string
@@ -727,6 +781,17 @@ public class TestUtils {
   public static JsonObject readJsonString(String objectString) {
     InputStream inputStream = IOUtils.toInputStream(objectString, Charset.forName("UTF-16"));
     return readJsonStream(inputStream);
+  }
+
+  /**
+   * Gets the json array.
+   *
+   * @param objectString the object string
+   * @return the json array
+   */
+  public static JsonArray readJsonArrayString(String objectString) {
+    InputStream inputStream = IOUtils.toInputStream(objectString, Charset.forName("UTF-16"));
+    return readJsonArrayStream(inputStream);
   }
 
   /**

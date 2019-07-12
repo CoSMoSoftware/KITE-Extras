@@ -22,18 +22,18 @@ import javax.persistence.Transient;
 public class NetworkProfile extends KiteEntity implements SampleData {
 
   final static String TABLE_NAME = "networkprofiles";
-  private String id;
+  private String id = "";
   private static final String INTERFACE_0_NAME = "eth9";
   private static final String INTERFACE_1_NAME = "eth10";
-  private String nit;
-  private String command;
-  private String cleanUpCommand;
-  private int delay;
-  private int packetloss;
-  private int corrupt;
-  private int duplicate;
-  private int bandwidth;
-  private String name;
+  private String nit = "";
+  private String command = "";
+  private String cleanUpCommand = "";
+  private Integer delay = 0;
+  private Integer packetloss = 0;
+  private Integer corrupt = 0;
+  private Integer duplicate = 0;
+  private Integer bandwidth = 0;
+  private String name = "";
 
   public NetworkProfile() {
     super();
@@ -145,43 +145,43 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.name = name;
   }
 
-  public int getBandwidth() {
+  public Integer getBandwidth() {
     return bandwidth;
   }
 
-  public void setBandwidth(int bandwidth) {
+  public void setBandwidth(Integer bandwidth) {
     this.bandwidth = bandwidth;
   }
 
-  public int getCorrupt() {
+  public Integer getCorrupt() {
     return corrupt;
   }
 
-  public void setCorrupt(int corrupt) {
+  public void setCorrupt(Integer corrupt) {
     this.corrupt = corrupt;
   }
 
-  public int getDelay() {
+  public Integer getDelay() {
     return delay;
   }
 
-  public void setDelay(int delay) {
+  public void setDelay(Integer delay) {
     this.delay = delay;
   }
 
-  public int getDuplicate() {
+  public Integer getDuplicate() {
     return duplicate;
   }
 
-  public void setDuplicate(int duplicate) {
+  public void setDuplicate(Integer duplicate) {
     this.duplicate = duplicate;
   }
 
-  public int getPacketloss() {
+  public Integer getPacketloss() {
     return packetloss;
   }
 
-  public void setPacketloss(int packetloss) {
+  public void setPacketloss(Integer packetloss) {
     this.packetloss = packetloss;
   }
 

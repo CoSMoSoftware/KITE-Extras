@@ -16,5 +16,5 @@ public interface JsonBuilder {
    *
    * @return the json object builder
    */
-  public JsonObjectBuilder buildJsonObjectBuilder();
+  public JsonObjectBuilder buildJsonObjectBuilder() throws NullPointerException;
 }
