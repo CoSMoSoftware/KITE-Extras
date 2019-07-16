@@ -96,7 +96,10 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.cleanUpCommand =  "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev "
         + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
   }
-  
+
+  protected void setNit() {
+    this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
+  }
   @Transient
   public String getInterface() {
     return this.nit;
