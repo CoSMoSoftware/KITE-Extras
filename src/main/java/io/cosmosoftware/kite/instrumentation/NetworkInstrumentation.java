@@ -8,7 +8,6 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
-import io.cosmosoftware.kite.util.WebDriverUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -84,7 +83,7 @@ public class NetworkInstrumentation {
         if (networkProfiles.get(i).getCommand() == null) {
           networkProfiles.get(i).setCommand();
         }
-        networkProfiles.get(i).setNit();
+        networkProfiles.get(i).setDefaultNit();
         if (networkProfiles.get(i).getCleanUpCommand() == null) {
           networkProfiles.get(i).setCleanUpCommand();
         }
