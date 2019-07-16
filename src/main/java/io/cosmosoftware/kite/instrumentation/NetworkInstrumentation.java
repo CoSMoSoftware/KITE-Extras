@@ -84,7 +84,7 @@ public class NetworkInstrumentation {
         if (networkProfiles.get(i).getCommand() == null) {
           networkProfiles.get(i).setCommand();
         }
-        networkProfiles.get(i).setNit("eth9");
+        networkProfiles.get(i).setNit();
         if (networkProfiles.get(i).getCleanUpCommand() == null) {
           networkProfiles.get(i).setCleanUpCommand();
         }
