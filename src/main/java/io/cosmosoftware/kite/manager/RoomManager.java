@@ -5,7 +5,9 @@
 package io.cosmosoftware.kite.manager;
 
 import io.cosmosoftware.kite.entities.MeetingStatus;
+import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,15 +59,15 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    *
    * @param i the index of the room name in the array
    * @return the room name correspoding to index i in the array
-   * @throws Exception if i > roomNames.length - 1
+   * @throws KiteTestException if i > roomNames.length - 1
    */
-  public synchronized String getRoomName(int i) throws Exception {
+  public synchronized String getRoomName(int i) throws KiteTestException {
     if (i > roomNames.length - 1 && !loopRooms) {
       logger.error(
           "Error: only " + roomNames.length + " rooms in the room list, unable to create the "
               + i + "th room. Please check the config file.");
-      throw new Exception(
-          "Unable to create the new room, there are not enough rooms provided in the room list.");
+      throw new KiteTestException(
+          "Unable to create the new room, there are not enough rooms provided in the room list.", Status.BROKEN);
     }
     return roomNames[i % roomNames.length];
   }
@@ -75,9 +77,9 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    *
    * @param hubIpOrDns the IP or DNS of the Hub
    * @return the meeting room URL for the load testing.
-   * @throws Exception the exception
+   * @throws KiteTestException the exception
    */
-  public synchronized String getRoomUrl(String hubIpOrDns) throws Exception {
+  public synchronized String getRoomUrl(String hubIpOrDns) throws KiteTestException {
     boolean newMeeting = roomIndex == 0;
     if (usersPerRoom == 0) {
       newMeeting = true;
@@ -113,10 +115,26 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * Gets the meeting room URL when running the test locally (on open-source KITE)
    *
    * @return the meeting room URL
-   * @throws Exception the exception
+   * @throws KiteTestException the exception
    */
-  public synchronized String getRoomUrl() throws Exception {
+  public synchronized String getRoomUrl() throws KiteTestException {
     return getRoomUrl(null);
+  }
+
+  /**
+   * Gets the base url provided in the payload
+   * @return the base url
+   */
+  public synchronized String getBaseURL() {
+    return baseURL;
+  }
+
+  /**
+   * Gets the array of room name
+   * @return the room names
+   */
+  public String[] getRoomNames() {
+    return roomNames;
   }
 
   /**

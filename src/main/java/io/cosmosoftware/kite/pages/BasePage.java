@@ -5,6 +5,8 @@
 package io.cosmosoftware.kite.pages;
 
 import static io.cosmosoftware.kite.entities.Timeouts.EXTENDED_TIMEOUT_IN_SECONDS;
+import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 import static io.cosmosoftware.kite.util.WebDriverUtils.clickElement;
 
 import io.appium.java_client.AppiumDriver;
@@ -130,6 +132,19 @@ public abstract class BasePage {
    */
   public void tap(int x, int y) throws KiteTestException {
     WebDriverUtils.tap(webDriver, x, y);
+  }
+
+  public void waitUntilAvailabilityOf(WebElement elem, int timeoutInSeconds)
+      throws KiteInteractionException {
+      for (int i =0; i < timeoutInSeconds; i++) {
+        if(elem.isEnabled()) {
+          return;
+        } else {
+          waitAround(ONE_SECOND_INTERVAL);
+        }
+      }
+      throw new KiteInteractionException(
+          "The web element " + elem + " is not visible after " + timeoutInSeconds + "s");
   }
 
   /**
