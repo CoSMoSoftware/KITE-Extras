@@ -249,7 +249,7 @@ public class TestUtils {
     try {
       //http://localhost:4444/wd/hub
       String urlStr = hubUrl.substring(0, hubUrl.indexOf("/wd/hub"));
-      logger.info("urlStr: " + urlStr);
+      logger.debug("urlStr: " + urlStr);
       client = HttpClients.createDefault();
       response =
           client.execute(
@@ -650,14 +650,14 @@ public class TestUtils {
     try {
       String fileUrl = jsonObject.getString(key, "");
       if (!fileUrl.equals("")) {
-        String File = System.getProperty("java.io.tmpdir") + key + ".json";
+        String fileStr = System.getProperty("java.io.tmpdir") + key + ".json";
         System.setProperty(key, fileUrl);
         if (fileUrl.contains("file://")) {
-          downloadFile(fileUrl, File);
+          downloadFile(fileUrl, fileStr);
         } else {
-          File = fileUrl;
+          fileStr = fileUrl;
         }
-        fileArray = readJsonFile(File).getJsonArray(key);
+        fileArray = readJsonFile(fileStr).getJsonArray(key);
       } else {
         fileArray = jsonObject.getJsonArray(key);
       }
@@ -667,6 +667,7 @@ public class TestUtils {
     return fileArray;
   }
 
+
   /**
    * Reads a json file into a JsonObject
    *
@@ -674,12 +675,21 @@ public class TestUtils {
    * @return the jsonObject
    */
   public static JsonObject readJsonFile(String jsonFile) {
+    
+    
     FileReader fileReader = null;
     JsonReader jsonReader = null;
     JsonObject jsonObject = null;
     try {
-      logger.info("Reading '" + jsonFile + "' ...");
-      fileReader = new FileReader(new File(jsonFile));
+      String fileStr = System.getProperty("java.io.tmpdir") + "tmpfile.json";
+      if (jsonFile.contains("file://")) {
+        downloadFile(jsonFile, fileStr);
+      } else {
+        fileStr = jsonFile;
+      }
+      
+      logger.info("Reading '" + fileStr + "' ...");
+      fileReader = new FileReader(new File(fileStr));
       jsonReader = Json.createReader(fileReader);
       jsonObject =  jsonReader.readObject();
     } catch (Exception e) {
