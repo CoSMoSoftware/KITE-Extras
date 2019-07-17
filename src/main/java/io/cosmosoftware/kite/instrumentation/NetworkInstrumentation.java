@@ -5,8 +5,10 @@
 package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import javax.json.JsonArray;
@@ -17,6 +19,8 @@ import javax.json.JsonObject;
  */
 public class NetworkInstrumentation {
 
+  private final KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
+  
   private final String remoteAddress;
   private final HashMap<String, Instance> instances;
   private final String kiteServerGridId;
@@ -55,6 +59,7 @@ public class NetworkInstrumentation {
             jsonArray.getJsonObject(i));
         this.networkProfiles.put(networkProfile.getName(), networkProfile);
       } catch (Exception e) {
+        logger.error(e.getStackTrace());
         throw new KiteTestException(
             "Error in json config networkProfiles, the key " + missingKey + " is missing.",
             Status.BROKEN, e);
@@ -78,12 +83,13 @@ public class NetworkInstrumentation {
         if (networkProfiles.get(i).getCommand() == null) {
           networkProfiles.get(i).setCommand();
         }
-        networkProfiles.get(i).setNit("eth9");
+        networkProfiles.get(i).setDefaultNit();
         if (networkProfiles.get(i).getCleanUpCommand() == null) {
           networkProfiles.get(i).setCleanUpCommand();
         }
         this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
       } catch (Exception e) {
+        logger.error(e.getStackTrace());
         throw new KiteTestException(
             "Error in json config networkProfiles, the key " + missingKey + " is missing.",
             Status.BROKEN, e);

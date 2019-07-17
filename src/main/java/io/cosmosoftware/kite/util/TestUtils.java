@@ -247,17 +247,19 @@ public class TestUtils {
     JsonReader reader = null;
 
     try {
-      URL url = new URL(hubUrl);
+      //http://localhost:4444/wd/hub
+      String urlStr = hubUrl.substring(0, hubUrl.indexOf("/wd/hub"));
+      logger.info("urlStr: " + urlStr);
       client = HttpClients.createDefault();
       response =
           client.execute(
               new HttpGet(
-                  String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority())
+                  urlStr
                       + "/grid/api/testsession?session="
                       + sessionId));
       stream = response.getEntity().getContent();
       reader = Json.createReader(stream);
-      url = new URL(reader.readObject().getString("proxyId"));
+      URL url = new URL(reader.readObject().getString("proxyId"));
       node = String.format(protocolAuthorityFormat, url.getProtocol(), url.getAuthority());
     } catch (Exception e) {
       logger.error("Exception while talking to the grid", e);
