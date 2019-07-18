@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Scenario extends KiteEntity {
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
+public class Scenario extends KiteEntity {
+  
   private static final int DEFAULT_SCENARIO_DURATION = 10000;
 
   private final String type;
@@ -64,12 +66,16 @@ public class Scenario extends KiteEntity {
       }
       missingKey = "network";
       this.network = jsonObject.getString("network");
+      NetworkProfile networkProfile = this.networkInstrumentation.getNetworkProfile(network);
+      if (networkProfile == null) {
+        throw new KiteTestException("The NetworkProfile " + network + " is not defined", Status.FAILED);
+      }
       this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
       this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
       this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
       missingKey = "name";
       name = jsonObject.getString("name");
-    } catch (Exception e) {
+    } catch (NullPointerException e) {
       throw new KiteTestException("The key " + missingKey + " is missing", Status.FAILED, e);
     }
     this.duration = jsonObject.getInt("duration", DEFAULT_SCENARIO_DURATION);

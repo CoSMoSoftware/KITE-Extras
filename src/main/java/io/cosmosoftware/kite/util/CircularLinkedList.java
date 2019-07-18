@@ -47,6 +47,9 @@ public class CircularLinkedList<E> extends LinkedList<E> {
    */
   public E get() {
     try {
+      if (size() < 1) {
+        return null;
+      }
       return this.get(pointer++);
     } catch (IndexOutOfBoundsException e) {
       pointer = 0;

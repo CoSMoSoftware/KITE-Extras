@@ -14,6 +14,8 @@ import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+
 /**
  * The type Instrumentation.
  */
@@ -58,11 +60,11 @@ public class NetworkInstrumentation {
         NetworkProfile networkProfile = new NetworkProfile(
             jsonArray.getJsonObject(i));
         this.networkProfiles.put(networkProfile.getName(), networkProfile);
+
+      } catch (NullPointerException e) {
+        throw new KiteTestException("Error in json config networkProfiles, The key " + missingKey + " is missing", Status.FAILED, e);
       } catch (Exception e) {
-        logger.error(e.getStackTrace());
-        throw new KiteTestException(
-            "Error in json config networkProfiles, the key " + missingKey + " is missing.",
-            Status.BROKEN, e);
+        logger.error(getStackTrace(e));
       }
     }
   }
@@ -88,11 +90,11 @@ public class NetworkInstrumentation {
           networkProfiles.get(i).setCleanUpCommand();
         }
         this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
+
+      } catch (NullPointerException e) {
+        throw new KiteTestException("Error with NetworkInstrumentation json config, The key " + missingKey + " is missing", Status.FAILED, e);
       } catch (Exception e) {
-        logger.error(e.getStackTrace());
-        throw new KiteTestException(
-            "Error in json config networkProfiles, the key " + missingKey + " is missing.",
-            Status.BROKEN, e);
+        logger.error(getStackTrace(e));
       }
     }
   }
@@ -122,4 +124,9 @@ public class NetworkInstrumentation {
     return this.jsonObject;
   }
 
+
+  public NetworkProfile getNetworkProfile(String s) {
+    return this.networkProfiles.get(s);
+  }
+  
 }
