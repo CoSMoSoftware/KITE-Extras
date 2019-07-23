@@ -30,7 +30,6 @@ public class AllureTestReport extends AllureStepReport {
     super(null , name);
     this.labels = new ParamList();
     this.links = Collections.synchronizedList(new ArrayList<>());;
-    this.historyId = UUID.randomUUID().toString();
   }
 
   public void setFullName(String fullName) {
@@ -68,5 +67,22 @@ public class AllureTestReport extends AllureStepReport {
   public void generateReport() {
     String fileName = this.reporter.getReportPath() + this.uuid + "-result.json";
     printJsonTofile(this.toString(), fileName);
+    this.reporter.updateContainers();
   }
+
+  public void setHistoryId(String historyId) {
+    this.historyId = historyId;
+  }
+
+  public String getFullName() {
+    return fullName;
+  }
+
+  @Override
+  public void setStopTimestamp() {
+    super.setStopTimestamp();
+    this.generateReport();
+  }
+
+
 }

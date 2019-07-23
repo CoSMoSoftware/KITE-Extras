@@ -109,12 +109,16 @@ public class JSActionScript {
         + "var video = document.getElementById('"
         + videoId
         + "');"
+        + "if(video){"
         + "ctx.drawImage(video,0,0,video.videoHeight-1,video.videoWidth-1);"
         + "var imageData = ctx.getImageData(0,0,video.videoHeight-1,video.videoWidth-1).data;"
         + "var sum = imageData.reduce(getSum);"
-        + "if (sum===255*(Math.pow(video.videoHeight-1,(video.videoWidth-1)*(video.videoWidth-1))))"
-        + "   return 0;"
-        + "return sum;";
+        + "if (sum===255*(Math.pow(video.videoHeight-1,(video.videoWidth-1)*(video.videoWidth-1)))) {"
+        + "   return 0;}"
+        + "return sum;"
+        + "} else {"
+        + "return 0 "
+        + "}";
   }
 
   /**
