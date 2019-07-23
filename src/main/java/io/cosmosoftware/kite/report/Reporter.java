@@ -9,10 +9,16 @@ import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
 import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
 import static io.cosmosoftware.kite.util.TestUtils.createDirs;
 import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
+import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
 import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -290,6 +296,8 @@ public class Reporter {
     }
     logger.info("Creating report folder if not exist at :" + this.reportPath);
     createDirs(this.reportPath);
+    this.generateCategoryJsonFile();
+
   }
 
   /**
@@ -300,6 +308,65 @@ public class Reporter {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
       printJsonTofile(container.toString(), fileName);
     }
+  }
+
+  private void generateCategoryJsonFile(){
+    File file = new File(this.reportPath + "categories.json");
+    if (!file.exists()) {
+      BufferedWriter writer = null;
+      try {
+      // Writes bytes from the specified byte array to this file output stream
+        writer = new BufferedWriter(new FileWriter(file));
+        writer.write(defaultCategoriesString());
+
+      }
+      catch (FileNotFoundException e) {
+        logger.error("File not found" + e);
+      } catch (IOException ioe) {
+        logger.error("Exception while writing file " + ioe);
+      } finally {
+        // close the streams using close method
+        try {
+          if (writer != null) {
+            writer.close();
+          }
+        } catch (IOException ioe) {
+          logger.error("Error while closing stream: " + ioe);
+        }
+      }
+    }
+  }
+
+  private String defaultCategoriesString() {
+    return "["
+        + "  {"
+        + "    \"name\": \"Ignored tests\", "
+        + "    \"matchedStatuses\": [\"skipped\"] "
+        + "  },"
+        + "  {"
+        + "    \"name\": \"Infrastructure problems\","
+        + "    \"messageRegex\": \".*WebDriverException.*\", "
+        + "    \"matchedStatuses\": [\"failed\"]"
+        + "  },"
+        + "  {"
+        + "    \"name\": \"Outdated tests\","
+        + "    \"traceRegex\": \".*FileNotFoundException.*\", "
+        + "    \"matchedStatuses\": [\"broken\", \"failed\"]"
+        + "  },"
+        + "  {"
+        + "    \"name\": \"Product defects\","
+        + "    \"matchedStatuses\": [\"failed\"]"
+        + "  },"
+        + "  {"
+        + "    \"name\": \"Connection problem\","
+        + "    \"traceRegex\": \".*connection.*\", "
+        + "    \"matchedStatuses\": [\"failed\"]"
+        + "  },"
+        + "  {"
+        + "    \"name\": \"Test defects\","
+        + "    \"matchedStatuses\": [\"broken\"]"
+        + "  }"
+        + "]";
   }
 
 }

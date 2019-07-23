@@ -67,7 +67,6 @@ public class AllureTestReport extends AllureStepReport {
   public void generateReport() {
     String fileName = this.reporter.getReportPath() + this.uuid + "-result.json";
     printJsonTofile(this.toString(), fileName);
-    this.reporter.updateContainers();
   }
 
   public void setHistoryId(String historyId) {
