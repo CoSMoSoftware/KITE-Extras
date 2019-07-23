@@ -8,6 +8,8 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.Status;
 import javax.json.JsonObject;
 
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+
 /**
  * The type Instance: represents a selenium node or a gateway for network instrumentation. { "_id":
  * "gw1", "type": "gateway", "name": "Alice Gateway", "ipAddress": "11.222.33.238", "username":
@@ -61,10 +63,9 @@ public class Instance {
       this.nit1 = jsonObject.getString("nit1");
       missingKey = "nit2";
       this.nit2 = jsonObject.getString("nit2");
+
     } catch (NullPointerException e) {
-      throw new KiteTestException(
-          "Error in json config instrumentation, the key " + missingKey + " is missing.",
-          Status.BROKEN, e);
+      throw new KiteTestException("The key " + missingKey + " is missing", Status.FAILED, e);
     }
     this.name = jsonObject.getString("name", this.id);
     this.password = jsonObject.getString("password", null);
