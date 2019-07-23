@@ -111,15 +111,6 @@ public class Reporter {
    */
   public void generateReportFiles() {
     updateContainers();
-
-//    for (AllureTestReport test : tests) {
-//      test.generateReport();
-//    }
-
-//    for (CustomAttachment attachment : attachments) {
-//      attachment.saveToFile(reportPath);
-//    }
-
     if (this.csvReport) {
       closeCSVWriter();
     }
