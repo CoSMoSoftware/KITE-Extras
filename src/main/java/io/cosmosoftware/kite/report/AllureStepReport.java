@@ -93,10 +93,12 @@ public class AllureStepReport extends ReportEntity {
   }
 
   protected Status getActualStatus() {
-    for (AllureStepReport stepReport : this.steps) {
-      Status temp = stepReport.getStatus();
-      if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
-        return temp;
+    synchronized (steps) {
+      for (AllureStepReport stepReport : this.steps) {
+        Status temp = stepReport.getStatus();
+        if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
+          return temp;
+        }
       }
     }
     return this.status;
@@ -149,8 +151,10 @@ public class AllureStepReport extends ReportEntity {
 
     JsonArrayBuilder attArray = Json.createArrayBuilder();
     if (attachments.size() > 0) {
-      for (CustomAttachment attachment : attachments) {
-        attArray.add(attachment.toJson());
+      synchronized (attachments) {
+        for (CustomAttachment attachment : attachments) {
+          attArray.add(attachment.toJson());
+        }
       }
     }
 
