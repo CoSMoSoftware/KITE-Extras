@@ -18,14 +18,14 @@ import javax.json.JsonObjectBuilder;
  */
 public class AllureStepReport extends ReportEntity {
 
-  private final List<CustomAttachment> attachments;
+  private List<CustomAttachment> attachments;
   private String description = "N/C";
   private String clientId = "N/C";
   private StatusDetails details;
   private boolean ignore = false;
   private ParamList parameters;
   private Status status = Status.PASSED;
-  private final List<AllureStepReport> steps;
+  private List<AllureStepReport> steps;
   private StepPhase phase;
 
   /**
@@ -38,8 +38,8 @@ public class AllureStepReport extends ReportEntity {
     super((clientId == null ? "" : (clientId + ": ")) + description);
     this.clientId = clientId;
     this.description = description;
-    this.attachments = Collections.synchronizedList(new ArrayList<>());
-    this.steps = Collections.synchronizedList(new ArrayList<>());
+    this.attachments = Collections.synchronizedList(new ArrayList<>());;
+    this.steps = Collections.synchronizedList(new ArrayList<>());;
     this.parameters = new ParamList();
   }
 
@@ -93,12 +93,10 @@ public class AllureStepReport extends ReportEntity {
   }
 
   protected Status getActualStatus() {
-    synchronized (steps) {
-      for (AllureStepReport stepReport : this.steps) {
-        Status temp = stepReport.getStatus();
-        if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
-          return temp;
-        }
+    for (AllureStepReport stepReport : this.steps) {
+      Status temp = stepReport.getStatus();
+      if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
+        return temp;
       }
     }
     return this.status;
@@ -142,19 +140,15 @@ public class AllureStepReport extends ReportEntity {
     this.status = getActualStatus();
     JsonArrayBuilder stepsArray = Json.createArrayBuilder();
     if (steps.size() > 0) {
-      synchronized (steps) {
-        for (AllureStepReport stepReport : this.steps) {
-          stepsArray.add(stepReport.toJson());
-        }
+      for (AllureStepReport stepReport : this.steps) {
+        stepsArray.add(stepReport.toJson());
       }
     }
 
     JsonArrayBuilder attArray = Json.createArrayBuilder();
     if (attachments.size() > 0) {
-      synchronized (attachments) {
-        for (CustomAttachment attachment : attachments) {
-          attArray.add(attachment.toJson());
-        }
+      for (CustomAttachment attachment : attachments) {
+        attArray.add(attachment.toJson());
       }
     }
 
