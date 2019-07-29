@@ -18,14 +18,14 @@ import javax.json.JsonObjectBuilder;
  */
 public class AllureStepReport extends ReportEntity {
 
-  private List<CustomAttachment> attachments;
+  private final List<CustomAttachment> attachments;
+  private final List<AllureStepReport> steps;
   private String description = "N/C";
   private String clientId = "N/C";
   private StatusDetails details;
   private boolean ignore = false;
   private ParamList parameters;
   private Status status = Status.PASSED;
-  private List<AllureStepReport> steps;
   private StepPhase phase;
 
   /**
@@ -140,8 +140,10 @@ public class AllureStepReport extends ReportEntity {
     this.status = getActualStatus();
     JsonArrayBuilder stepsArray = Json.createArrayBuilder();
     if (steps.size() > 0) {
-      for (AllureStepReport stepReport : this.steps) {
-        stepsArray.add(stepReport.toJson());
+      synchronized (steps) {
+        for (AllureStepReport stepReport : this.steps) {
+          stepsArray.add(stepReport.toJson());
+        }
       }
     }
 
