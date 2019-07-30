@@ -44,7 +44,6 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
     this.bandwidth = jsonObject.getInt("bandwidth", 0);
-    this.nit = "eth";
     this.command = jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
     this.nit = this.command.split("dev")[1].split(" ")[1].trim();
     int i = 1;
