@@ -38,8 +38,8 @@ public class AllureStepReport extends ReportEntity {
     super((clientId == null ? "" : (clientId + ": ")) + description);
     this.clientId = clientId;
     this.description = description;
-    this.attachments = Collections.synchronizedList(new ArrayList<>());;
-    this.steps = Collections.synchronizedList(new ArrayList<>());;
+    this.attachments = Collections.synchronizedList(new ArrayList<>());
+    this.steps = Collections.synchronizedList(new ArrayList<>());
     this.parameters = new ParamList();
   }
 
