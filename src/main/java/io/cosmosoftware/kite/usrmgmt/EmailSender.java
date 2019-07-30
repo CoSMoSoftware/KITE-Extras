@@ -86,6 +86,7 @@ public class EmailSender {
       t.connect(email.getSmtpServer(), email.getPort(), email.getUsername(), email.getPassword());
       t.sendMessage(msg, msg.getAllRecipients());
       t.close();
+      logger.info("Email sent to " + email.getToAsString());
     } catch (MessagingException e) {
       logger.error(getStackTrace(e));
     }

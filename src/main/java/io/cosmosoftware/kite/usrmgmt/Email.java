@@ -221,7 +221,8 @@ public class Email extends KiteEntity {
    * 
    * @return the to
    */
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+  @Column
+  @ElementCollection(fetch = FetchType.EAGER)
   public List<String> getTo() {
     return to;
   }
