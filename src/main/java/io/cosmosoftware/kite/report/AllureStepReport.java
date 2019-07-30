@@ -19,13 +19,13 @@ import javax.json.JsonObjectBuilder;
 public class AllureStepReport extends ReportEntity {
 
   private final List<CustomAttachment> attachments;
+  private final List<AllureStepReport> steps;
   private String description = "N/C";
   private String clientId = "N/C";
   private StatusDetails details;
   private boolean ignore = false;
   private ParamList parameters;
   private Status status = Status.PASSED;
-  private final List<AllureStepReport> steps;
   private StepPhase phase;
 
   /**
