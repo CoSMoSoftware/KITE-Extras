@@ -32,8 +32,8 @@ public class Scenario extends KiteEntity {
 
   private final String type;
   private final String name;
-  private  String command;
-  private  String cleanUpCommand;
+  private final String command;
+  private final String cleanUpCommand;
   private final String gateway;
   private final Integer duration;
   private final NetworkInstrumentation networkInstrumentation;
