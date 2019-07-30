@@ -23,8 +23,6 @@ public class NetworkProfile extends KiteEntity implements SampleData {
 
   final static String TABLE_NAME = "networkprofiles";
   private String id = "";
-  private static final String INTERFACE_0_NAME = "eth9";
-  private static final String INTERFACE_1_NAME = "eth10";
   private String nit = "";
   private String command = "";
   private String cleanUpCommand = "";
@@ -46,9 +44,14 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
     this.bandwidth = jsonObject.getInt("bandwidth", 0);
+    this.nit = "eth";
     this.command = jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
-    this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
-    
+    this.nit = this.command.split("dev")[1].split(" ")[1].trim();
+    int i = 1;
+    while (this.nit.equals("ifb0")) {
+      this.nit = this.command.split("dev")[i].split(" ")[1].trim();
+      i += 1;
+    }
     final String defaultCleanUp = "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " 
         + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
     this.cleanUpCommand = jsonObject.getString("cleanUpCommand", defaultCleanUp);
@@ -56,32 +59,33 @@ public class NetworkProfile extends KiteEntity implements SampleData {
 
   protected String setCommand() throws Exception {
     String command;
+    String nit = "eth";
     String egress_command = ""; // command for traffic going out
     String ingress_command = ""; // command for traffic going in
     command =
         "sudo ip link add ifb0 type ifb || true && sudo ip link set up dev ifb0 || true && sudo tc qdisc add dev "
-            + INTERFACE_0_NAME + " ingress || true && sudo tc filter add dev " + INTERFACE_0_NAME
+            + nit + " ingress || true && sudo tc filter add dev " + nit
             + " parent ffff: protocol ip u32 match u32 0 0 action mirred egress redirect dev ifb0 || true && ";
     if (this.delay != 0) {
-      egress_command = createCommand(egress_command, "delay " + delay + "ms ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "delay " + delay + "ms ", nit);
       ingress_command = createCommand(ingress_command, "delay " + delay + "ms ", "ifb0");
     }
     if (this.packetloss != 0) {
-      egress_command = createCommand(egress_command, "loss " + packetloss + "% ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "loss " + packetloss + "% ", nit);
       ingress_command = createCommand(ingress_command, "loss " + packetloss + "% ", "ifb0");
     }
     if (this.corrupt != 0) {
-      egress_command = createCommand(egress_command, "corrupt " + corrupt + "% ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "corrupt " + corrupt + "% ", nit);
       ingress_command = createCommand(ingress_command, "corrupt " + corrupt + "% ", "ifb0");
     }
     if (this.duplicate != 0) {
       egress_command = createCommand(egress_command, "duplicate " + duplicate + "% ",
-          INTERFACE_0_NAME);
+          nit);
       ingress_command = createCommand(ingress_command, "duplicate " + duplicate + "% ", "ifb0");
     }
     if (this.bandwidth != 0) {
       egress_command = createCommand(egress_command, "rate " + bandwidth + "kbit ",
-          INTERFACE_0_NAME);
+          nit);
       ingress_command = createCommand(ingress_command, "rate " + bandwidth + "kbit ", "ifb0");
     }
     command += egress_command + "|| true && " + ingress_command;
@@ -98,7 +102,18 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   }
 
   protected void setDefaultNit() {
-    this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
+    this.nit = this.command.split("dev")[1].split(" ")[1].trim();
+    int i = 1;
+    while (this.nit.equals("ifb0")) {
+      this.nit = this.command.split("dev")[i].split(" ")[1].trim();
+      i += 1;
+    }
+  }
+
+  protected void changeNit(String nit) {
+    this.command = this.command.replace(this.nit, nit);
+    this.cleanUpCommand = this.cleanUpCommand.replace(this.nit, nit);
+    this.nit = nit;
   }
   
   
