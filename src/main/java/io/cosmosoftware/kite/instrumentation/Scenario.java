@@ -48,10 +48,10 @@ public class Scenario extends KiteEntity {
     String missingKey = "";
     this.networkInstrumentation = networkInstrumentation;
     try {
-      missingKey = "type";
-      this.type = jsonObject.getString("type");
       missingKey = "network";
       this.network = jsonObject.getString("network");
+      missingKey = "type";
+      this.type = jsonObject.getString("type");
       NetworkProfile networkProfile = this.networkInstrumentation.getNetworkProfile(network);
       if (networkProfile == null) {
         throw new KiteTestException("The NetworkProfile " + network + " is not defined", Status.FAILED);
@@ -64,8 +64,6 @@ public class Scenario extends KiteEntity {
         if (nit.equals("eth")) {
           networkProfile.changeNit("eth1");
         }
-        this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
-        this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
         this.gateway = null;
       } else if (this.type.equals("gateway")) {
         missingKey = "gateway";
@@ -73,12 +71,13 @@ public class Scenario extends KiteEntity {
         if (nit.equals("eth")) {
           networkProfile.changeNit("eth9");
         }
-        this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
-        this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
         this.clientIds = null;
       } else {
         throw new KiteTestException("The type specified doesn't exist", Status.FAILED);
       }
+      missingKey = "command";
+      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
+      this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (NullPointerException e) {
