@@ -54,15 +54,13 @@ public class NetworkInstrumentation {
     jsonArray = TestUtils.getJsonArray(jsonObject, "networkProfiles");
     this.networkProfiles = new HashMap<>();
     for (int i = 0; i < jsonArray.size(); i++) {
-      String missingKey = "";
       try {
-        missingKey = "networkProfile";
-        NetworkProfile networkProfile = new NetworkProfile(
-            jsonArray.getJsonObject(i));
+        NetworkProfile networkProfile = new NetworkProfile(jsonArray.getJsonObject(i));
         this.networkProfiles.put(networkProfile.getName(), networkProfile);
-
       } catch (NullPointerException e) {
-        throw new KiteTestException("Error in json config networkProfiles, The key " + missingKey + " is missing", Status.FAILED, e);
+        logger.error(getStackTrace(e));
+        throw new KiteTestException("Error with NetworkInstrumentation json config, failed to create NetworkProfile",
+          Status.FAILED, e);
       } catch (Exception e) {
         logger.error(getStackTrace(e));
       }
@@ -78,8 +76,7 @@ public class NetworkInstrumentation {
     this.kiteServerGridId = kiteServerGridId;
     this.remoteAddress = remoteAddress;
     this.kiteServer = kiteServer;
-    this.networkProfiles = new HashMap<>();
-    
+    this.networkProfiles = new HashMap<>();    
     for (int i = 0; i < networkProfiles.size(); i++) {
       try {
         this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
@@ -117,8 +114,7 @@ public class NetworkInstrumentation {
   public JsonObject getJsonObject() {
     return this.jsonObject;
   }
-
-
+  
   public NetworkProfile getNetworkProfile(String s) {
     return this.networkProfiles.get(s);
   }

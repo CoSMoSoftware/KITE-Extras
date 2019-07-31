@@ -69,13 +69,11 @@ public class NetworkProfile extends KiteEntity implements SampleData {
       ingress_command = createCommand(ingress_command, "corrupt " + corrupt + "% ", "ifb0");
     }
     if (this.duplicate != 0) {
-      egress_command = createCommand(egress_command, "duplicate " + duplicate + "% ",
-          nit);
+      egress_command = createCommand(egress_command, "duplicate " + duplicate + "% ", nit);
       ingress_command = createCommand(ingress_command, "duplicate " + duplicate + "% ", "ifb0");
     }
     if (this.bandwidth != 0) {
-      egress_command = createCommand(egress_command, "rate " + bandwidth + "kbit ",
-          nit);
+      egress_command = createCommand(egress_command, "rate " + bandwidth + "kbit ", nit);
       ingress_command = createCommand(ingress_command, "rate " + bandwidth + "kbit ", "ifb0");
     }
     commandStr += egress_command + "|| true && " + ingress_command;
@@ -88,9 +86,8 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   protected String defaultCleanUpCommand(List<String> nit) {
     String commandStr = "";
     for (String n : nit) {
-      commandStr +=
-          "sudo tc qdisc del dev " + n + " root || true "+ 
-          "&& sudo tc qdisc del dev " + n + " ingress || true && ";
+      commandStr += "sudo tc qdisc del dev " + n + " root || true " 
+        + "&& sudo tc qdisc del dev " + n + " ingress || true && ";
     }
     commandStr += "sudo tc qdisc del dev ifb0 root || true";
     return commandStr;
