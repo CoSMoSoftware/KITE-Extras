@@ -83,12 +83,9 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     return commandStr;
   }
 
-  protected String defaultCleanUpCommand(List<String> nit) {
-    String commandStr = "";
-    for (String n : nit) {
-      commandStr += "sudo tc qdisc del dev " + n + " root || true " 
-        + "&& sudo tc qdisc del dev " + n + " ingress || true && ";
-    }
+  protected String defaultCleanUpCommand(String nit) {
+    String commandStr = "sudo tc qdisc del dev " + nit + " root || true ";
+    commandStr += "&& sudo tc qdisc del dev " + nit + " ingress || true && ";
     commandStr += "sudo tc qdisc del dev ifb0 root || true";
     return commandStr;
   }
@@ -200,7 +197,7 @@ public class NetworkProfile extends KiteEntity implements SampleData {
 
   @Transient
   public String getCleanUpCommand(List<String> nit) throws KiteTestException {
-    String commandStr = this.cleanUpCommand != null ? this.cleanUpCommand : defaultCleanUpCommand(nit);
+    String commandStr = this.cleanUpCommand != null ? this.cleanUpCommand : defaultCleanUpCommand(nit.get(0));
     for (int i = 0; i < nit.size(); i++) {
       commandStr.replaceAll("%nit" + i, nit.get(i));
     }
