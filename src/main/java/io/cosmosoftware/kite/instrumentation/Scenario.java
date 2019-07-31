@@ -30,12 +30,16 @@ public class Scenario extends KiteEntity {
   
   private static final int DEFAULT_SCENARIO_DURATION = 10000;
 
+  private static final String DEFAULT_GW_NIT1 = "eth9";
+  private static final String DEFAULT_GW_NIT2 = "eth10";  
+  private static final String DEFAULT_CLIENT_NIT = "eth0";
+
   private final String type;
   private final String name;
   private final String command;
   private final String cleanUpCommand;
   private final String gateway;
-  private final String nit;
+  private final List<String> nit;
   private final Integer duration;
   private final NetworkInstrumentation networkInstrumentation;
   private final KiteLogger logger;
@@ -70,9 +74,9 @@ public class Scenario extends KiteEntity {
       if (networkProfile == null) {
         throw new KiteTestException("The NetworkProfile " + network + " is not defined", Status.FAILED);
       }
-      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand().trim();
-      this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand().trim();
-      this.nit = this.networkInstrumentation.getNetworkProfiles().get(network).getInterface();
+      this.nit = getNit(jsonObject, this.type);      
+      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand(this.nit).trim();
+      this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand(this.nit).trim();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (NullPointerException e) {
@@ -105,6 +109,24 @@ public class Scenario extends KiteEntity {
 
   public Integer getDuration() {
     return duration;
+  }
+  
+  private List<String> getNit(JsonObject jsonObject, String type) {
+    List<String> result = new ArrayList<>();
+    if (!jsonObject.containsKey("nit")) {
+      if ("gateway".equalsIgnoreCase(type)) {
+        result.add(DEFAULT_GW_NIT1);
+        result.add(DEFAULT_GW_NIT2);
+      } else {
+        result.add(DEFAULT_CLIENT_NIT);
+      }
+    } else {
+      JsonArray jsonArray = jsonObject.getJsonArray("nit");
+      for (int i = 0; i < jsonArray.size(); i++) {
+        result.add(jsonArray.getString(i));
+      }
+    }
+    return result;
   }
 
   public String sendCommand(WebDriver webDriver) {

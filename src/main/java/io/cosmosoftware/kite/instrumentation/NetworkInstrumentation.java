@@ -79,20 +79,14 @@ public class NetworkInstrumentation {
     this.remoteAddress = remoteAddress;
     this.kiteServer = kiteServer;
     this.networkProfiles = new HashMap<>();
+    
     for (int i = 0; i < networkProfiles.size(); i++) {
-      String missingKey = "networkProfiles";
       try {
-        if (networkProfiles.get(i).getCommand() == null) {
-          networkProfiles.get(i).setCommand();
-        }
-        networkProfiles.get(i).setDefaultNit();
-        if (networkProfiles.get(i).getCleanUpCommand() == null) {
-          networkProfiles.get(i).setCleanUpCommand();
-        }
         this.networkProfiles.put(networkProfiles.get(i).getName(), networkProfiles.get(i));
-
       } catch (NullPointerException e) {
-        throw new KiteTestException("Error with NetworkInstrumentation json config, The key " + missingKey + " is missing", Status.FAILED, e);
+        logger.error(getStackTrace(e));
+        throw new KiteTestException("Error with NetworkInstrumentation json config, profile " 
+          + networkProfiles.get(i).getName() + " does not exist.", Status.FAILED, e);
       } catch (Exception e) {
         logger.error(getStackTrace(e));
       }
