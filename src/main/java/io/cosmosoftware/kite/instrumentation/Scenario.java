@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
-
 public class Scenario extends KiteEntity {
   
   private static final int DEFAULT_SCENARIO_DURATION = 10000;

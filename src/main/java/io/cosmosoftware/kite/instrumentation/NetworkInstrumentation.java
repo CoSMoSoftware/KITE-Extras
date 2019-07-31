@@ -9,10 +9,10 @@ import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
 
-import java.util.HashMap;
-import java.util.List;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.util.HashMap;
+import java.util.List;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
