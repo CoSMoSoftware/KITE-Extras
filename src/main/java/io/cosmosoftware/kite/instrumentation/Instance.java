@@ -6,9 +6,8 @@ package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.Status;
-import javax.json.JsonObject;
 
-import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+import javax.json.JsonObject;
 
 /**
  * The type Instance: represents a selenium node or a gateway for network instrumentation. { "_id":

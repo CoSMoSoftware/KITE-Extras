@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.util.List;
 
 
 @Entity(name = NetworkProfile.TABLE_NAME)
@@ -23,9 +24,6 @@ public class NetworkProfile extends KiteEntity implements SampleData {
 
   final static String TABLE_NAME = "networkprofiles";
   private String id = "";
-  private static final String INTERFACE_0_NAME = "eth9";
-  private static final String INTERFACE_1_NAME = "eth10";
-  private String nit = "";
   private String command = "";
   private String cleanUpCommand = "";
   private Integer delay = 0;
@@ -46,65 +44,49 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.corrupt = jsonObject.getInt("corrupt", 0);
     this.duplicate = jsonObject.getInt("duplicate", 0);
     this.bandwidth = jsonObject.getInt("bandwidth", 0);
-    this.command = jsonObject.containsKey("command") ? jsonObject.getString("command") : this.setCommand();
-    this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
-    
-    final String defaultCleanUp = "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev " 
-        + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
-    this.cleanUpCommand = jsonObject.getString("cleanUpCommand", defaultCleanUp);
+    this.command = jsonObject.getString("command", null);
+    this.cleanUpCommand = jsonObject.getString("cleanUpCommand", null);
   }
 
-  protected String setCommand() throws Exception {
-    String command;
+  protected String defaultCommand(String nit) throws KiteTestException {
     String egress_command = ""; // command for traffic going out
     String ingress_command = ""; // command for traffic going in
-    command =
+    String commandStr =
         "sudo ip link add ifb0 type ifb || true && sudo ip link set up dev ifb0 || true && sudo tc qdisc add dev "
-            + INTERFACE_0_NAME + " ingress || true && sudo tc filter add dev " + INTERFACE_0_NAME
+            + nit + " ingress || true && sudo tc filter add dev " + nit
             + " parent ffff: protocol ip u32 match u32 0 0 action mirred egress redirect dev ifb0 || true && ";
     if (this.delay != 0) {
-      egress_command = createCommand(egress_command, "delay " + delay + "ms ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "delay " + delay + "ms ", nit);
       ingress_command = createCommand(ingress_command, "delay " + delay + "ms ", "ifb0");
     }
     if (this.packetloss != 0) {
-      egress_command = createCommand(egress_command, "loss " + packetloss + "% ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "loss " + packetloss + "% ", nit);
       ingress_command = createCommand(ingress_command, "loss " + packetloss + "% ", "ifb0");
     }
     if (this.corrupt != 0) {
-      egress_command = createCommand(egress_command, "corrupt " + corrupt + "% ", INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "corrupt " + corrupt + "% ", nit);
       ingress_command = createCommand(ingress_command, "corrupt " + corrupt + "% ", "ifb0");
     }
     if (this.duplicate != 0) {
-      egress_command = createCommand(egress_command, "duplicate " + duplicate + "% ",
-          INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "duplicate " + duplicate + "% ", nit);
       ingress_command = createCommand(ingress_command, "duplicate " + duplicate + "% ", "ifb0");
     }
     if (this.bandwidth != 0) {
-      egress_command = createCommand(egress_command, "rate " + bandwidth + "kbit ",
-          INTERFACE_0_NAME);
+      egress_command = createCommand(egress_command, "rate " + bandwidth + "kbit ", nit);
       ingress_command = createCommand(ingress_command, "rate " + bandwidth + "kbit ", "ifb0");
     }
-    command += egress_command + "|| true && " + ingress_command;
+    commandStr += egress_command + "|| true && " + ingress_command;
     if (egress_command.equals("") && ingress_command.equals("")) {
       throw new KiteTestException("No command to run.", Status.BROKEN);
     }
-    this.command = command;
-    return command;
+    return commandStr;
   }
 
-  protected void setCleanUpCommand() {
-    this.cleanUpCommand =  "sudo tc qdisc del dev " + this.nit + " root || true && sudo tc qdisc del dev "
-        + this.nit + " ingress || true && sudo tc qdisc del dev ifb0 root || true";
-  }
-
-  protected void setDefaultNit() {
-    this.nit = this.command.contains(INTERFACE_0_NAME) ? INTERFACE_0_NAME : INTERFACE_1_NAME;
-  }
-  
-  
-  @Transient
-  public String getInterface() {
-    return this.nit;
+  protected String defaultCleanUpCommand(String nit) {
+    String commandStr = "sudo tc qdisc del dev " + nit + " root || true ";
+    commandStr += "&& sudo tc qdisc del dev " + nit + " ingress || true && ";
+    commandStr += "sudo tc qdisc del dev ifb0 root || true";
+    return commandStr;
   }
 
   private String createCommand(String command, String info, String nit) {
@@ -187,7 +169,6 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.packetloss = packetloss;
   }
 
-
   public String getCommand() {
     return this.command;
   }
@@ -203,21 +184,25 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   public void setCleanUpCommand(String cleanUpCommand) {
     this.cleanUpCommand = cleanUpCommand;
   }
+  
+  @Transient
+  public String getCommand(List<String> nit) throws KiteTestException {
+    String commandStr = this.command != null ? this.command : defaultCommand(nit.get(0));
+    for (int i = 0; i < nit.size(); i++) {
+      commandStr = commandStr.replaceAll("%nit" + i, nit.get(i));
+    }
+    return commandStr;
+  }
 
   @Transient
-  public String getNit() {
-    return nit;
+  public String getCleanUpCommand(List<String> nit) throws KiteTestException {
+    String commandStr = this.cleanUpCommand != null ? this.cleanUpCommand : defaultCleanUpCommand(nit.get(0));
+    for (int i = 0; i < nit.size(); i++) {
+      commandStr = commandStr.replaceAll("%nit" + i, nit.get(i));
+    }
+    return commandStr;
   }
-
-  public void setNit(String nit) {
-    this.nit = nit;
-  }
-
-  /**
-   * Make sample data.
-   *
-   * @return the sample data
-   */
+  
   /*
    * (non-Javadoc)
    *
@@ -231,7 +216,6 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     this.corrupt = 0;
     this.duplicate = 0;
     this.packetloss = 0;
-
     return this;
   }
 }
