@@ -30,7 +30,7 @@ public class Scenario extends KiteEntity {
 
   private static final String DEFAULT_GW_NIT1 = "eth9";
   private static final String DEFAULT_GW_NIT2 = "eth10";  
-  private static final String DEFAULT_CLIENT_NIT = "eth0";
+  private static final String DEFAULT_CLIENT_NIT = "eth1";
 
   private final String type;
   private final String name;
@@ -73,8 +73,8 @@ public class Scenario extends KiteEntity {
         throw new KiteTestException("The NetworkProfile " + network + " is not defined", Status.FAILED);
       }
       this.nit = getNit(jsonObject, this.type);      
-      this.command = this.networkInstrumentation.getNetworkProfiles().get(network).getCommand(this.nit).trim();
-      this.cleanUpCommand = this.networkInstrumentation.getNetworkProfiles().get(network).getCleanUpCommand(this.nit).trim();
+      this.command = networkProfile.getCommand(this.nit).trim();
+      this.cleanUpCommand = networkProfile.getCleanUpCommand(this.nit).trim();
       missingKey = "name";
       name = jsonObject.getString("name");
     } catch (NullPointerException e) {

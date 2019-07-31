@@ -49,10 +49,9 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   }
 
   protected String defaultCommand(String nit) throws KiteTestException {
-    String commandStr = "";
     String egress_command = ""; // command for traffic going out
     String ingress_command = ""; // command for traffic going in
-    command =
+    String commandStr =
         "sudo ip link add ifb0 type ifb || true && sudo ip link set up dev ifb0 || true && sudo tc qdisc add dev "
             + nit + " ingress || true && sudo tc filter add dev " + nit
             + " parent ffff: protocol ip u32 match u32 0 0 action mirred egress redirect dev ifb0 || true && ";
@@ -190,7 +189,7 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   public String getCommand(List<String> nit) throws KiteTestException {
     String commandStr = this.command != null ? this.command : defaultCommand(nit.get(0));
     for (int i = 0; i < nit.size(); i++) {
-      commandStr.replaceAll("%nit" + i, nit.get(i));
+      commandStr = commandStr.replaceAll("%nit" + i, nit.get(i));
     }
     return commandStr;
   }
@@ -199,7 +198,7 @@ public class NetworkProfile extends KiteEntity implements SampleData {
   public String getCleanUpCommand(List<String> nit) throws KiteTestException {
     String commandStr = this.cleanUpCommand != null ? this.cleanUpCommand : defaultCleanUpCommand(nit.get(0));
     for (int i = 0; i < nit.size(); i++) {
-      commandStr.replaceAll("%nit" + i, nit.get(i));
+      commandStr = commandStr.replaceAll("%nit" + i, nit.get(i));
     }
     return commandStr;
   }
