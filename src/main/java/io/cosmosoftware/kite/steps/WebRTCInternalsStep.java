@@ -1,9 +1,12 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.pages.WebRTCInternalPage;
-import io.cosmosoftware.kite.report.Reporter;
 
 public class WebRTCInternalsStep extends TestStep {
 

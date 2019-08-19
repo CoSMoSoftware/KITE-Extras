@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) CoSMo Software Consulting Pte. Ltd. - All Rights Reserved
+ */
+
 package io.cosmosoftware.kite.steps;
 
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
