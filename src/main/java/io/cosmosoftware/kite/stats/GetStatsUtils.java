@@ -5,13 +5,14 @@
 package io.cosmosoftware.kite.stats;
 
 
-import java.util.ArrayList;
-import java.util.Map;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Utility class with static methods to obtain and process getStats()

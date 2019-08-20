@@ -4,14 +4,13 @@
 
 package io.cosmosoftware.kite.steps;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.Runner;
+import io.cosmosoftware.kite.report.Status;
+
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT_IN_SECONDS;
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
-
-import io.cosmosoftware.kite.exception.KiteTestException;
-import io.cosmosoftware.kite.interfaces.Runner;
-import io.cosmosoftware.kite.report.Reporter;
-import io.cosmosoftware.kite.report.Status;
 
 /**
  * Special Step implementation that waits for a given step to complete on all other runners.

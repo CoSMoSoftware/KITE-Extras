@@ -5,10 +5,11 @@ package io.cosmosoftware.kite.stats;
 
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
+
+import javax.json.JsonObject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
-import javax.json.JsonObject;
 
 /**
  * RTCPeerConnectionStats, with attributes dataChannelsOpened, dataChannelsClosed

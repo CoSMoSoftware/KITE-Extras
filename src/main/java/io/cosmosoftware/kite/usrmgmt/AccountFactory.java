@@ -5,6 +5,7 @@
 package io.cosmosoftware.kite.usrmgmt;
 
 import io.cosmosoftware.kite.pool.ObjectFactory;
+
 import java.util.List;
 
 /**

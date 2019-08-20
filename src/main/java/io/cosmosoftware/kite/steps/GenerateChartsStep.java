@@ -12,10 +12,9 @@ import org.json.JSONObject;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import java.io.*;
-import java.util.Base64;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
@@ -26,12 +25,14 @@ public class GenerateChartsStep extends TestStep {
   private final JsonObject getChartsConfig;
   private final String pathToGenerateChartsFile;
   private final String pathToChartBundleMin;
+  private final String pathToJar;
 
-  public GenerateChartsStep(Runner runner, JsonObject getChartsConfig) {
+  public GenerateChartsStep(Runner runner, JsonObject getChartsConfig, String pathToJar) {
     super(runner);
     this.getChartsConfig = getChartsConfig;
     this.pathToGenerateChartsFile = getChartsConfig.getString("pathToGenerateChartsFile");
     this.pathToChartBundleMin = getChartsConfig.getString("pathToChartBundleMin");
+    this.pathToJar = pathToJar;
   }
 
   @Override
@@ -71,7 +72,20 @@ public class GenerateChartsStep extends TestStep {
 
   private void runScript(String pathToScript) throws IOException, KiteTestException {
     logger.info("Loading " + pathToScript);
-    InputStream in = getClass().getResourceAsStream(pathToScript);    
+    InputStream in = null;
+    if (pathToJar != null) {
+      JarFile jarFile = new JarFile(new File(pathToJar));
+      if (pathToScript.startsWith("/")) {
+        pathToScript = pathToScript.substring(1);
+      }
+      JarEntry jarEntry = jarFile.getJarEntry(pathToScript);
+      in = jarFile.getInputStream(jarEntry);
+    } else {
+      in = getClass().getResourceAsStream(pathToScript);
+    }      
+    if (in == null) {
+      throw new IOException("File " + pathToScript + " not found in classpath");
+    }
     BufferedReader buf = new BufferedReader(new InputStreamReader(in));
     StringWriter out = new StringWriter();
     int b;

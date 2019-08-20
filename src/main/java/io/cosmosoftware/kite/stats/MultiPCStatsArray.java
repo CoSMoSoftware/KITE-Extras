@@ -5,9 +5,10 @@ package io.cosmosoftware.kite.stats;
 
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.ReportUtils;
+
+import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
-import javax.json.JsonObject;
 
 /**
  * The type Multi pc stats array.

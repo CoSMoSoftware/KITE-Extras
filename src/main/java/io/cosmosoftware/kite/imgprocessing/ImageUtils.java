@@ -11,7 +11,7 @@
 
 package io.cosmosoftware.kite.imgprocessing;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 

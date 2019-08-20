@@ -4,11 +4,6 @@
 
 package io.cosmosoftware.kite.pages;
 
-import static io.cosmosoftware.kite.entities.Timeouts.EXTENDED_TIMEOUT_IN_SECONDS;
-import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
-import static io.cosmosoftware.kite.util.TestUtils.waitAround;
-import static io.cosmosoftware.kite.util.WebDriverUtils.clickElement;
-
 import io.appium.java_client.AppiumDriver;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -22,6 +17,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static io.cosmosoftware.kite.entities.Timeouts.EXTENDED_TIMEOUT_IN_SECONDS;
+import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
+import static io.cosmosoftware.kite.util.WebDriverUtils.clickElement;
 
 public abstract class BasePage {
 

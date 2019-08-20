@@ -4,26 +4,17 @@
 
 package io.cosmosoftware.kite.report;
 
-import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
-import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
-import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
-import static io.cosmosoftware.kite.util.TestUtils.createDirs;
-import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
-import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
-
 import io.cosmosoftware.kite.exception.KiteTestException;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import java.io.*;
+import java.util.*;
+
+import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
+import static io.cosmosoftware.kite.util.TestUtils.*;
 
 /**
  * The type Reporter.

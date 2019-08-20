@@ -6,7 +6,6 @@ package io.cosmosoftware.kite.steps;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
-import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.util.ReportUtils;
 
 public class ConsoleLogStep extends TestStep {

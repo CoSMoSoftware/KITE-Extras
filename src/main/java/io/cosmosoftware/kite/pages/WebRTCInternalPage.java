@@ -1,14 +1,15 @@
 package io.cosmosoftware.kite.pages;
 
-import static io.cosmosoftware.kite.util.TestUtils.waitAround;
-import static io.cosmosoftware.kite.util.WebDriverUtils.isChrome;
-
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.interfaces.Runner;
-import java.util.ArrayList;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+
+import java.util.ArrayList;
+
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
+import static io.cosmosoftware.kite.util.WebDriverUtils.isChrome;
 
 public class WebRTCInternalPage extends BasePage {
 

@@ -16,13 +16,6 @@
 
 package io.cosmosoftware.kite.util;
 
-import static io.cosmosoftware.kite.entities.Timeouts.DEFAULT_TIMEOUT;
-import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
-import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT;
-import static io.cosmosoftware.kite.entities.Timeouts.TEN_SECOND_INTERVAL;
-import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
-import static io.cosmosoftware.kite.util.TestUtils.waitAround;
-
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileDriver;
 import io.appium.java_client.TouchAction;
@@ -33,29 +26,20 @@ import io.appium.java_client.touch.offset.PointOption;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
+import io.cosmosoftware.kite.report.Status;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.cosmosoftware.kite.report.Status;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import static io.cosmosoftware.kite.entities.Timeouts.*;
+import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 
 /**
  * Utility class serving WebDriver related operations.

@@ -1,7 +1,6 @@
 package io.cosmosoftware.kite.usrmgmt;
 
 import io.cosmosoftware.kite.report.KiteLogger;
-import io.cosmosoftware.kite.usrmgmt.Email;
 import io.cosmosoftware.kite.util.TestUtils;
 
 import javax.json.JsonObject;

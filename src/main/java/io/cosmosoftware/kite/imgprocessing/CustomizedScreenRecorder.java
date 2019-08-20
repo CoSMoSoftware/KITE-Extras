@@ -5,15 +5,14 @@
 
 package io.cosmosoftware.kite.imgprocessing;
 
-import java.awt.AWTException;
-import java.awt.GraphicsConfiguration;
-import java.awt.Rectangle;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import org.monte.media.Format;
 import org.monte.media.Registry;
 import org.monte.screenrecorder.ScreenRecorder;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 /**
  * The type Specialized screen recorder.

@@ -4,12 +4,12 @@
 
 package io.cosmosoftware.kite.stats;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonObjectBuilder;
 
 /**
  * Standard stats take from https://www.w3.org/TR/webrtc-stats/

@@ -4,26 +4,15 @@
 
 package io.cosmosoftware.kite.report;
 
-import static io.cosmosoftware.kite.util.TestUtils.readJsonFile;
-
 import io.cosmosoftware.kite.util.ReportUtils;
+
+import javax.json.*;
+import javax.json.stream.JsonGenerator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonWriter;
-import javax.json.JsonWriterFactory;
-import javax.json.stream.JsonGenerator;
+import java.util.*;
 
 // XXX todo:  move to KITE engine, then extend this for individual tests
 

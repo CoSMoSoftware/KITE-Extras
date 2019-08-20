@@ -4,10 +4,10 @@
 
 package io.cosmosoftware.kite.steps;
 
-import static io.cosmosoftware.kite.util.TestUtils.waitAround;
-
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
+
+import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 
 public class StayInMeetingStep extends TestStep {
 

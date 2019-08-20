@@ -4,10 +4,10 @@
 
 package io.cosmosoftware.kite.steps;
 
+import io.cosmosoftware.kite.interfaces.Runner;
+
 import static io.cosmosoftware.kite.entities.Timeouts.DEFAULT_TIMEOUT;
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
-
-import io.cosmosoftware.kite.interfaces.Runner;
 
 /**
  * The type Test check.

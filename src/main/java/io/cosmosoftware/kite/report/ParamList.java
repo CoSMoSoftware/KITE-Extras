@@ -4,10 +4,10 @@
 
 package io.cosmosoftware.kite.report;
 
-import java.util.LinkedHashMap;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import java.util.LinkedHashMap;
 
 public class ParamList extends LinkedHashMap<String, String> {
 

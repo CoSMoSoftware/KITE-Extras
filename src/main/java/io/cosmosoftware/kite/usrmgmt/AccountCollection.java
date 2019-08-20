@@ -6,9 +6,9 @@ package io.cosmosoftware.kite.usrmgmt;
 
 import io.cosmosoftware.kite.report.KiteLogger;
 
-import java.util.*;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import java.util.*;
 
 /**
  * The type Rc account collection.

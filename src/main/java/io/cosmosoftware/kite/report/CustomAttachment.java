@@ -4,17 +4,12 @@
 
 package io.cosmosoftware.kite.report;
 
-import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.UUID;
 import javax.json.Json;
 import javax.json.JsonObject;
+import java.io.*;
+import java.util.UUID;
+
+import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
 
 
 public class CustomAttachment {

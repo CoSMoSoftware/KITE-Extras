@@ -5,10 +5,11 @@
 package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.entities.Stage;
-import java.util.UUID;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.UUID;
 
 public class ReportEntity {
   protected Reporter reporter;

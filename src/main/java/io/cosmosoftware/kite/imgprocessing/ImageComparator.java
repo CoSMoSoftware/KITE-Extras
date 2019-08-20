@@ -11,14 +11,15 @@
 
 package io.cosmosoftware.kite.imgprocessing;
 
-import static io.cosmosoftware.kite.imgprocessing.ImageUtils.containRGBValue;
-
 import io.appium.java_client.MobileElement;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
-import java.awt.Color;
-import java.awt.Graphics2D;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Rectangle;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
@@ -30,9 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
-import javax.imageio.ImageIO;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.Rectangle;
+
+import static io.cosmosoftware.kite.imgprocessing.ImageUtils.containRGBValue;
 
 /**
  * The type Image comparator.

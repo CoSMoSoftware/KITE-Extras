@@ -4,18 +4,15 @@
 
 package io.cosmosoftware.kite.manager;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.TestUtils;
+import org.apache.log4j.MDC;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
-import org.apache.log4j.MDC;
 
 /**
  * Class handling SSH command running.

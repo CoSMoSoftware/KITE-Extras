@@ -4,8 +4,8 @@
 
 package io.cosmosoftware.kite.usrmgmt;
 
-import java.util.Objects;
 import javax.json.JsonObject;
+import java.util.Objects;
 
 /**
  * The type Rc type role.

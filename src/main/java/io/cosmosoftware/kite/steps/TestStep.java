@@ -4,20 +4,21 @@
 
 package io.cosmosoftware.kite.steps;
 
-import static io.cosmosoftware.kite.steps.StepPhase.DEFAULT;
-import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
-import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
-
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Reporter;
 import io.cosmosoftware.kite.report.Status;
+import org.openqa.selenium.WebDriver;
+
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
-import org.openqa.selenium.WebDriver;
+
+import static io.cosmosoftware.kite.steps.StepPhase.DEFAULT;
+import static io.cosmosoftware.kite.util.ReportUtils.getLogHeader;
+import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
 
 /**
  * The type Test step.

@@ -4,12 +4,12 @@
 
 package io.cosmosoftware.kite.report;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Container extends ReportEntity {
 
