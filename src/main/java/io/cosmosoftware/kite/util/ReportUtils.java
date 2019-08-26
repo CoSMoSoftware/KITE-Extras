@@ -209,7 +209,7 @@ public class ReportUtils {
    */
   public static String timestamp() {
     //must be file name safe (no /\?%*:|"<>)
-    return new SimpleDateFormat("yyyy-MM-dd HHmmss").format(new Date());
+    return new SimpleDateFormat("yyyy-MM-dd-HHmmss").format(new Date());
   }
 
   /**
