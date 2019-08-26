@@ -28,7 +28,7 @@ public class StartGetStatsStep extends TestStep {
 
   public StartGetStatsStep(Runner runner, JsonObject getChartsConfig) {
     super(runner);
-    this.chartsStatsInterval = getChartsConfig.getInt("chartsStatsInterval", 2) * 1000;
+    this.chartsStatsInterval = getChartsConfig.getInt("chartsStatsInterval", 1 * 1000);
     this.sfu = SFU.valueOf(getChartsConfig.getString("sfu", SFU.DEFAULT.name()));
     this.peerConnectionScript = getPeerConnectionScript(getChartsConfig.getJsonArray("peerConnections"));
   }
