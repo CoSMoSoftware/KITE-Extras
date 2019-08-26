@@ -102,7 +102,7 @@ public class Reporter {
     if (this.csvReport) {
       closeCSVWriter();
     }
-    zipFile(this.reportPath, this.reportPath + "report.zip");
+    // zipFile(this.reportPath, this.reportPath + "report.zip");
   }
 
   /**

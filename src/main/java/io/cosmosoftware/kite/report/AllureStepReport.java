@@ -74,8 +74,8 @@ public class AllureStepReport extends ReportEntity {
       // prevent overwriting failed/broken status
       // step should not has status "skipped" if sub steps gets skipped on failure
       this.status = step.getStatus();
-      if (this.details != null && step.getDetails() != null) {
-        this.details = step.getDetails();
+      if (step.getDetails() != null) {
+        this.setDetails(step.getDetails());
       }
     } else {
       if (step.status.equals(Status.PASSED)) {
