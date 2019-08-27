@@ -14,6 +14,7 @@ import java.util.*;
 import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
+import static io.cosmosoftware.kite.util.ReportUtils.zipFile;
 import static io.cosmosoftware.kite.util.TestUtils.*;
 
 /**
@@ -90,7 +91,7 @@ public class Reporter {
    */
   public void generateReportFiles() {
     updateContainers();
-
+    generateCategoryJsonFile();
     for (AllureTestReport test : tests) {
       test.generateReport();
     }
@@ -101,6 +102,7 @@ public class Reporter {
     if (this.csvReport) {
       closeCSVWriter();
     }
+    // zipFile(this.reportPath, this.reportPath + "report.zip");
   }
 
   /**
@@ -315,33 +317,31 @@ public class Reporter {
 
   private String defaultCategoriesString() {
     return "["
-        + "  {"
-        + "    \"name\": \"Ignored tests\", "
-        + "    \"matchedStatuses\": [\"skipped\"] "
-        + "  },"
-        + "  {"
-        + "    \"name\": \"Infrastructure problems\","
-        + "    \"messageRegex\": \".*WebDriverException.*\", "
-        + "    \"matchedStatuses\": [\"failed\"]"
-        + "  },"
-        + "  {"
-        + "    \"name\": \"Outdated tests\","
-        + "    \"traceRegex\": \".*FileNotFoundException.*\", "
-        + "    \"matchedStatuses\": [\"broken\", \"failed\"]"
-        + "  },"
-        + "  {"
-        + "    \"name\": \"Product defects\","
-        + "    \"matchedStatuses\": [\"failed\"]"
-        + "  },"
-        + "  {"
-        + "    \"name\": \"Connection problem\","
-        + "    \"traceRegex\": \".*connection.*\", "
-        + "    \"matchedStatuses\": [\"failed\"]"
-        + "  },"
-        + "  {"
-        + "    \"name\": \"Test defects\","
-        + "    \"matchedStatuses\": [\"broken\"]"
-        + "  }"
+          + "{"
+            + "\"name\":\"Connection Issues\","
+            + "\"matchedStatuses\":[\"failed\"],"
+            + "\"messageRegex\":\".*onnection.*\""
+          + "},"
+          + "{"
+            + "\"name\":\"WebDriver issues\","
+            + "\"matchedStatuses\":[\"failed\", \"failed\"],"
+            + "\"messageRegex\":\".*river.*\""
+          + "},"
+          + "{"
+            + "\"name\":\"Video display issues\","
+            + "\"matchedStatuses\":[\"failed\"],"
+            + "\"messageRegex\":\".*ideo.*\""
+          + "},"
+          + "{"
+            + "\"name\":\"Audio issues\","
+            + "\"matchedStatuses\":[\"failed\"],"
+            + "\"messageRegex\":\".*udio.*\""
+          + "},"
+          + "{"
+            + "\"name\":\"Get stats issues\","
+            + "\"matchedStatuses\":[\"failed\",\"broken\"],"
+            + "\"messageRegex\":\".*tats.*\""
+          + "}"
         + "]";
   }
 

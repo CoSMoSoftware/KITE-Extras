@@ -8,6 +8,12 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.usrmgmt.TypeRole;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -25,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static io.cosmosoftware.kite.util.TestUtils.executeCommand;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isElectron;
 
 /**
@@ -237,5 +244,73 @@ public class ReportUtils {
     return log;
   }
 
+  /**
+   * Zips file to .zip file with default file name
+   * @param sourceFile  path to source file
+   * @throws KiteTestException  if there's IOException
+   */
+  public static void zipFile(String sourceFile) {
+    zipFile(sourceFile, null);
+  }
+
+  /**
+   * Zips a folder to a .zip file
+   * @param sourceFile  path to source file
+   * @param desFile .zip file name
+   * @throws KiteTestException  if there's IOException
+   */
+  public static void zipFile(String sourceFile, String desFile){
+    FileOutputStream fos= null;
+    ZipOutputStream zipOut= null;
+    desFile = desFile == null ? sourceFile : desFile;
+    desFile = desFile.endsWith(".zip") ? desFile : desFile + ".zip";
+    try {
+      fos = new FileOutputStream(desFile);
+      zipOut = new ZipOutputStream(fos);
+      File fileToZip = new File(sourceFile);
+      zipFile(fileToZip, fileToZip.getName(), zipOut);
+    } catch (IOException e) {
+      logger.error("Could not zip file/folder: " + sourceFile + " \n" + e.getMessage());
+    } finally {
+      try {
+        if (zipOut != null) {
+          zipOut.close();
+        } if (fos != null) {
+          fos.close();
+        }
+      } catch (IOException e) {
+        logger.error("Could not close stream after zipping file");
+      }
+    }
+  }
+
+  private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
+    if (fileToZip.isHidden()) {
+      return;
+    }
+    if (fileToZip.isDirectory()) {
+      if (fileName.endsWith("/")) {
+        zipOut.putNextEntry(new ZipEntry(fileName));
+        zipOut.closeEntry();
+      } else {
+        zipOut.putNextEntry(new ZipEntry(fileName + "/"));
+        zipOut.closeEntry();
+      }
+      File[] children = fileToZip.listFiles();
+      for (File childFile : children) {
+        zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+      }
+      return;
+    }
+    FileInputStream fis = new FileInputStream(fileToZip);
+    ZipEntry zipEntry = new ZipEntry(fileName);
+    zipOut.putNextEntry(zipEntry);
+    byte[] bytes = new byte[1024];
+    int length;
+    while ((length = fis.read(bytes)) >= 0) {
+      zipOut.write(bytes, 0, length);
+    }
+    fis.close();
+  }
 
 }
