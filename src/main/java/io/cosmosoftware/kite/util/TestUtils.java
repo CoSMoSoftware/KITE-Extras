@@ -162,6 +162,23 @@ public class TestUtils {
    * @return the string
    * @throws Exception the exception
    */
+  public static String executeCommand(String workingDir, String command, KiteLogger logger,
+      String logHeader) throws Exception {
+    List<String> commands = new ArrayList<>();
+    commands.add(command);
+    return executeCommand(workingDir, commands, logger, logHeader);
+  }
+
+  /**
+   * Execute command string.
+   *
+   * @param workingDir the working dir
+   * @param command the command
+   * @param logger the logger
+   * @param logHeader the log header
+   * @return the string
+   * @throws Exception the exception
+   */
   public static String executeCommand(String workingDir, List<String> command, KiteLogger logger,
       String logHeader) throws Exception {
     ProcessBuilder builder =
