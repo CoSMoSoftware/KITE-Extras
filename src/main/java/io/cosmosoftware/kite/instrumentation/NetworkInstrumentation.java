@@ -4,22 +4,25 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
+import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.JsonBuilder;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
-import javax.json.JsonArray;
-import javax.json.JsonObject;
+import javax.json.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
 /**
  * The type Instrumentation.
  */
-public class NetworkInstrumentation {
+public class NetworkInstrumentation implements JsonBuilder {
 
   private final KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   
@@ -88,6 +91,44 @@ public class NetworkInstrumentation {
         logger.error(getStackTrace(e));
       }
     }
+  }
+
+  @Override
+  public String toString() {
+   try {
+     return buildJsonObjectBuilder().build().toString();
+   } catch (NullPointerException e) {
+     return getStackTrace(e);
+   }
+  }
+
+  @Override
+  public JsonObjectBuilder buildJsonObjectBuilder() throws NullPointerException {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    if (this.remoteAddress != null) {
+      builder.add("remoteAdress", this.remoteAddress);
+    }
+    if (this.instances != null) {
+      JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+      for (Map.Entry<String, Instance> entry : this.instances.entrySet()) {
+        jsonArrayBuilder.add(entry.getValue().toString());
+      }
+      builder.add("instances", jsonArrayBuilder.build());
+    }
+    if (this.kiteServerGridId != null) {
+      builder.add("kiteServerGridId", this.kiteServerGridId);
+    }
+    if (this.networkProfiles != null) {
+      JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+      for (Map.Entry<String, NetworkProfile> entry : this.networkProfiles.entrySet()) {
+        jsonArrayBuilder.add(entry.getValue().toString());
+      }
+      builder.add("networkProfiles", jsonArrayBuilder.build());
+    }
+    if (this.kiteServer != null) {
+      builder.add("kiteServerGridId", this.kiteServer);
+    }
+    return builder;
   }
 
 
