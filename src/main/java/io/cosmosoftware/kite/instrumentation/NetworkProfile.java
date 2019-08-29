@@ -6,21 +6,26 @@ package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.config.KiteEntity;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.JsonBuilder;
 import io.cosmosoftware.kite.interfaces.SampleData;
 import io.cosmosoftware.kite.report.Status;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.util.List;
 
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+
 
 @Entity(name = NetworkProfile.TABLE_NAME)
-public class NetworkProfile extends KiteEntity implements SampleData {
+public class NetworkProfile extends KiteEntity implements JsonBuilder, SampleData {
 
   final static String TABLE_NAME = "networkprofiles";
   private String id = "";
@@ -97,6 +102,49 @@ public class NetworkProfile extends KiteEntity implements SampleData {
     }
     return command;
   }
+
+  @Override
+  public String toString() {
+    try {
+      return buildJsonObjectBuilder().build().toString();
+    } catch (NullPointerException e) {
+      return getStackTrace(e);
+    }
+  }
+
+  @Override
+  public JsonObjectBuilder buildJsonObjectBuilder() throws NullPointerException {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    if (this.id != null) {
+      builder.add("_id", this.id);
+    }
+    if (this.command != null) {
+      builder.add("command", this.command);
+    }
+    if (this.cleanUpCommand != null) {
+      builder.add("cleanUpCommand", this.cleanUpCommand);
+    }
+    if (this.delay != null && this.delay != 0) {
+      builder.add("delay", this.delay);
+    }
+    if (this.packetloss != null && this.packetloss != 0) {
+      builder.add("packetloss", this.packetloss);
+    }
+    if (this.corrupt != null && this.corrupt != 0) {
+      builder.add("corrupt", this.corrupt);
+    }
+    if (this.duplicate != null && this.duplicate != 0) {
+      builder.add("duplicate", this.duplicate);
+    }
+    if (this.bandwidth != null && this.bandwidth != 0) {
+      builder.add("bandwidth", this.bandwidth);
+    }
+    if (this.name != null) {
+      builder.add("name", this.name);
+    }
+    return builder;
+  }
+
 
   /**
    * Gets id.

@@ -5,9 +5,14 @@
 package io.cosmosoftware.kite.instrumentation;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.interfaces.JsonBuilder;
 import io.cosmosoftware.kite.report.Status;
 
+import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 
 /**
  * The type Instance: represents a selenium node or a gateway for network instrumentation. { "_id":
@@ -15,7 +20,7 @@ import javax.json.JsonObject;
  * "gw-user", "password": "optional", "keyFilePath": "file://path/to/privatekey.pem", "nit0":
  * "eth0", "nit1": "eth1", "nit2": "eth2", },
  */
-public class Instance {
+public class Instance implements JsonBuilder {
 
   private final String id;
 
@@ -68,6 +73,51 @@ public class Instance {
     }
     this.name = jsonObject.getString("name", this.id);
     this.password = jsonObject.getString("password", null);
+  }
+
+  @Override
+  public String toString() {
+    try {
+      return buildJsonObjectBuilder().build().toString();
+    } catch (NullPointerException e) {
+      return getStackTrace(e);
+    }
+  }
+
+  @Override
+  public JsonObjectBuilder buildJsonObjectBuilder() throws NullPointerException {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+    if (this.id != null) {
+      builder.add("_id", this.id);
+    }
+    if (this.username != null) {
+      builder.add("username", this.username);
+    }
+    if (this.name != null) {
+      builder.add("name", this.name);
+    }
+    if (this.ipAddress != null) {
+      builder.add("ipAddress", this.ipAddress);
+    }
+    if (this.keyFilePath != null) {
+      builder.add("keyFilePath", this.keyFilePath);
+    }
+    if (this.type != null) {
+      builder.add("type", this.type);
+    }
+    if (this.password != null) {
+      builder.add("password", this.password);
+    }
+    if (this.nit0 != null) {
+      builder.add("nit0", this.nit0);
+    }
+    if (this.nit1 != null) {
+      builder.add("nit1", this.nit1);
+    }
+    if (this.nit2 != null) {
+      builder.add("nit2", this.nit2);
+    }
+    return builder;
   }
 
   /**
