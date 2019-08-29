@@ -4,13 +4,11 @@
 
 package io.cosmosoftware.kite.instrumentation;
 
-import com.sun.corba.se.impl.naming.cosnaming.NamingUtils;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.JsonBuilder;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 import javax.json.*;
 import java.util.HashMap;
