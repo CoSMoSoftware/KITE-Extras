@@ -10,6 +10,7 @@ import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.TestUtils;
 
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,11 +24,16 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
 
   private static final KiteLogger logger = KiteLogger.getLogger(RoomManager.class.getName());
   private final String baseURL;
+
+
   private final int usersPerRoom;
   private int roomId = 0;
   private int roomIndex = 0;
   private String[] roomNames = null;
   private boolean loopRooms;
+
+  //this is for the case where the roomURL is created after the call is initiated (e.g. Google Hangouts)
+  private HashMap<Integer,String> dynamicUrls = null;
 
 
   public RoomManager(String baseURL, int usersPerRoom, boolean loop) {
@@ -160,4 +166,35 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     return Integer.toString((int) Math.floor(Math.random() * Math.pow(10, roomIdLen)));
   }
 
+  /**
+   * Gets the number of users per room
+   * @return the number of users per room
+   */
+  public int getUsersPerRoom() {
+    return usersPerRoom;
+  }
+
+  /**
+   * Gets the dynamic room URL (generated after the call is initiated.
+   * 
+   * @return the dynamicUrl
+   */
+  public String getDynamicUrl(Integer userId) {
+    logger.info("getDynamicUrl(" + userId + ") => " + ( userId - (userId % usersPerRoom)));
+    return dynamicUrls.get(userId - (userId % usersPerRoom));
+  }
+
+  /**
+   * Sets the dynamicUrl
+   * @param dynamicUrl
+   */
+  public void setDynamicUrl(Integer userId, String dynamicUrl) {
+    if (dynamicUrls == null) {
+      dynamicUrls = new HashMap<>();
+    }
+    logger.info("setDynamicUrl(" + userId + ", " + dynamicUrl + ")");
+    dynamicUrls.put(userId, dynamicUrl);
+  }
+  
+  
 }
