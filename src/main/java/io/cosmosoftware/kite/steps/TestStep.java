@@ -140,7 +140,7 @@ public abstract class TestStep {
    */
   public String getClientID() {    
     return currentStepPhase.getShortName() + getLogHeader(webDriver) 
-      + (this.clientName != null ? (" - " + this.clientName) : "");
+      + (this.clientName != null && this.clientName.length() > 0 ? (" - " + this.clientName) : "");
   }
 
   /**
