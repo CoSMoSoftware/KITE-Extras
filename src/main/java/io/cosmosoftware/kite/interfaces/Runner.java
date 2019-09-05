@@ -19,4 +19,6 @@ public interface Runner {
 
   Reporter getReporter();
 
+  String getClientName();
+
 }

@@ -38,6 +38,7 @@ public abstract class TestStep {
 
   private StepPhase stepPhase = DEFAULT;
   private StepPhase currentStepPhase = DEFAULT;
+  private final String clientName;
 
   private LinkedHashMap<String, String> csvResult = null;
 
@@ -50,6 +51,7 @@ public abstract class TestStep {
     this.webDriver = runner.getWebDriver();
     this.stepPhase = runner.getStepPhase();
     this.reporter = runner.getReporter();
+    this.clientName = runner.getClientName();
     this.logger = KiteLogger.getLogger(runner.getLogger(), getClientID() + ": ");
   }
 
@@ -136,8 +138,9 @@ public abstract class TestStep {
    *
    * @return the client id
    */
-  public String getClientID() {
-    return currentStepPhase.getShortName() + getLogHeader(webDriver);
+  public String getClientID() {    
+    return currentStepPhase.getShortName() + getLogHeader(webDriver) 
+      + (this.clientName != null ? (" - " + this.clientName) : "");
   }
 
   /**
