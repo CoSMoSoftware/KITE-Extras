@@ -6,6 +6,8 @@ package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import java.io.*;
@@ -14,7 +16,6 @@ import java.util.*;
 import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
-import static io.cosmosoftware.kite.util.ReportUtils.zipFile;
 import static io.cosmosoftware.kite.util.TestUtils.*;
 
 /**
@@ -33,8 +34,8 @@ public class Reporter {
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
+  private List<Category> categories = new ArrayList<>();
 
-  
   /**
    * Instantiates a new Reporter.
    */
@@ -295,7 +296,7 @@ public class Reporter {
       try {
         // Writes bytes from the specified byte array to this file output stream
         writer = new BufferedWriter(new FileWriter(file));
-        writer.write(defaultCategoriesString());
+        writer.write(generateCategories());
 
       }
       catch (FileNotFoundException e) {
@@ -315,38 +316,19 @@ public class Reporter {
     }
   }
 
-  private String defaultCategoriesString() {
-    return "["
-          + "{"
-            + "\"name\":\"Passed tests\","
-            + "\"matchedStatuses\":[\"passed\"]"
-          + "},"
-          + "{"
-            + "\"name\":\"Connection Issues\","
-            + "\"matchedStatuses\":[\"failed\"],"
-            + "\"messageRegex\":\".*onnection.*\""
-          + "},"
-          + "{"
-            + "\"name\":\"WebDriver issues\","
-            + "\"matchedStatuses\":[\"failed\", \"broken\"],"
-            + "\"messageRegex\":\".*river.*\""
-          + "},"
-          + "{"
-            + "\"name\":\"Video display issues\","
-            + "\"matchedStatuses\":[\"failed\"],"
-            + "\"messageRegex\":\".*ideo.*\""
-          + "},"
-          + "{"
-            + "\"name\":\"Audio issues\","
-            + "\"matchedStatuses\":[\"failed\"],"
-            + "\"messageRegex\":\".*udio.*\""
-          + "},"
-          + "{"
-            + "\"name\":\"Get stats issues\","
-            + "\"matchedStatuses\":[\"failed\",\"broken\"],"
-            + "\"messageRegex\":\".*tats.*\""
-          + "}"
-        + "]";
+  private String generateCategories() {
+    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+    for (Category category : categories) {
+      arrayBuilder.add(category.toJson());
+    }
+    return arrayBuilder.build().toString();
   }
 
+  public void addCategory(Category category) {
+    this.categories.add(category);
+  }
+
+  public void addCategory(List<Category> categories) {
+    this.categories.addAll(categories);
+  }
 }
