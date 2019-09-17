@@ -319,11 +319,35 @@ public class Reporter {
   }
 
   private synchronized String generateCategories() {
+    addDefaultCategories();
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
     for (Category category : categories) {
       arrayBuilder.add(category.toJson());
     }
     return arrayBuilder.build().toString();
+  }
+
+  private synchronized void addDefaultCategories() {
+    Category category1 = new Category("Passed tests");
+    category1.addStatus("passed");
+    Category category2 = new FailedCategory("Connection Issues");
+    category2.setMessageRegex("onnection");
+    Category category3 = new FailedCategory("WebDriver Issues");
+    category3.addStatus("broken");
+    category3.setMessageRegex("river");
+    Category category4 = new FailedCategory("Video issues");
+    category4.setMessageRegex("ideo");
+    Category category5 = new FailedCategory("Audio issues");
+    category5.setMessageRegex("udio");
+    Category category6 = new FailedCategory("Get stats issues");
+    category6.setMessageRegex("tats");
+
+    addCategory(category1);
+    addCategory(category2);
+    addCategory(category3);
+    addCategory(category4);
+    addCategory(category5);
+    addCategory(category6);
   }
 
   public synchronized void addCategory(Category category) {
