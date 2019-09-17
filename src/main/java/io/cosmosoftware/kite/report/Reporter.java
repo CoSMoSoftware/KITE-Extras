@@ -31,6 +31,7 @@ public class Reporter {
   private boolean csvReport = false;
   private String reportPath = DEFAULT_REPORT_FOLDER;
   private String timestamp = timestamp();
+  private Environment environment = new Environment();
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
@@ -55,7 +56,7 @@ public class Reporter {
     return timestamp;
   }
 
-  private void addAttachment(AllureStepReport report, CustomAttachment attachment) {
+  private synchronized void addAttachment(AllureStepReport report, CustomAttachment attachment) {
     report.addAttachment(attachment);
     this.attachments.add(attachment);
   }
@@ -65,7 +66,7 @@ public class Reporter {
    *
    * @param container the container
    */
-  public void addContainer(Container container) {
+  public synchronized  void addContainer(Container container) {
     this.containers.add(container);
   }
 
@@ -74,14 +75,14 @@ public class Reporter {
    *
    * @param test the test
    */
-  public void addTest(AllureTestReport test) {
+  public synchronized void addTest(AllureTestReport test) {
     this.tests.add(test);
   }
 
   /**
    * Clear lists.
    */
-  public void clearLists() {
+  public synchronized  void clearLists() {
     this.containers = Collections.synchronizedList(new ArrayList<>());;
     this.tests = Collections.synchronizedList(new ArrayList<>());;
     this.attachments = Collections.synchronizedList(new ArrayList<>());;
@@ -90,9 +91,10 @@ public class Reporter {
   /**
    * Generate report files.
    */
-  public void generateReportFiles() {
+  public synchronized void generateReportFiles() {
     updateContainers();
     generateCategoryJsonFile();
+    generateEnvironmentFile();
     for (AllureTestReport test : tests) {
       test.generateReport();
     }
@@ -113,7 +115,7 @@ public class Reporter {
    * @param name the name
    * @param jsonObject the json object
    */
-  public void jsonAttachment(AllureStepReport report, String name, JsonValue jsonObject) {
+  public synchronized void jsonAttachment(AllureStepReport report, String name, JsonValue jsonObject) {
     jsonAttachment(report, name, (JsonObject) jsonObject);
   }
 
@@ -124,7 +126,7 @@ public class Reporter {
    * @param name the name
    * @param jsonObject the json object
    */
-  public void jsonAttachment(AllureStepReport report, String name, JsonObject jsonObject) {
+  public synchronized void jsonAttachment(AllureStepReport report, String name, JsonObject jsonObject) {
     String value = jsonToString(jsonObject);
     CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
     attachment.setText(value);
@@ -145,7 +147,7 @@ public class Reporter {
     csvWriterMap.get(attachmentName).println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/", report.getClientId());
   }
   
-  private void closeCSVWriter() {
+  private synchronized void closeCSVWriter() {
     for (String attachmentName : csvWriterMap.keySet()) {
       csvWriterMap.get(attachmentName).close();
     }
@@ -158,7 +160,7 @@ public class Reporter {
    * @param e the e
    * @param optional the optional
    */
-  public void processException(AllureStepReport report, Exception e, boolean optional) {
+  public synchronized void processException(AllureStepReport report, Exception e, boolean optional) {
     StatusDetails details = new StatusDetails();
     Status status;
     String message;
@@ -203,7 +205,7 @@ public class Reporter {
    * @param type the type
    * @param subFolder the sub folder
    */
-  public void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
+  public synchronized void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
     createDirs(this.reportPath + subFolder);
     printJsonTofile(value, verifyPathFormat(this.reportPath + subFolder) + name + "." + type);
   }
@@ -214,7 +216,7 @@ public class Reporter {
    * @param report the report
    * @param screenshot the screenshot
    */
-  public void screenshotAttachment(AllureStepReport report, byte[] screenshot) {
+  public synchronized void screenshotAttachment(AllureStepReport report, byte[] screenshot) {
     CustomAttachment attachment = new CustomAttachment("Page-screenshot(" + timestamp() + ")",
         "image/png", "png");
     attachment.setScreenshot(screenshot);
@@ -228,7 +230,7 @@ public class Reporter {
    * @param name the name
    * @param screenshot the screenshot
    */
-  public void screenshotAttachment(AllureStepReport report, String name, byte[] screenshot) {
+  public synchronized  void screenshotAttachment(AllureStepReport report, String name, byte[] screenshot) {
     CustomAttachment attachment = new CustomAttachment(name, "image/png", "png");
     attachment.setScreenshot(screenshot);
     addAttachment(report, attachment);
@@ -239,7 +241,7 @@ public class Reporter {
    *
    * @param logger the logger
    */
-  public void setLogger(KiteLogger logger) {
+  public synchronized void setLogger(KiteLogger logger) {
     this.logger = logger;
   }
 
@@ -251,7 +253,7 @@ public class Reporter {
    * @param value the value
    * @param type the type
    */
-  public void textAttachment(AllureStepReport report, String name, String value, String type) {
+  public synchronized void textAttachment(AllureStepReport report, String name, String value, String type) {
     CustomAttachment attachment = new CustomAttachment(name, "text/" + type, type);
     attachment.setText(value);
     addAttachment(report, attachment);
@@ -262,7 +264,7 @@ public class Reporter {
    *
    * @return the report path
    */
-  public String getReportPath() {
+  public synchronized String getReportPath() {
     return reportPath;
   }
 
@@ -271,7 +273,7 @@ public class Reporter {
    *
    * @param reportPath the report path
    */
-  public void setReportPath(String reportPath) {
+  public synchronized void setReportPath(String reportPath) {
     if (reportPath != null && !reportPath.isEmpty()) {
       this.reportPath = verifyPathFormat(reportPath);
     }
@@ -289,7 +291,7 @@ public class Reporter {
     }
   }
 
-  private void generateCategoryJsonFile(){
+  private synchronized void generateCategoryJsonFile(){
     File file = new File(this.reportPath + "categories.json");
     if (!file.exists()) {
       BufferedWriter writer = null;
@@ -316,7 +318,7 @@ public class Reporter {
     }
   }
 
-  private String generateCategories() {
+  private synchronized String generateCategories() {
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
     for (Category category : categories) {
       arrayBuilder.add(category.toJson());
@@ -324,11 +326,42 @@ public class Reporter {
     return arrayBuilder.build().toString();
   }
 
-  public void addCategory(Category category) {
+  public synchronized void addCategory(Category category) {
     this.categories.add(category);
   }
 
-  public void addCategory(List<Category> categories) {
+  public synchronized void addCategory(List<Category> categories) {
     this.categories.addAll(categories);
+  }
+
+  public synchronized void addEnvironmentParam(String key, String value) {
+    this.environment.put(key,value);
+  }
+
+  private synchronized void generateEnvironmentFile() {
+    File file = new File(this.reportPath + "environment.properties");
+    if (!file.exists()) {
+      BufferedWriter writer = null;
+      try {
+        // Writes bytes from the specified byte array to this file output stream
+        writer = new BufferedWriter(new FileWriter(file));
+        writer.write(this.environment.toString());
+
+      }
+      catch (FileNotFoundException e) {
+        logger.error("File not found" + e);
+      } catch (IOException ioe) {
+        logger.error("Exception while writing file " + ioe);
+      } finally {
+        // close the streams using close method
+        try {
+          if (writer != null) {
+            writer.close();
+          }
+        } catch (IOException ioe) {
+          logger.error("Error while closing stream: " + ioe);
+        }
+      }
+    }
   }
 }

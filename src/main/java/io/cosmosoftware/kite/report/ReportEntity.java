@@ -27,20 +27,20 @@ public class ReportEntity {
   }
 
   public void setStartTimestamp() {
-    this.start = System.currentTimeMillis();
-    this.stage = Stage.RUNNING;
+    setStartTimestamp(System.currentTimeMillis());
   }
 
   public void setStartTimestamp(long start) {
+    this.stage = Stage.RUNNING;
     this.start = start;
   }
 
   public void setStopTimestamp() {
-    this.stage = Stage.FINISHED;
-    this.stop = System.currentTimeMillis();
+    setStopTimestamp(System.currentTimeMillis());
   }
 
   public void setStopTimestamp(long stop) {
+    this.stage = Stage.FINISHED;
     this.stop = stop;
   }
 
