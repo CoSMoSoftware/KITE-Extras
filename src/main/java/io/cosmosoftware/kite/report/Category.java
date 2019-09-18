@@ -8,11 +8,12 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 public class Category {
+
   private final String name;
   private List<String> matchedStatuses = new ArrayList<>();
   private String messageRegex;
 
-  public Category (String name) {
+  public Category(String name) {
     this.name = name;
   }
 
@@ -29,7 +30,7 @@ public class Category {
     builder.add("name", this.name);
     if (matchedStatuses.size() > 0) {
       JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-      for (String status :matchedStatuses) {
+      for (String status : matchedStatuses) {
         arrayBuilder.add(status);
       }
       builder.add("matchedStatuses", arrayBuilder);

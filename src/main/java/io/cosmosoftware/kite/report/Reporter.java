@@ -4,19 +4,28 @@
 
 package io.cosmosoftware.kite.report;
 
-import io.cosmosoftware.kite.exception.KiteTestException;
+import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
+import static io.cosmosoftware.kite.util.TestUtils.createDirs;
+import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
+import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
 
+import io.cosmosoftware.kite.exception.KiteTestException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import java.io.*;
-import java.util.*;
-
-import static io.cosmosoftware.kite.report.CSVHelper.jsonToString;
-import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
-import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
-import static io.cosmosoftware.kite.util.TestUtils.*;
 
 /**
  * The type Reporter.
@@ -25,9 +34,9 @@ public class Reporter {
 
   private final String DEFAULT_REPORT_FOLDER =
       System.getProperty("user.dir") + "/kite-allure-reports/";
-  protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private final Map<String, CSVHelper> csvWriterMap = new HashMap();
   private final String testName;
+  protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private boolean csvReport = false;
   private String reportPath = DEFAULT_REPORT_FOLDER;
   private String timestamp = timestamp();
@@ -66,7 +75,7 @@ public class Reporter {
    *
    * @param container the container
    */
-  public synchronized  void addContainer(Container container) {
+  public synchronized void addContainer(Container container) {
     this.containers.add(container);
   }
 
@@ -82,10 +91,13 @@ public class Reporter {
   /**
    * Clear lists.
    */
-  public synchronized  void clearLists() {
-    this.containers = Collections.synchronizedList(new ArrayList<>());;
-    this.tests = Collections.synchronizedList(new ArrayList<>());;
-    this.attachments = Collections.synchronizedList(new ArrayList<>());;
+  public synchronized void clearLists() {
+    this.containers = Collections.synchronizedList(new ArrayList<>());
+    ;
+    this.tests = Collections.synchronizedList(new ArrayList<>());
+    ;
+    this.attachments = Collections.synchronizedList(new ArrayList<>());
+    ;
   }
 
   /**
@@ -115,7 +127,8 @@ public class Reporter {
    * @param name the name
    * @param jsonObject the json object
    */
-  public synchronized void jsonAttachment(AllureStepReport report, String name, JsonValue jsonObject) {
+  public synchronized void jsonAttachment(AllureStepReport report, String name,
+      JsonValue jsonObject) {
     jsonAttachment(report, name, (JsonObject) jsonObject);
   }
 
@@ -126,7 +139,8 @@ public class Reporter {
    * @param name the name
    * @param jsonObject the json object
    */
-  public synchronized void jsonAttachment(AllureStepReport report, String name, JsonObject jsonObject) {
+  public synchronized void jsonAttachment(AllureStepReport report, String name,
+      JsonObject jsonObject) {
     String value = jsonToString(jsonObject);
     CustomAttachment attachment = new CustomAttachment(name, "text/json", "json");
     attachment.setText(value);
@@ -136,23 +150,25 @@ public class Reporter {
     }
   }
 
-  
+
   private synchronized void updateCSVReport(AllureStepReport report, CustomAttachment attachment) {
     String attachmentName = report.getPhase().getShortName().trim() + attachment.getName();
     if (!csvWriterMap.keySet().contains(attachmentName)) {
       String CSVFileName = attachmentName + "_"
-        +  this.timestamp + ".csv";
+          + this.timestamp + ".csv";
       csvWriterMap.put(attachmentName, new CSVHelper(CSVFileName));
     }
-    csvWriterMap.get(attachmentName).println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/", report.getClientId());
+    csvWriterMap.get(attachmentName)
+        .println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/",
+            report.getClientId());
   }
-  
+
   private synchronized void closeCSVWriter() {
     for (String attachmentName : csvWriterMap.keySet()) {
       csvWriterMap.get(attachmentName).close();
     }
   }
-  
+
   /**
    * Process exception.
    *
@@ -160,7 +176,8 @@ public class Reporter {
    * @param e the e
    * @param optional the optional
    */
-  public synchronized void processException(AllureStepReport report, Exception e, boolean optional) {
+  public synchronized void processException(AllureStepReport report, Exception e,
+      boolean optional) {
     StatusDetails details = new StatusDetails();
     Status status;
     String message;
@@ -205,7 +222,8 @@ public class Reporter {
    * @param type the type
    * @param subFolder the sub folder
    */
-  public synchronized void saveAttachmentToSubFolder(String name, String value, String type, String subFolder) {
+  public synchronized void saveAttachmentToSubFolder(String name, String value, String type,
+      String subFolder) {
     createDirs(this.reportPath + subFolder);
     printJsonTofile(value, verifyPathFormat(this.reportPath + subFolder) + name + "." + type);
   }
@@ -230,7 +248,8 @@ public class Reporter {
    * @param name the name
    * @param screenshot the screenshot
    */
-  public synchronized  void screenshotAttachment(AllureStepReport report, String name, byte[] screenshot) {
+  public synchronized void screenshotAttachment(AllureStepReport report, String name,
+      byte[] screenshot) {
     CustomAttachment attachment = new CustomAttachment(name, "image/png", "png");
     attachment.setScreenshot(screenshot);
     addAttachment(report, attachment);
@@ -253,7 +272,8 @@ public class Reporter {
    * @param value the value
    * @param type the type
    */
-  public synchronized void textAttachment(AllureStepReport report, String name, String value, String type) {
+  public synchronized void textAttachment(AllureStepReport report, String name, String value,
+      String type) {
     CustomAttachment attachment = new CustomAttachment(name, "text/" + type, type);
     attachment.setText(value);
     addAttachment(report, attachment);
@@ -291,7 +311,7 @@ public class Reporter {
     }
   }
 
-  private synchronized void generateCategoryJsonFile(){
+  private synchronized void generateCategoryJsonFile() {
     File file = new File(this.reportPath + "categories.json");
     if (!file.exists()) {
       BufferedWriter writer = null;
@@ -300,8 +320,7 @@ public class Reporter {
         writer = new BufferedWriter(new FileWriter(file));
         writer.write(generateCategories());
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         logger.error("File not found" + e);
       } catch (IOException ioe) {
         logger.error("Exception while writing file " + ioe);
@@ -359,7 +378,7 @@ public class Reporter {
   }
 
   public synchronized void addEnvironmentParam(String key, String value) {
-    this.environment.put(key,value);
+    this.environment.put(key, value);
   }
 
   private synchronized void generateEnvironmentFile() {
@@ -371,8 +390,7 @@ public class Reporter {
         writer = new BufferedWriter(new FileWriter(file));
         writer.write(this.environment.toString());
 
-      }
-      catch (FileNotFoundException e) {
+      } catch (FileNotFoundException e) {
         logger.error("File not found" + e);
       } catch (IOException ioe) {
         logger.error("Exception while writing file " + ioe);
