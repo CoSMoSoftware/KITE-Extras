@@ -5,13 +5,13 @@
 package io.cosmosoftware.kite.report;
 
 import io.cosmosoftware.kite.entities.Stage;
-
+import java.util.UUID;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.UUID;
 
 public class ReportEntity {
+
   protected Reporter reporter;
   protected String name;
   protected String uuid;
@@ -27,20 +27,20 @@ public class ReportEntity {
   }
 
   public void setStartTimestamp() {
-    this.start = System.currentTimeMillis();
-    this.stage = Stage.RUNNING;
+    setStartTimestamp(System.currentTimeMillis());
   }
 
   public void setStartTimestamp(long start) {
+    this.stage = Stage.RUNNING;
     this.start = start;
   }
 
   public void setStopTimestamp() {
-    this.stage = Stage.FINISHED;
-    this.stop = System.currentTimeMillis();
+    setStopTimestamp(System.currentTimeMillis());
   }
 
   public void setStopTimestamp(long stop) {
+    this.stage = Stage.FINISHED;
     this.stop = stop;
   }
 
@@ -89,10 +89,10 @@ public class ReportEntity {
   public void setReporter(Reporter reporter) {
     this.reporter = reporter;
     if (this instanceof Container) {
-      reporter.addContainer((Container)this);
+      reporter.addContainer((Container) this);
     }
-    if (this instanceof AllureTestReport){
-      reporter.addTest((AllureTestReport)this);
+    if (this instanceof AllureTestReport) {
+      reporter.addTest((AllureTestReport) this);
     }
   }
 }
