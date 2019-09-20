@@ -196,7 +196,7 @@ public class TestUtils {
       String line = s.nextLine();
       text.append(line);
       text.append("\n");
-      logger.info("[nodejs console " + logHeader + " ] " + line);
+      logger.info("[" + logHeader + " ] " + line);
     }
     s.close();
 

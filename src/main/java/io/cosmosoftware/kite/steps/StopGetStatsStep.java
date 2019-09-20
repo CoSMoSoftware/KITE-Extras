@@ -23,6 +23,7 @@ public class StopGetStatsStep extends TestStep {
 
   public StopGetStatsStep(Runner runner) {
     super(runner);
+    setOptional(true);
   }
 
   @Override

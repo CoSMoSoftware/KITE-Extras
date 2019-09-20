@@ -12,6 +12,8 @@ import org.openqa.selenium.JavascriptExecutor;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
+import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+
 public class StartGetStatsStep extends TestStep {
 
   enum SFU {
@@ -28,9 +30,10 @@ public class StartGetStatsStep extends TestStep {
 
   public StartGetStatsStep(Runner runner, JsonObject getChartsConfig) {
     super(runner);
-    this.chartsStatsInterval = getChartsConfig.getInt("chartsStatsInterval", 1 * 1000);
+    this.chartsStatsInterval = getChartsConfig.getInt("chartsStatsInterval", 1000);
     this.sfu = SFU.valueOf(getChartsConfig.getString("sfu", SFU.DEFAULT.name()));
     this.peerConnectionScript = getPeerConnectionScript(getChartsConfig.getJsonArray("peerConnections"));
+    setOptional(true);
   }
 
   @Override
@@ -46,6 +49,7 @@ public class StartGetStatsStep extends TestStep {
           .executeScript(getStartGetStatsDuringTestScript(chartsStatsInterval));
 
     } catch (Exception e) {
+      logger.info(getStackTrace(e));
       throw new KiteTestException("Unable to start stats recovery", Status.FAILED, e);
     }
   }
@@ -64,13 +68,11 @@ public class StartGetStatsStep extends TestStep {
         + "        window.StatsOvertime[idx] = [];"
         + "      }"
         + "      stats = await pcArray[idx].getStats().then(data => {"
+        + "        const statsToIgnore = ['codec', 'remote-candidate', 'local-candidate', 'data-channel', 'certificate', 'media-source', 'peer-connection', 'transport'];"
         + "        let statsObj = [];"
         + "        let presenceOfCodec = false;"
         + "        data.forEach(res => {"
-        + "          if(res.type === 'codec') {"
-        + "            presenceOfCodec = true;"
-        + "          }"
-        + "          if(presenceOfCodec && res.type === 'inbound-rtp' && !res.codecId) {"
+        + "          if (statsToIgnore.includes(res.type) || (res.type === 'inbound-rtp' && !res.codecId)) {"
         + "            "
         + "          } else {"
         + "            statsObj.push(res);"

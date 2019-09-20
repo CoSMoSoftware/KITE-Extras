@@ -33,6 +33,7 @@ public class GenerateChartsStep extends TestStep {
     this.pathToGenerateChartsFile = getChartsConfig.getString("pathToGenerateChartsFile");
     this.pathToChartBundleMin = getChartsConfig.getString("pathToChartBundleMin");
     this.pathToJar = pathToJar;
+    setOptional(true);
   }
 
   @Override

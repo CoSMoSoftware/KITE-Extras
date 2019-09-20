@@ -198,7 +198,7 @@ public class ReportUtils {
       return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     } catch (Exception e) {
       throw new KiteTestException("Failed to take screenshot: " + e.getLocalizedMessage(),
-          Status.BROKEN, e.getCause(), true);
+          Status.BROKEN, e, true);
     }
   }
 
