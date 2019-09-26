@@ -185,6 +185,8 @@ public abstract class BasePage {
     }
   }
 
-  abstract public List<WebElement> getVideos();
+  public List<WebElement> getVideos() {
+    return  null;
+  }
 
 }
