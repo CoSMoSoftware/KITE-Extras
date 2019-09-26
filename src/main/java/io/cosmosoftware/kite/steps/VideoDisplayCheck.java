@@ -23,12 +23,35 @@ public class VideoDisplayCheck extends TestStep {
    *
    * @param runner the runner
    */
+  public VideoDisplayCheck(Runner runner, BasePage page, int videoIndex, String videoName, boolean optional) {
+    super(runner);
+    this.page = page;
+    this.videoIndex = videoIndex;
+    this.videoName = videoName;
+    setOptional(optional);
+  }
+  /**
+   * Instantiates a new Test step.
+   *
+   * @param runner the runner
+   */
   public VideoDisplayCheck(Runner runner, BasePage page, int videoIndex, String videoName) {
     super(runner);
     this.page = page;
     this.videoIndex = videoIndex;
     this.videoName = videoName;
   }
+
+  /**
+   * Instantiates a new Test step.
+   *
+   * @param runner the runner
+   */
+  public VideoDisplayCheck(Runner runner, BasePage page, int videoIndex, boolean optional) {
+    this(runner,page,videoIndex,"");
+    this.setOptional(optional);
+  }
+
   /**
    * Instantiates a new Test step.
    *
