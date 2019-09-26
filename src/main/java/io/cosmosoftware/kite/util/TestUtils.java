@@ -509,17 +509,17 @@ public class TestUtils {
     }
     return path;
   }
-  
+
   /**
    *  Check the video playback by verifying the pixel sum of 2 frame between a time interval
    *  of 500ms with duration of 1s.
    *
    * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
+   * @param indexOrId indexOrId of the video element on the page in question
    * @return the video status
    */
-  public static String videoCheck(WebDriver webDriver, int index) {
-    return videoCheck(webDriver, index,
+  public static String videoCheck(WebDriver webDriver, Object indexOrId) {
+    return videoCheck(webDriver, indexOrId,
         Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
   }
 
@@ -528,12 +528,12 @@ public class TestUtils {
    *  of 500ms.
    *
    * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
+   * @param indexOrId indexOrId of the video element on the page in question
    * @param duration max duration of video check
    * @return the video status
    */
-  public static String videoCheck(WebDriver webDriver, int index, int duration) {
-    return videoCheck(webDriver, index, Timeouts.ONE_SECOND_INTERVAL/2, duration);
+  public static String videoCheck(WebDriver webDriver, Object indexOrId, int duration) {
+    return videoCheck(webDriver, indexOrId, Timeouts.ONE_SECOND_INTERVAL/2, duration);
   }
 
   /**
@@ -543,15 +543,15 @@ public class TestUtils {
    * "blank"
    *
    * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
+   * @param indexOrId indexOrId of the video element on the page in question
    * @param interval interval between check
    * @param duration max duration of video check
    * @return the video status
    */
-  public static String videoCheck(WebDriver webDriver, int index, int interval, int duration) {
-    long canvas = getCanvasData(webDriver, index, interval);
+  public static String videoCheck(WebDriver webDriver, Object indexOrId, int interval, int duration) {
+    long canvas = getCanvasData(webDriver, indexOrId, interval);
     for (int elapsed = 0; elapsed < duration; elapsed += interval){
-      long tmp = getCanvasData(webDriver, index, interval);
+      long tmp = getCanvasData(webDriver, indexOrId, interval);
       if (tmp != 0 && Math.abs(tmp - canvas) != 0) {
         return VideoQuality.VIDEO.toString();
       }
@@ -569,11 +569,11 @@ public class TestUtils {
    * Only 0 value -> video display is blank
    *
    * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
+   * @param indexOrId indexOrId of the video element on the page in question
    * @return the video display behavior
    */
-  public static String videoQualityCheck(WebDriver webDriver, int index) {
-    return videoQualityCheck(webDriver, index, Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
+  public static String videoQualityCheck(WebDriver webDriver, Object indexOrId) {
+    return videoQualityCheck(webDriver, indexOrId, Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
   }
 
   /**
@@ -585,15 +585,15 @@ public class TestUtils {
    * Only 0 value -> video display is blank
    *
    * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
+   * @param indexOrId indexOrId of the video element on the page in question
    * @param interval the interval between canvas checks
    * @param duration max duration of video check
    * @return the video display behavior
    */
-  public static String videoQualityCheck(WebDriver webDriver, int index, int interval, int duration) {
+  public static String videoQualityCheck(WebDriver webDriver, Object indexOrId, int interval, int duration) {
     List<Long> canvasDatas = new ArrayList<>();
     for (int elapsed = 0; elapsed < duration; elapsed += interval){
-      canvasDatas.add(getCanvasData(webDriver, index, interval));
+      canvasDatas.add(getCanvasData(webDriver, indexOrId, interval));
     }
     HashSet<Long> temp = new HashSet<>(canvasDatas);
     if (temp.size() != canvasDatas.size()) {
@@ -608,10 +608,10 @@ public class TestUtils {
     return VideoQuality.VIDEO.toString();
   }
 
-  private static long getCanvasData(WebDriver webDriver, int index, int delay) {
+  private static long getCanvasData(WebDriver webDriver, Object indexOrId, int delay) {
     try {
       waitAround(delay);
-      return (long) executeJsScript(webDriver,JSActionScript.getVideoFrameValueSumByIndexScript(index));
+      return (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumScript(indexOrId));
     } catch (KiteInteractionException e) {
       return 0;
     }

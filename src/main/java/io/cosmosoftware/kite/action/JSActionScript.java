@@ -149,6 +149,15 @@ public class JSActionScript {
         + "}";
   }
 
+  public static String getVideoFrameValueSumScript(Object indexOrId) {
+    if (indexOrId instanceof String) {
+      return getVideoFrameValueSumByIdScript((String)indexOrId);
+    } else {
+      return getVideoFrameValueSumByIndexScript((int)indexOrId);
+    }
+  }
+
+
   /**
    * Script to input a value to an element by executing JS code
    *
