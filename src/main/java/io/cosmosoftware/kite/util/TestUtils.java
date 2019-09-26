@@ -6,6 +6,8 @@ package io.cosmosoftware.kite.util;
 
 import io.cosmosoftware.kite.action.JSActionScript;
 import io.cosmosoftware.kite.entities.Timeouts;
+import io.cosmosoftware.kite.entities.VideoQuality;
+import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
@@ -39,8 +41,6 @@ import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
  */
 public class TestUtils {
 
-  static private final String IPV4_REGEX = "(([0-1]?[0-9]{1,2}\\.)|(2[0-4][0-9]\\.)|(25[0-5]\\.)){3}(([0-1]?[0-9]{1,2})|(2[0-4][0-9])|(25[0-5]))";
-
   private static final KiteLogger logger = KiteLogger.getLogger(TestUtils.class.getName());
 
   /**
@@ -56,6 +56,11 @@ public class TestUtils {
     }
   }
 
+  /**
+   * Get response from http GET request
+   * @param fullUrl url to server to send request
+   * @return the response from the request
+   */
   public static String doHttpGet(String fullUrl) {
     StringBuilder result = new StringBuilder();
 
@@ -213,13 +218,13 @@ public class TestUtils {
    * @return the result of the script execution
    */
   public static Object executeJsScript(WebDriver webDriver, String scriptString)
-      throws KiteTestException {
+      throws KiteInteractionException {
     try {
       return ((JavascriptExecutor) webDriver).executeScript(scriptString);
     } catch (Exception e) {
-      throw new KiteTestException("Unable to execute JavaScript code '"
+      throw new KiteInteractionException("Unable to execute JavaScript code '"
           + scriptString.substring(0, scriptString.length() / 3) + "...' :"
-          + e.getLocalizedMessage(), Status.BROKEN);
+          + e.getLocalizedMessage());
     }
   }
 
@@ -327,7 +332,7 @@ public class TestUtils {
   /**
    * Saves a JSON object into a file, with line breaks and indents.
    *
-   * @param testName the name of the test, which will be inlcuded in the file name
+   * @param testName the name of the test, which will be included in the file name
    * @param jsonStr the json object as a String.
    * @param dirPath the directory path where to save the file.
    */
@@ -493,69 +498,125 @@ public class TestUtils {
     return 0;
   }
 
-  public static String verifyPathFormat(String url) {
-    if (url != null && !url.endsWith("/")) {
-      return url + "/";
+  /**
+   * Verify the path ends with /
+   * @param path the path string
+   * @return the corrected string
+   */
+  public static String verifyPathFormat(String path) {
+    if (path != null && !path.endsWith("/")) {
+      return path + "/";
     }
-    return url;
+    return path;
+  }
+  
+  /**
+   *  Check the video playback by verifying the pixel sum of 2 frame between a time interval
+   *  of 500ms with duration of 1s.
+   *
+   * @param webDriver webdriver that control the browser
+   * @param index index of the video element on the page in question
+   * @return the video status
+   */
+  public static String videoCheck(WebDriver webDriver, int index) {
+    return videoCheck(webDriver, index,
+        Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
   }
 
   /**
-   * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
-   * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
-   * getSum(frame1) > 0 => return "still" if getSum(frame2) == getSum(frame1) == 0 => return
+   *  Check the video playback by verifying the pixel sum of 2 frame between a time interval
+   *  of 500ms.
+   *
+   * @param webDriver webdriver that control the browser
+   * @param index index of the video element on the page in question
+   * @param duration max duration of video check
+   * @return the video status
+   */
+  public static String videoCheck(WebDriver webDriver, int index, int duration) {
+    return videoCheck(webDriver, index, Timeouts.ONE_SECOND_INTERVAL/2, duration);
+  }
+
+  /**
+   * Check the video playback by verifying the pixel sum of 2 frame between a time interval.
+   * if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
+   * getSum(frame1) > 0 => return "freeze" if getSum(frame2) == getSum(frame1) == 0 => return
    * "blank"
    *
    * @param webDriver webdriver that control the browser
    * @param index index of the video element on the page in question
-   * @return "blank" or "still" or "video"
-   * @throws InterruptedException the interrupted exception
+   * @param interval interval between check
+   * @param duration max duration of video check
+   * @return the video status
    */
-  public static String videoCheck(WebDriver webDriver, int index) throws KiteTestException {
-    return videoCheckSum(webDriver, index).getString("result");
-  }
-
-  /**
-   * Check the video playback by verifying the pixel sum of 2 frame between a time interval of
-   * 500ms. if (getSum(frame2) - getSum(frame1) != 0 ) => return "video", if getSum(frame2) ==
-   * getSum(frame1) > 0 => return "still" if getSum(frame2) == getSum(frame1) == 0 => return
-   * "blank"
-   *
-   * @param webDriver webdriver that control the browser
-   * @param index index of the video element on the page in question
-   * @return the check sum
-   * @throws InterruptedException the interrupted exception
-   */
-  public static JsonObject videoCheckSum(WebDriver webDriver, int index) throws KiteTestException {
-    String result = "blank";
-    JsonObjectBuilder resultObject = Json.createObjectBuilder();
-    long canvasData1 =
-        (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumByIndexScript(index));
-    waitAround(500);
-    long canvasData2 =
-        (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumByIndexScript(index));
-    long canvasData3 = 0;
-    if (canvasData1 != 0 || canvasData2 != 0) {
-      long diff = Math.abs(canvasData2 - canvasData1);
-      if (diff != 0) {
-        result = "video";
-      } else {
-        waitAround(Timeouts.ONE_SECOND_INTERVAL);
-
-        canvasData3 = (long) executeJsScript(webDriver,
-            JSActionScript.getVideoFrameValueSumByIndexScript(index));
-        result = Math.abs(canvasData3 - canvasData1) != 0 ? "video" : "still";
+  public static String videoCheck(WebDriver webDriver, int index, int interval, int duration) {
+    long canvas = getCanvasData(webDriver, index, interval);
+    for (int elapsed = 0; elapsed < duration; elapsed += interval){
+      long tmp = getCanvasData(webDriver, index, interval);
+      if (tmp != 0 && Math.abs(tmp - canvas) != 0) {
+        return VideoQuality.VIDEO.toString();
       }
+      canvas = tmp;
     }
-
-    resultObject
-        .add("checksum1", canvasData1)
-        .add("checksum2", canvasData2)
-        .add("canvasData3", canvasData3) // if ever needed
-        .add("result", result);
-    return resultObject.build();
+    return canvas == 0 ? VideoQuality.BLANK.toString() : VideoQuality.FREEZE.toString();
   }
 
+  /**
+   * Gets canvas data of a video element periodically with a time interval (500ms)
+   * for a duration (2s), then analyzes the values to deduct the video display behavior.
+   * All different values -> video display correctly
+   * Some repetitive values -> video display with jerky framerate
+   * Only 2 values -> video display freeze
+   * Only 0 value -> video display is blank
+   *
+   * @param webDriver webdriver that control the browser
+   * @param index index of the video element on the page in question
+   * @return the video display behavior
+   */
+  public static String videoQualityCheck(WebDriver webDriver, int index) {
+    return videoQualityCheck(webDriver, index, Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
+  }
+
+  /**
+   * Gets canvas data of a video element periodically with a time interval
+   * for a duration, then analyzes the values to deduct the video display behavior.
+   * All different values -> video display correctly
+   * Some repetitive values -> video display with jerky framerate
+   * Only 2 values -> video display freeze
+   * Only 0 value -> video display is blank
+   *
+   * @param webDriver webdriver that control the browser
+   * @param index index of the video element on the page in question
+   * @param interval the interval between canvas checks
+   * @param duration max duration of video check
+   * @return the video display behavior
+   */
+  public static String videoQualityCheck(WebDriver webDriver, int index, int interval, int duration) {
+    List<Long> canvasDatas = new ArrayList<>();
+    for (int elapsed = 0; elapsed < duration; elapsed += interval){
+      canvasDatas.add(getCanvasData(webDriver, index, interval));
+    }
+    HashSet<Long> temp = new HashSet<>(canvasDatas);
+    if (temp.size() != canvasDatas.size()) {
+      if (temp.size() < 3) {
+        if (temp.size() == 1 && temp.contains(0L)) {
+          return VideoQuality.BLANK.toString();
+        }
+        return VideoQuality.FREEZE.toString();
+      }
+      return VideoQuality.JERKY.toString();
+    }
+    return VideoQuality.VIDEO.toString();
+  }
+
+  private static long getCanvasData(WebDriver webDriver, int index, int delay) {
+    try {
+      waitAround(delay);
+      return (long) executeJsScript(webDriver,JSActionScript.getVideoFrameValueSumByIndexScript(index));
+    } catch (KiteInteractionException e) {
+      return 0;
+    }
+  }
+  
   /**
    * Waits for a duration
    *
@@ -570,6 +631,11 @@ public class TestUtils {
     }
   }
 
+  /**
+   * Reformat the file path to correct format
+   * @param filePath path to file
+   * @return the corrected file path
+   */
   public static String filePath(String filePath) {
     return filePath.contains("~") ? filePath.replaceAll(
         "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
@@ -639,6 +705,12 @@ public class TestUtils {
 
   }
 
+  /**
+   * Gets the json array from a json object with a key
+   * @param jsonObject the json object
+   * @param key the key
+   * @return the json array
+   */
   public static JsonArray getJsonArray(JsonObject jsonObject, String key) {
     JsonArray fileArray = null;
     try {
@@ -660,7 +732,6 @@ public class TestUtils {
     }
     return fileArray;
   }
-
 
   /**
    * Reads a json file into a JsonObject
@@ -702,6 +773,7 @@ public class TestUtils {
     }
     return jsonObject;
   }
+
   /**
    * Reads a json file into a JsonArray
    *
