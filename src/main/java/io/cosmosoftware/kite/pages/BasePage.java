@@ -10,6 +10,7 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.WebDriverUtils;
+import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
@@ -182,6 +183,10 @@ public abstract class BasePage {
           "The web element " + locator.toString() + " is not visible after " + timeoutInSeconds
               + "s", e);
     }
+  }
+
+  public List<WebElement> getVideos() {
+    return  null;
   }
 
 }

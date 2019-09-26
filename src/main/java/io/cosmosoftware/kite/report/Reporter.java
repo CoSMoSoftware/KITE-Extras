@@ -347,19 +347,21 @@ public class Reporter {
   }
 
   private synchronized void addDefaultCategories() {
-    Category category1 = new Category("Passed tests");
+    Category category1 = new Category("Passed Tests");
     category1.addStatus("passed");
     Category category2 = new FailedCategory("Connection Issues");
     category2.setMessageRegex("onnection");
-    Category category3 = new FailedCategory("WebDriver Issues");
-    category3.addStatus("broken");
+    Category category3 = new FailedCategory("WebDriver spawning Issues");
     category3.setMessageRegex("river");
-    Category category4 = new FailedCategory("Video issues");
+    Category category4 = new FailedCategory("Video Issues");
     category4.setMessageRegex("ideo");
-    Category category5 = new FailedCategory("Audio issues");
+    Category category5 = new FailedCategory("Audio Issues");
     category5.setMessageRegex("udio");
-    Category category6 = new FailedCategory("Get stats issues");
+    Category category6 = new FailedCategory("Get Stats Issues");
     category6.setMessageRegex("tats");
+    Category category7 = new Category("WebDriver Unexpected Issues");
+    category7.addStatus("broken");
+    category7.setMessageRegex("river");
 
     addCategory(category1);
     addCategory(category2);
@@ -367,6 +369,7 @@ public class Reporter {
     addCategory(category4);
     addCategory(category5);
     addCategory(category6);
+    addCategory(category7);
   }
 
   public synchronized void addCategory(Category category) {
