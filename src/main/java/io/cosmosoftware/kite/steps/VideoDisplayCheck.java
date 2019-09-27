@@ -1,7 +1,7 @@
 package io.cosmosoftware.kite.steps;
 
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
-import static io.cosmosoftware.kite.entities.Timeouts.TEN_SECOND_INTERVAL;
+import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT;
 import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
 import static io.cosmosoftware.kite.util.TestUtils.videoCheck;
@@ -18,6 +18,8 @@ public class VideoDisplayCheck extends TestStep {
   protected final Object videoIndexOrId;
   protected final String videoName;
   protected final BasePage page;
+  protected int interval = ONE_SECOND_INTERVAL;
+  protected int duration = SHORT_TIMEOUT/2;
 
   /**
    * Instantiates a new Test step.
@@ -71,7 +73,7 @@ public class VideoDisplayCheck extends TestStep {
             "Unable to find any <video> element on the page", Status.FAILED);
       }
     }
-    String videoCheck = videoCheck(webDriver, videoIndexOrId,ONE_SECOND_INTERVAL, TEN_SECOND_INTERVAL);
+    String videoCheck = videoCheck(webDriver, videoIndexOrId, interval, duration);
     reporter.screenshotAttachment(report,
         getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
     reporter.textAttachment(report, getVideoName() , videoCheck, "plain");
@@ -90,5 +92,13 @@ public class VideoDisplayCheck extends TestStep {
         + (this.videoName.isEmpty() ? "" : (this.videoName + " - "))
         + (this.videoIndexOrId instanceof String ? "id: " : "index ") + this.videoIndexOrId
         + ")";
+  }
+
+  public void setDuration(int duration) {
+    this.duration = duration;
+  }
+
+  public void setInterval(int interval) {
+    this.interval = interval;
   }
 }

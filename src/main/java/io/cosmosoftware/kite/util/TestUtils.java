@@ -549,7 +549,7 @@ public class TestUtils {
    * @return the video status
    */
   public static String videoCheck(WebDriver webDriver, Object indexOrId, int interval, int duration) {
-    long canvas = getCanvasData(webDriver, indexOrId, interval);
+    long canvas = getCanvasData(webDriver, indexOrId, 0);
     for (int elapsed = 0; elapsed < duration; elapsed += interval){
       long tmp = getCanvasData(webDriver, indexOrId, interval);
       if (tmp != 0 && Math.abs(tmp - canvas) != 0) {
@@ -610,7 +610,9 @@ public class TestUtils {
 
   private static long getCanvasData(WebDriver webDriver, Object indexOrId, int delay) {
     try {
-      waitAround(delay);
+      if (delay > 0) {
+        waitAround(delay);
+      }
       return (long) executeJsScript(webDriver, JSActionScript.getVideoFrameValueSumScript(indexOrId));
     } catch (KiteInteractionException e) {
       return 0;
