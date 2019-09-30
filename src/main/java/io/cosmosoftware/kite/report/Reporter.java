@@ -377,7 +377,7 @@ public class Reporter {
     this.environment.put(key, value);
   }
 
-  private void generateFile(String fileName, String content) {
+  private synchronized void generateFile(String fileName, String content) {
     File file = new File(this.reportPath + fileName);
     if (!file.exists()) {
       BufferedWriter writer = null;
@@ -403,7 +403,7 @@ public class Reporter {
     }
   }
 
-  private String generateRetryConfigFile() {
+  private synchronized String generateRetryConfigFile() {
     if (this.configFilePath != null
         && !this.configFilePath.isEmpty()
         && !failedClientMatrixList.isEmpty()) {
@@ -434,19 +434,19 @@ public class Reporter {
     return null;
   }
 
-  public void setConfigFilePath(String configFilePath) {
+  public synchronized void setConfigFilePath(String configFilePath) {
     this.configFilePath = configFilePath;
   }
 
-  public void setTestConfig(JsonObject testConfig) {
+  public synchronized void setTestConfig(JsonObject testConfig) {
     this.testConfig = testConfig;
   }
 
-  public long getStartTime() {
+  public synchronized long getStartTime() {
     return startTime;
   }
 
-  public Environment getEnvironment() {
+  public synchronized Environment getEnvironment() {
     return environment;
   }
 }
