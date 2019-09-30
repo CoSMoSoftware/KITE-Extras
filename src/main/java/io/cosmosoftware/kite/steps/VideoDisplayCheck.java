@@ -67,7 +67,7 @@ public class VideoDisplayCheck extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
-    premilinaryCheck();
+    preliminaryCheck();
     String videoCheck = mainCheck();
     reporter.screenshotAttachment(report,
         getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
@@ -105,7 +105,7 @@ public class VideoDisplayCheck extends TestStep {
     return videoCheck(webDriver, videoIndexOrId, interval, duration);
   }
 
-  protected void premilinaryCheck() throws KiteTestException {
+  protected void preliminaryCheck() throws KiteTestException {
     List<WebElement> videos = page.getVideos();
     if (videos != null) { // the page does not overwrite the base function
       if (videos.isEmpty()) {
