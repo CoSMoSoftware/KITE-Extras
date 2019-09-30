@@ -122,7 +122,8 @@ public class Reporter {
     generateFile("categories.json", generateCategories());
     if (generateRetryConfigFile() != null) {
       logger.warn("Done! Some test cases might need to be rerun!");
-      generateFile(retryPath + this.testConfig.getString("name") + "-" + timestamp,
+      generateFile(retryPath + this.testConfig.getString("name")
+              .replaceAll(" ", "_").replaceAll(":","_") + "-" + timestamp,
           generateRetryConfigFile());
     } else {
       logger.warn("Done! All test cases have passed!");
