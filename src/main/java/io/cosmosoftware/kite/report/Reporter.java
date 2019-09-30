@@ -445,4 +445,8 @@ public class Reporter {
   public long getStartTime() {
     return startTime;
   }
+
+  public Environment getEnvironment() {
+    return environment;
+  }
 }
