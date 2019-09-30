@@ -20,6 +20,7 @@ public class AllureTestReport extends AllureStepReport {
   private String fullName;
   private ParamList labels;
   private List<String> links;
+  private String testClientMatrix = "";
 
   /**
    * Instantiates a new AllureStepReport report.
@@ -68,5 +69,13 @@ public class AllureTestReport extends AllureStepReport {
   public void generateReport() {
     String fileName = this.reporter.getReportPath() + this.uuid + "-result.json";
     printJsonTofile(this.toString(), fileName);
+  }
+
+  public void setTestClientMatrix(String testClientMatrix) {
+    this.testClientMatrix = testClientMatrix;
+  }
+
+  public String getTestClientMatrix() {
+    return testClientMatrix;
   }
 }

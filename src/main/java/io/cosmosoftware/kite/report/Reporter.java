@@ -9,6 +9,7 @@ import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
 import static io.cosmosoftware.kite.util.TestUtils.createDirs;
 import static io.cosmosoftware.kite.util.TestUtils.printJsonTofile;
+import static io.cosmosoftware.kite.util.TestUtils.readJsonFile;
 import static io.cosmosoftware.kite.util.TestUtils.verifyPathFormat;
 
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -25,6 +26,7 @@ import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 /**
@@ -39,13 +41,17 @@ public class Reporter {
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private boolean csvReport = false;
   private String reportPath = DEFAULT_REPORT_FOLDER;
+  private String retryPath = reportPath + "retry-config/";
+  private String configFilePath;
+  private JsonObject testConfig;
+  private long startTime = System.currentTimeMillis();
   private String timestamp = timestamp();
   private Environment environment = new Environment();
   private List<CustomAttachment> attachments = Collections.synchronizedList(new ArrayList<>());
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
   private List<Category> categories = new ArrayList<>();
-
+  private List<String> failedClientMatrixList = new ArrayList<>();
   /**
    * Instantiates a new Reporter.
    */
@@ -105,10 +111,22 @@ public class Reporter {
    */
   public synchronized void generateReportFiles() {
     updateContainers();
-    generateCategoryJsonFile();
-    generateEnvironmentFile();
     for (AllureTestReport test : tests) {
       test.generateReport();
+      if (!test.getStatus().equals(Status.PASSED)) {
+        failedClientMatrixList.add(test.getTestClientMatrix());
+        logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
+      }
+    }
+    generateFile("environment.properties", this.environment.toString());
+    generateFile("categories.json", generateCategories());
+    if (generateRetryConfigFile() != null) {
+      logger.warn("Done! Some test cases might need to be rerun!");
+      generateFile(retryPath + this.testConfig.getString("name")
+              .replaceAll(" ", "_").replaceAll(":","_") + "-" + timestamp,
+          generateRetryConfigFile());
+    } else {
+      logger.warn("Done! All test cases have passed!");
     }
 
     for (CustomAttachment attachment : attachments) {
@@ -305,35 +323,10 @@ public class Reporter {
    */
   public synchronized void updateContainers() {
     createDirs(this.reportPath);
+    createDirs(this.retryPath);
     for (Container container : containers) {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
       printJsonTofile(container.toString(), fileName);
-    }
-  }
-
-  private synchronized void generateCategoryJsonFile() {
-    File file = new File(this.reportPath + "categories.json");
-    if (!file.exists()) {
-      BufferedWriter writer = null;
-      try {
-        // Writes bytes from the specified byte array to this file output stream
-        writer = new BufferedWriter(new FileWriter(file));
-        writer.write(generateCategories());
-
-      } catch (FileNotFoundException e) {
-        logger.error("File not found" + e);
-      } catch (IOException ioe) {
-        logger.error("Exception while writing file " + ioe);
-      } finally {
-        // close the streams using close method
-        try {
-          if (writer != null) {
-            writer.close();
-          }
-        } catch (IOException ioe) {
-          logger.error("Error while closing stream: " + ioe);
-        }
-      }
     }
   }
 
@@ -384,14 +377,14 @@ public class Reporter {
     this.environment.put(key, value);
   }
 
-  private synchronized void generateEnvironmentFile() {
-    File file = new File(this.reportPath + "environment.properties");
+  private void generateFile(String fileName, String content) {
+    File file = new File(this.reportPath + fileName);
     if (!file.exists()) {
       BufferedWriter writer = null;
       try {
         // Writes bytes from the specified byte array to this file output stream
         writer = new BufferedWriter(new FileWriter(file));
-        writer.write(this.environment.toString());
+        writer.write(content);
 
       } catch (FileNotFoundException e) {
         logger.error("File not found" + e);
@@ -408,5 +401,52 @@ public class Reporter {
         }
       }
     }
+  }
+
+  private String generateRetryConfigFile() {
+    if (this.configFilePath != null
+        && !this.configFilePath.isEmpty()
+        && !failedClientMatrixList.isEmpty()) {
+      JsonObject configFileObject = readJsonFile(configFilePath);
+      JsonObjectBuilder builder = Json.createObjectBuilder();
+      builder.add("name", configFileObject.get("name"));
+      builder.add("grids", configFileObject.get("grids"));
+      builder.add("clients", configFileObject.get("clients"));
+      if (configFileObject.get("cloud")!=null) {
+        builder.add("cloud", configFileObject.get("cloud"));
+      }
+      if (configFileObject.get("permute")!=null) {
+        builder.add("permute", configFileObject.get("permute"));
+      }
+      if (configFileObject.get("networkInstrumentation")!=null) {
+        builder.add("networkInstrumentation", configFileObject.get("networkInstrumentation"));
+      }
+      if (testConfig != null) {
+        builder.add("tests", Json.createArrayBuilder().add(testConfig));
+      }
+      JsonArrayBuilder retryArrayBuilder = Json.createArrayBuilder();
+      for (String tuple : failedClientMatrixList) {
+        retryArrayBuilder.add(tuple);
+      }
+      builder.add("matrix", retryArrayBuilder);
+      return builder.build().toString();
+    }
+    return null;
+  }
+
+  public void setConfigFilePath(String configFilePath) {
+    this.configFilePath = configFilePath;
+  }
+
+  public void setTestConfig(JsonObject testConfig) {
+    this.testConfig = testConfig;
+  }
+
+  public long getStartTime() {
+    return startTime;
+  }
+
+  public Environment getEnvironment() {
+    return environment;
   }
 }

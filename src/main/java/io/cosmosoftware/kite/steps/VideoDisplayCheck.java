@@ -20,6 +20,7 @@ public class VideoDisplayCheck extends TestStep {
   protected final BasePage page;
   protected int interval = ONE_SECOND_INTERVAL;
   protected int duration = SHORT_TIMEOUT/2;
+  protected boolean allowFreeze = false;
 
   /**
    * Instantiates a new Test step.
@@ -66,14 +67,8 @@ public class VideoDisplayCheck extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
-    List<WebElement> videos = page.getVideos();
-    if (videos != null) { // the page does not overwrite the base function
-      if (videos.isEmpty()) {
-        throw new KiteTestException(
-            "Unable to find any <video> element on the page", Status.FAILED);
-      }
-    }
-    String videoCheck = videoCheck(webDriver, videoIndexOrId, interval, duration);
+    preliminaryCheck();
+    String videoCheck = mainCheck();
     reporter.screenshotAttachment(report,
         getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
     reporter.textAttachment(report, getVideoName() , videoCheck, "plain");
@@ -87,7 +82,7 @@ public class VideoDisplayCheck extends TestStep {
     return "Check the display for " + getVideoName();
   }
 
-  private String getVideoName() {
+  protected String getVideoName() {
     return "Video ("
         + (this.videoName.isEmpty() ? "" : (this.videoName + " - "))
         + (this.videoIndexOrId instanceof String ? "id: " : "index ") + this.videoIndexOrId
@@ -100,5 +95,23 @@ public class VideoDisplayCheck extends TestStep {
 
   public void setInterval(int interval) {
     this.interval = interval;
+  }
+
+  public void setAllowFreeze(boolean allowFreeze) {
+    this.allowFreeze = allowFreeze;
+  }
+
+  protected String mainCheck() {
+    return videoCheck(webDriver, videoIndexOrId, interval, duration);
+  }
+
+  protected void preliminaryCheck() throws KiteTestException {
+    List<WebElement> videos = page.getVideos();
+    if (videos != null) { // the page does not overwrite the base function
+      if (videos.isEmpty()) {
+        throw new KiteTestException(
+            "Unable to find any <video> element on the page", Status.FAILED);
+      }
+    }
   }
 }
