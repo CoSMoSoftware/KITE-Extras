@@ -20,7 +20,7 @@ public class AllureTestReport extends AllureStepReport {
   private String fullName;
   private ParamList labels;
   private List<String> links;
-  private String testClientMatrix = "";
+  private List<Integer> testClientMatrix = new ArrayList<>();
 
   /**
    * Instantiates a new AllureStepReport report.
@@ -71,11 +71,15 @@ public class AllureTestReport extends AllureStepReport {
     printJsonTofile(this.toString(), fileName);
   }
 
-  public void setTestClientMatrix(String testClientMatrix) {
+  public void setTestClientMatrix(List<Integer> testClientMatrix) {
     this.testClientMatrix = testClientMatrix;
   }
 
-  public String getTestClientMatrix() {
+  public void addClientIndex(int clientIndex) {
+    this.testClientMatrix.add(clientIndex);
+  }
+
+  public List<Integer> getTestClientMatrix() {
     return testClientMatrix;
   }
 }

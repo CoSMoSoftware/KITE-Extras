@@ -51,7 +51,7 @@ public class Reporter {
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
   private List<Category> categories = new ArrayList<>();
-  private List<String> failedClientMatrixList = new ArrayList<>();
+  private List<List<Integer>> failedClientMatrixList = new ArrayList<>();
   /**
    * Instantiates a new Reporter.
    */
@@ -122,7 +122,7 @@ public class Reporter {
     generateFile(this.reportPath + "categories.json", generateCategories());
     if (generateRetryConfigFile() != null) {
       logger.warn("Done! Some test cases might need to be rerun!");
-      generateFile(this.retryPath + this.testName + timestamp() + ".json",
+      generateFile(this.retryPath + "retry-" + timestamp() + ".json",
           generateRetryConfigFile());
     } else {
       logger.warn("Done! All test cases have passed!");
@@ -425,8 +425,12 @@ public class Reporter {
         builder.add("tests", Json.createArrayBuilder().add(testConfig));
       }
       JsonArrayBuilder retryArrayBuilder = Json.createArrayBuilder();
-      for (String tuple : failedClientMatrixList) {
-        retryArrayBuilder.add(tuple);
+      for (List<Integer> tuple : failedClientMatrixList) {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (int index : tuple) {
+          arrayBuilder.add(index);
+        }
+        retryArrayBuilder.add(arrayBuilder);
       }
       builder.add("matrix", retryArrayBuilder);
       return builder.build().toString();
