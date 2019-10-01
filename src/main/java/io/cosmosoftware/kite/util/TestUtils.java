@@ -518,9 +518,22 @@ public class TestUtils {
    * @param indexOrId indexOrId of the video element on the page in question
    * @return the video status
    */
+  public static String videoCheck(WebDriver webDriver, int indexOrId) {
+    return videoCheck(webDriver, new Integer(indexOrId),
+      Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
+  }
+
+  /**
+   *  Check the video playback by verifying the pixel sum of 2 frame between a time interval
+   *  of 500ms with duration of 1s.
+   *
+   * @param webDriver webdriver that control the browser
+   * @param indexOrId indexOrId of the video element on the page in question
+   * @return the video status
+   */
   public static String videoCheck(WebDriver webDriver, Object indexOrId) {
     return videoCheck(webDriver, indexOrId,
-        Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
+      Timeouts.ONE_SECOND_INTERVAL/2, Timeouts.ONE_SECOND_INTERVAL*2);
   }
 
   /**
