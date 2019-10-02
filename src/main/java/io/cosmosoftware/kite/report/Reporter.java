@@ -51,7 +51,7 @@ public class Reporter {
   private List<Container> containers = Collections.synchronizedList(new ArrayList<>());
   private List<AllureTestReport> tests = Collections.synchronizedList(new ArrayList<>());
   private List<Category> categories = new ArrayList<>();
-  private List<String> failedClientMatrixList = new ArrayList<>();
+  private List<List<Integer>> failedClientMatrixList = new ArrayList<>();
   /**
    * Instantiates a new Reporter.
    */
@@ -118,12 +118,11 @@ public class Reporter {
         logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
       }
     }
-    generateFile("environment.properties", this.environment.toString());
-    generateFile("categories.json", generateCategories());
+    generateFile(this.reportPath + "environment.properties", this.environment.toString());
+    generateFile(this.reportPath + "categories.json", generateCategories());
     if (generateRetryConfigFile() != null) {
       logger.warn("Done! Some test cases might need to be rerun!");
-      generateFile(retryPath + this.testConfig.getString("name")
-              .replaceAll(" ", "_").replaceAll(":","_") + "-" + timestamp,
+      generateFile(this.retryPath + "retry-" + timestamp() + ".json",
           generateRetryConfigFile());
     } else {
       logger.warn("Done! All test cases have passed!");
@@ -378,27 +377,28 @@ public class Reporter {
   }
 
   private synchronized void generateFile(String fileName, String content) {
-    File file = new File(this.reportPath + fileName);
-    if (!file.exists()) {
-      BufferedWriter writer = null;
-      try {
-        // Writes bytes from the specified byte array to this file output stream
-        writer = new BufferedWriter(new FileWriter(file));
-        writer.write(content);
+    File file = new File( fileName);
+    if (file.exists()) {
+      file.delete();
+    }
+    BufferedWriter writer = null;
+    try {
+      // Writes bytes from the specified byte array to this file output stream
+      writer = new BufferedWriter(new FileWriter(file));
+      writer.write(content);
 
-      } catch (FileNotFoundException e) {
-        logger.error("File not found" + e);
-      } catch (IOException ioe) {
-        logger.error("Exception while writing file " + ioe);
-      } finally {
-        // close the streams using close method
-        try {
-          if (writer != null) {
-            writer.close();
-          }
-        } catch (IOException ioe) {
-          logger.error("Error while closing stream: " + ioe);
+    } catch (FileNotFoundException e) {
+      logger.error("File not found" + e);
+    } catch (IOException ioe) {
+      logger.error("Exception while writing file " + ioe);
+    } finally {
+      // close the streams using close method
+      try {
+        if (writer != null) {
+          writer.close();
         }
+      } catch (IOException ioe) {
+        logger.error("Error while closing stream: " + ioe);
       }
     }
   }
@@ -425,8 +425,12 @@ public class Reporter {
         builder.add("tests", Json.createArrayBuilder().add(testConfig));
       }
       JsonArrayBuilder retryArrayBuilder = Json.createArrayBuilder();
-      for (String tuple : failedClientMatrixList) {
-        retryArrayBuilder.add(tuple);
+      for (List<Integer> tuple : failedClientMatrixList) {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (int index : tuple) {
+          arrayBuilder.add(index);
+        }
+        retryArrayBuilder.add(arrayBuilder);
       }
       builder.add("matrix", retryArrayBuilder);
       return builder.build().toString();
@@ -448,5 +452,13 @@ public class Reporter {
 
   public synchronized Environment getEnvironment() {
     return environment;
+  }
+
+  public synchronized int numberOfRegisteredTest() {
+    return this.tests.size();
+  }
+
+  public synchronized void setStartTime(long startTime) {
+    this.startTime = startTime;
   }
 }
