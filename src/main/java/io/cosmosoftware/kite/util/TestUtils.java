@@ -27,7 +27,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.json.*;
 import javax.json.stream.JsonGenerator;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -233,7 +235,7 @@ public class TestUtils {
    *
    * @param hubUrl the hub url
    * @param sessionId the session id
-   * @return the node
+   * @return the node url
    */
   public static String getNode(String hubUrl, String sessionId) {
     String node = null;
@@ -897,4 +899,39 @@ public class TestUtils {
     String dir = System.getProperty(dirkey);
     return dir.charAt(dir.length() - 1) == File.separatorChar ? dir : dir + File.separator;
   }
+
+
+  /**
+   * Send a command to the KiteServer.
+   * This is used by network instrumnetation to send commands to GW or nodes and by 
+   * webdriverFactory to send the command to playback the video for Firefox.
+   * 
+   * @param kiteServerUrl the url of the kiteServer (e.g. "http://localhost:8080/KITEServer")
+   * @param command the command full uri (e.g. "/command?id=" + gridId + "&ip=" + nodeIp + "&cmd=" + command)
+   * @return the HTTP response (String)
+   */
+  public static String kiteServerCommand(String kiteServerUrl, String command) {
+    String result;
+    try {
+      URL url = new URL(kiteServerUrl + command);
+      logger.info("kiteServerCommand => " + url);
+      HttpURLConnection con = (HttpURLConnection) url.openConnection();
+      con.setRequestMethod("GET");
+      int responseCode = con.getResponseCode();
+      logger.info("Response Code from kiteServer: " + responseCode);
+      BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+      String inputLine;
+      StringBuffer response = new StringBuffer();
+      while ((inputLine = in.readLine()) != null) {
+        response.append(inputLine);
+      }
+      in.close();
+      result = response.toString();
+    } catch (Exception e) {
+      result = "Error: " + e.getLocalizedMessage();
+      logger.error(getStackTrace(e));
+    }
+    return result;
+  }
+  
 }
