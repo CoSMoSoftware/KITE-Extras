@@ -917,8 +917,6 @@ public class TestUtils {
       logger.info("kiteServerCommand => " + url);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("GET");
-      int responseCode = con.getResponseCode();
-      logger.info("Response Code from kiteServer: " + responseCode);
       BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
       String inputLine;
       StringBuffer response = new StringBuffer();
@@ -931,6 +929,7 @@ public class TestUtils {
       result = "Error: " + e.getLocalizedMessage();
       logger.error(getStackTrace(e));
     }
+    logger.debug("kiteServerCommand response:\r\n" + result);
     return result;
   }
   
