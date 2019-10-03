@@ -73,9 +73,19 @@ public class VideoDisplayCheck extends TestStep {
     reporter.screenshotAttachment(report,
         getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
     reporter.textAttachment(report, getVideoName() , videoCheck, "plain");
-    if (!VideoQuality.VIDEO.toString().equals(videoCheck)) {
+    if (resultNotOK(videoCheck)) {
       throw new KiteTestException(customMessage == null ? getVideoName() + " did not display correctly" : customMessage, Status.FAILED);
     }
+  }
+
+  protected boolean resultNotOK(String videoCheck) throws KiteTestException {
+    if (VideoQuality.VIDEO.toString().equals(videoCheck)) {
+      return false;
+    }
+    if (VideoQuality.FREEZE.toString().equals(videoCheck)) {
+      return !allowFreeze;
+    }
+    return true;
   }
 
     @Override

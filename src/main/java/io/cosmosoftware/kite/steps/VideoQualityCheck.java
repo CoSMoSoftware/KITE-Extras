@@ -2,6 +2,8 @@ package io.cosmosoftware.kite.steps;
 
 import static io.cosmosoftware.kite.util.TestUtils.videoQualityCheck;
 
+import io.cosmosoftware.kite.entities.VideoQuality;
+import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.pages.BasePage;
 
@@ -38,6 +40,14 @@ public class VideoQualityCheck extends VideoDisplayCheck {
 
   public boolean allowJerky() {
     return allowJerky;
+  }
+
+  @Override
+  protected boolean resultNotOK(String videoCheck) throws KiteTestException {
+    if (VideoQuality.JERKY.toString().equals(videoCheck)) {
+      return !allowJerky;
+    }
+    return super.resultNotOK(videoCheck);
   }
 
   @Override
