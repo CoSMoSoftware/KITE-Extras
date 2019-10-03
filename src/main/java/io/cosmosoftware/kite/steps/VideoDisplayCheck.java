@@ -18,6 +18,7 @@ public class VideoDisplayCheck extends TestStep {
   protected final Object videoIndexOrId;
   protected final String videoName;
   protected final BasePage page;
+  protected String customMessage;
   protected int interval = ONE_SECOND_INTERVAL;
   protected int duration = SHORT_TIMEOUT/2;
   protected boolean allowFreeze = false;
@@ -73,7 +74,7 @@ public class VideoDisplayCheck extends TestStep {
         getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
     reporter.textAttachment(report, getVideoName() , videoCheck, "plain");
     if (!VideoQuality.VIDEO.toString().equals(videoCheck)) {
-      throw new KiteTestException(getVideoName() + " did not display correctly", Status.FAILED);
+      throw new KiteTestException(customMessage == null ? getVideoName() + " did not display correctly" : customMessage, Status.FAILED);
     }
   }
 
@@ -110,8 +111,12 @@ public class VideoDisplayCheck extends TestStep {
     if (videos != null) { // the page does not overwrite the base function
       if (videos.isEmpty()) {
         throw new KiteTestException(
-            "Unable to find any <video> element on the page", Status.FAILED);
+            "Unable to find any UI element on the page matching this check", Status.FAILED);
       }
     }
+  }
+
+  protected void setCustomMessage(String customMessage) {
+    this.customMessage = customMessage;
   }
 }
