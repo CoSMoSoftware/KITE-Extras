@@ -341,24 +341,23 @@ public class Reporter {
   private synchronized void addDefaultCategories() {
     Category category1 = new Category("Passed Tests");
     category1.addStatus("passed");
+    category1.setMessageRegex("The test has passed successfully");
     Category category2 = new FailedCategory("Connection Issues");
     category2.setMessageRegex("[cC]onnection");
-    Category category3 = new FailedCategory("WebDriver spawning Issues");
-    category3.setMessageRegex("[dD]river");
-    Category category4 = new FailedCategory("Video Issues");
-    category4.setMessageRegex("[vV]ideo");
-    Category category5 = new FailedCategory("Audio Issues");
-    category5.setMessageRegex("[aA]udio");
+    Category category3 = new FailedCategory("WebDriver Spawning Issues");
+    category3.setMessageRegex("Exception while populating web drivers");
+    Category category4 = new FailedCategory("Page Loading Issues");
+    category4.setMessageRegex("Error opening page");
+    Category category5 = new FailedCategory("UI Element Not Visible");
+    category5.addStatus("broken");
+    category5.setMessageRegex("is not visible");
     Category category6 = new FailedCategory("Get Stats Issues");
-    category6.setMessageRegex("[sS]tats");
+    category6.setMessageRegex("Could not get stats from peer connection");
     Category category7 = new Category("WebDriver Unexpected Issues");
     category7.addStatus("broken");
-    category7.setMessageRegex("[dD]river");
+    category7.setMessageRegex("UNHANDLED EXCEPTION");
     Category category8 = new FailedCategory("Screen sharing Issues");
     category8.setMessageRegex("[sS]hare");
-    Category category9 = new FailedCategory("Unexpected Issues");
-    category9.addStatus("broken");
-    category9.setMessageRegex("UNHANDLED EXCEPTION");
 
     addCategory(category1);
     addCategory(category2);
@@ -368,7 +367,6 @@ public class Reporter {
     addCategory(category6);
     addCategory(category7);
     addCategory(category8);
-    addCategory(category9);
   }
 
   public synchronized void addCategory(Category category) {

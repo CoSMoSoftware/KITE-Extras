@@ -60,7 +60,7 @@ public abstract class TestStep {
    */
   public void execute() {
     try {
-      logger.info(currentStepPhase.getShortName() + "Executing step: " + stepDescription());
+      logger.info(currentStepPhase.getShortName()  + stepDescription());
       step();
     } catch (Exception e) {
       String screenshotName = "error_screenshot_" + this.getName();
@@ -147,7 +147,7 @@ public abstract class TestStep {
    * Skip.
    */
   public void skip() {
-    logger.warn(currentStepPhase.getShortName() + "Skipping step: " + stepDescription());
+    logger.warn(currentStepPhase.getShortName() + "[SKIPPING] " + stepDescription());
     this.report.setStatus(Status.SKIPPED);
   }
 
