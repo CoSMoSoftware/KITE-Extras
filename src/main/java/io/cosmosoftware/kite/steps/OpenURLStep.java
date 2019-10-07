@@ -4,6 +4,9 @@
 
 package io.cosmosoftware.kite.steps;
 
+import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT_IN_SECONDS;
+import static io.cosmosoftware.kite.util.WebDriverUtils.loadPage;
+
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.Status;
@@ -38,7 +41,7 @@ public class OpenURLStep extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
-    this.webDriver.get(this.url);
+    loadPage(webDriver, this.url, SHORT_TIMEOUT_IN_SECONDS);
     String html = webDriver.getPageSource();
     for (String errorMessage : this.errorMessages) {
       if (html.contains(errorMessage)) {
