@@ -424,7 +424,10 @@ public class WebDriverUtils {
    */
   public static boolean isMobileApp(WebDriver webDriver) {
     Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
-    return capabilities.getBrowserName().isEmpty();
+    Object deviceName = capabilities.getCapability("deviceName");
+    return deviceName == null
+        || deviceName.toString().isEmpty()
+        || deviceName.toString().equals("unknown");
   }
 
   /**
@@ -447,15 +450,18 @@ public class WebDriverUtils {
    * Load the page, waiting for document.readyState to be complete
    *
    * @param url the url of the web page
+   * @param timeoutInSeconds timeout in seconds
    * @param webDriver the webdriver.
    */
-  public static void loadPage(WebDriver webDriver, String url, int timeout) {
-    WebDriverWait driverWait = new WebDriverWait(webDriver, timeout);
+  public static void loadPage(WebDriver webDriver, String url, int timeoutInSeconds) {
     webDriver.get(url);
-    driverWait.until(driver ->
-        ((JavascriptExecutor) driver)
-            .executeScript("return document.readyState")
-            .equals("complete"));
+    if (!isMobileApp(webDriver)) {
+      WebDriverWait driverWait = new WebDriverWait(webDriver, timeoutInSeconds);
+      driverWait.until(driver ->
+          ((JavascriptExecutor) driver)
+              .executeScript("return document.readyState")
+              .equals("complete"));
+    }
   }
 
   /**
