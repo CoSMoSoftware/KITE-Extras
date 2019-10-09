@@ -203,6 +203,7 @@ public class Reporter {
             : "");
     if (e instanceof KiteTestException) {
       details.setKnown(true);
+      details.setCode(1);
       details.setMuted(((KiteTestException) e).isContinueOnFailure());
       report.setIgnore(((KiteTestException) e).isContinueOnFailure() || optional);
       status = ((KiteTestException) e).getStatus();
@@ -220,6 +221,7 @@ public class Reporter {
           "must be caught and thrown as KiteTestException";
       report.setIgnore(optional);
       details.setFlaky(true);
+      details.setCode(2);
       status = Status.BROKEN;
       logger.error(
           "Step " + status.value() + ":\r\n   message = " + message + "\r\n   trace = " + trace);

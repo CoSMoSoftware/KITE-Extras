@@ -75,12 +75,9 @@ public class AllureStepReport extends ReportEntity {
     if (this.status.equals(Status.PASSED) && !step.getStatus().equals(Status.SKIPPED)) {
       // prevent overwriting failed/broken status
       // step should not has status "skipped" if sub steps gets skipped on failure
-      if (!this.failedRegistered) {
-        this.status = step.getStatus();
-        if (step.getDetails() != null) {
-          this.setDetails(step.getDetails());
-        }
-        this.failedRegistered = true;
+      this.status = step.getStatus();
+      if (step.getDetails() != null) {
+        this.setDetails(step.getDetails());
       }
     } else {
       if (step.status.equals(Status.PASSED)) {
@@ -130,7 +127,10 @@ public class AllureStepReport extends ReportEntity {
   }
 
   public void setDetails(StatusDetails details) {
-    this.details = details;
+    // prevent overwriting details
+    if (this.details.getCode() == 0) {
+      this.details = details;
+    }
     // reporter.textAttachment(this, "statusDetail", details.toJson().toString(), "json");
   }
 
@@ -214,6 +214,7 @@ public class AllureStepReport extends ReportEntity {
   protected StatusDetails defaultStatusDetail() {
     StatusDetails statusDetails = new StatusDetails();
     statusDetails.setMessage("The test has passed successfully!");
+    statusDetails.setCode(0);
     return statusDetails;
   }
 

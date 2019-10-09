@@ -15,6 +15,7 @@ public class StatusDetails {
   private boolean flaky = false;
   private String message;
   private String trace;
+  private int code = 0; // 0,1,2,3 for PASSED (DEFAULT), FAILED, BROKEN and SKIPPED
 
   public StatusDetails() {
   }
@@ -37,6 +38,14 @@ public class StatusDetails {
 
   public void setTrace(String trace) {
     this.trace = trace;
+  }
+
+  public void setCode(int code) {
+    this.code = code;
+  }
+
+  public int getCode() {
+    return code;
   }
 
   private JsonObjectBuilder getJsonBuilder() {
