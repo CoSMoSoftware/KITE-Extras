@@ -43,7 +43,7 @@ public class AllureStepReport extends ReportEntity {
     this.attachments = Collections.synchronizedList(new ArrayList<>());
     this.steps = Collections.synchronizedList(new ArrayList<>());
     this.parameters = new ParamList();
-    this.setDetails(defaultStatusDetail());
+    this.details = defaultStatusDetail();
   }
 
   /**
