@@ -25,7 +25,6 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   private static final KiteLogger logger = KiteLogger.getLogger(RoomManager.class.getName());
   private final String baseURL;
 
-
   private final int usersPerRoom;
   private int roomId = 0;
   private int roomIndex = 0;
@@ -33,8 +32,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   private boolean loopRooms;
 
   //this is for the case where the roomURL is created after the call is initiated (e.g. Google Hangouts)
-  private HashMap<Integer,String> dynamicUrls = null;
-
+  private HashMap<Integer,String> dynamicUrls = new HashMap<>();
 
   public RoomManager(String baseURL, int usersPerRoom, boolean loop) {
     this.baseURL = baseURL;
@@ -42,7 +40,6 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
     this.loopRooms = loop;
     logger.info("new RoomManager(" + usersPerRoom + ") for " + baseURL);
   }
-
 
   private synchronized String getHubId(String hubIpOrDns) {
     if (hubIpOrDns == null) {
@@ -140,7 +137,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * Gets the array of room name
    * @return the room names
    */
-  public String[] getRoomNames() {
+  public synchronized String[] getRoomNames() {
     return roomNames;
   }
 
@@ -149,7 +146,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    *
    * @return true if a room list was provided (this.roomNames != null)
    */
-  public boolean roomListProvided() {
+  public synchronized boolean roomListProvided() {
     return this.roomNames != null && this.roomNames.length > 0;
   }
 
@@ -158,11 +155,11 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    *
    * @param roomNames a String[] containing the list of room names.
    */
-  public void setRoomNames(String[] roomNames) {
+  public synchronized void setRoomNames(String[] roomNames) {
     this.roomNames = roomNames;
   }
 
-  private String getRandomRoomId(int roomIdLen) {
+  private synchronized String getRandomRoomId(int roomIdLen) {
     return Integer.toString((int) Math.floor(Math.random() * Math.pow(10, roomIdLen)));
   }
 
@@ -170,7 +167,7 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * Gets the number of users per room
    * @return the number of users per room
    */
-  public int getUsersPerRoom() {
+  public synchronized int getUsersPerRoom() {
     return usersPerRoom;
   }
 
@@ -179,22 +176,18 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * 
    * @return the dynamicUrl
    */
-  public String getDynamicUrl(Integer userId) {
-    logger.info("getDynamicUrl(" + userId + ") => " + ( userId - (userId % usersPerRoom)));
-    return dynamicUrls.get(userId - (userId % usersPerRoom));
+  public synchronized String getDynamicUrl(Integer userId) {
+    logger.debug("getDynamicUrl(" + userId + ") => " + ( userId - (userId % usersPerRoom)));
+    return dynamicUrls.getOrDefault(userId - (userId % usersPerRoom), null);
   }
 
   /**
    * Sets the dynamicUrl
    * @param dynamicUrl
    */
-  public void setDynamicUrl(Integer userId, String dynamicUrl) {
-    if (dynamicUrls == null) {
-      dynamicUrls = new HashMap<>();
-    }
+  public synchronized void setDynamicUrl(Integer userId, String dynamicUrl) {
     logger.info("setDynamicUrl(" + userId + ", " + dynamicUrl + ")");
     dynamicUrls.put(userId, dynamicUrl);
   }
-  
   
 }
