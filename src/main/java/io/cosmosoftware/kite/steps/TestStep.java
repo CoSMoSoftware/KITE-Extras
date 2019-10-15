@@ -271,4 +271,38 @@ public abstract class TestStep {
     this.silent = silent;
   }
   
+
+
+  /**
+   * Process the step in the new TestRunner and Kite
+   *
+   * @param stepPhase the StepPhase for this stepExecution
+   * @param parentStepReport the report of the parent step, containing the status of the last step.
+   * @param loadTest true if this is a load test.
+   */
+  public void processTestStep(StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
+    if (loadTest && !stepPhase.shouldProcess(this)) {
+      logger.info("Do not execute Step " + this.getClassName() + " because the phase don't match. ");
+      return;
+    }
+    this.init(stepPhase);
+    if (parentStepReport != null) {
+      if (!parentStepReport.failed() && !parentStepReport.broken()) {
+        this.execute();
+      } else {
+        if (parentStepReport.canBeIgnore()) {
+          this.execute();
+        } else {
+          this.skip();
+        }
+      }
+    } else {
+      this.execute();
+    }
+    this.finish();
+    if (!this.isSilent()) {
+      parentStepReport.addStepReport(this.getStepReport());
+    }
+  }
+  
 }

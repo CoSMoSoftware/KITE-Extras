@@ -353,40 +353,6 @@ public class TestUtils {
   }
 
   /**
-   * Process the step in the new TestRunner and Kite
-   *
-   * @param stepPhase the StepPhase for this stepExecution
-   * @param step the test step to execute
-   * @param parentStepReport the report of the parent step, containing the status of the last step.
-   */
-  public static void processTestStep(StepPhase stepPhase, TestStep step,
-      AllureStepReport parentStepReport) {
-    if (!stepPhase.shouldProcess(step)) {
-      logger
-          .info("Do not execute Step " + step.getClassName() + " because the phase don't match. ");
-      return;
-    }
-    step.init(stepPhase);
-    if (parentStepReport != null) {
-      if (!parentStepReport.failed() && !parentStepReport.broken()) {
-        step.execute();
-      } else {
-        if (parentStepReport.canBeIgnore()) {
-          step.execute();
-        } else {
-          step.skip();
-        }
-      }
-    } else {
-      step.execute();
-    }
-    step.finish();
-    if (!step.isSilent()) {
-      parentStepReport.addStepReport(step.getStepReport());
-    }
-  }
-
-  /**
    * Reads the file content into a String
    *
    * @param path to the file

@@ -52,7 +52,13 @@ public class AllureStepReport extends ReportEntity {
    * @param description the description for this report
    */
   public AllureStepReport(String description) {
-    this(null, description);
+    super(description);
+    this.clientId = null;
+    this.description = description;
+    this.attachments = Collections.synchronizedList(new ArrayList<>());
+    this.steps = Collections.synchronizedList(new ArrayList<>());
+    this.parameters = new ParamList();
+    this.details = defaultStatusDetail();
   }
 
   public synchronized void addAttachment(CustomAttachment attachment) {
