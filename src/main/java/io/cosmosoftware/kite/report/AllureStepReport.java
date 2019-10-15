@@ -128,7 +128,7 @@ public class AllureStepReport extends ReportEntity {
 
   public void setDetails(StatusDetails details) {
     // prevent overwriting details
-    if (this.details.getCode() == 0) {
+    if (this.details == null || this.details.getCode() == 0) {
       this.details = details;
     }
     // reporter.textAttachment(this, "statusDetail", details.toJson().toString(), "json");
