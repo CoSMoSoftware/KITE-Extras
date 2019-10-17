@@ -233,13 +233,16 @@ public class ReportUtils {
     String log = "";
     Set<String> logTypes = webDriver.manage().logs().getAvailableLogTypes();
     if (logTypes.contains(LogType.BROWSER)) {
-      LogEntries logEntries = webDriver.manage().logs().get(LogType.BROWSER);
+      List<LogEntry> logEntries = webDriver.manage().logs().get(LogType.BROWSER).getAll();
       for (LogEntry entry : logEntries) {
         log += entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
       }
     } else {
       log += getBrowserName(webDriver)
           + " does not support getting console logs, it's only possible on Chrome.";
+      for (String s:logTypes) {
+        logger.debug("logTypes: " + s);
+      }
     }
     return log;
   }
