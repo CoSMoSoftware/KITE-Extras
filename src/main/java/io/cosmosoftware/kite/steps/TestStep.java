@@ -282,7 +282,7 @@ public abstract class TestStep {
    */
   public void processTestStep(StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
     if (loadTest && !stepPhase.shouldProcess(this)) {
-      logger.info("Do not execute Step " + this.getClassName() + " because the phase don't match. ");
+      logger.info("Skipping " + this.getClassName() + " (only execute in " + this.getStepPhase() + ")");
       return;
     }
     this.init(stepPhase);
