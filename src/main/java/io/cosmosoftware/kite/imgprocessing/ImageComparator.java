@@ -12,6 +12,7 @@
 package io.cosmosoftware.kite.imgprocessing;
 
 import io.appium.java_client.MobileElement;
+import io.cosmosoftware.kite.entities.VideoQuality;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
@@ -601,5 +602,30 @@ public class ImageComparator {
             Status.BROKEN, e, true);
       }
     }
+  }
+
+  private static int getAvgRGBValue(BufferedImage image) {
+    int sumRBG = 0;
+    for (int i = 0; i < image.getWidth(); i ++) {
+      for (int j = 0; j < image.getHeight(); j ++) {
+        sumRBG += image.getRGB(i, j);
+      }
+    }
+    return sumRBG/image.getWidth()*image.getHeight();
+  }
+
+  public static String compareImageByBytes(byte[] image1, byte[] image2) throws KiteTestException {
+    BufferedImage bufferedImage1 = createImageFromBytes(image1);
+    BufferedImage bufferedImage2 = createImageFromBytes(image2);
+    if ((getAvgRGBValue(bufferedImage1) == 0 && getAvgRGBValue(bufferedImage2) == 0)
+      || (getAvgRGBValue(bufferedImage1) == -1 && getAvgRGBValue(bufferedImage2) == -1)) {
+      return VideoQuality.BLANK.toString();
+    }
+
+    if (areEqual(bufferedImage1, bufferedImage2)) {
+      return VideoQuality.FREEZE.toString();
+    }
+
+    return VideoQuality.VIDEO.toString();
   }
 }
