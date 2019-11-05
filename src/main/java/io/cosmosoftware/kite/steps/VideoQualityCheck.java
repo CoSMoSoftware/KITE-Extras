@@ -51,7 +51,11 @@ public class VideoQualityCheck extends VideoDisplayCheck {
   }
 
   @Override
-  protected String mainCheck() {
-    return videoQualityCheck(webDriver, videoIndexOrId, interval, duration);
+  protected String mainCheck() throws KiteTestException {
+    if (!this.byteComparing) {
+      return videoQualityCheck(webDriver, videoIndexOrId, interval, duration);
+    } else {
+      return videoQualityCheck(webDriver, this.rectangle, interval, duration);
+    }
   }
 }

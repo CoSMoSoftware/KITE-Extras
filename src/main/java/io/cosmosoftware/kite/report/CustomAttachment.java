@@ -8,6 +8,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import java.io.*;
 import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 
 import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
 
@@ -92,8 +93,9 @@ public class CustomAttachment {
         writer = new BufferedWriter(new FileWriter(file));
         writer.write(text);
       } else {
-        fos = new FileOutputStream(file);
-        fos.write(screenshot);
+//        fos = new FileOutputStream(file);
+//        fos.write(screenshot);
+        FileUtils.writeByteArrayToFile(file, this.screenshot);
       }
 
     }

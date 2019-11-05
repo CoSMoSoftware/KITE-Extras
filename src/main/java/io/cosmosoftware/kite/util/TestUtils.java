@@ -9,11 +9,13 @@ import io.cosmosoftware.kite.entities.Timeouts;
 import io.cosmosoftware.kite.entities.VideoQuality;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
+import io.cosmosoftware.kite.imgprocessing.ImageComparator;
 import io.cosmosoftware.kite.report.AllureStepReport;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.steps.StepPhase;
 import io.cosmosoftware.kite.steps.TestStep;
+import java.awt.image.BufferedImage;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -36,7 +38,10 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
+import static io.cosmosoftware.kite.imgprocessing.ImageComparator.createImageFromBytes;
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
+import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
 
 /**
  * The type Test utils.
@@ -588,6 +593,48 @@ public class TestUtils {
     }
     return VideoQuality.VIDEO.toString();
   }
+  /**
+   * Gets canvas data of a video element periodically with a time interval
+   * for a duration, then analyzes the values to deduct the video display behavior.
+   * All different values -> video display correctly
+   * Some repetitive values -> video display with jerky framerate
+   * Only 2 values -> video display freeze
+   * Only 0 value -> video display is blank
+   *
+   * @param webDriver webdriver that control the browser
+   * @param rect the cropped rect for comparing
+   * @param interval the interval between canvas checks
+   * @param duration max duration of video check
+   * @return the video display behavior
+   */
+  public static String videoQualityCheck(WebDriver webDriver, Rectangle rect, int interval, int duration)
+      throws KiteTestException {
+    List<Long> canvasDatas = new ArrayList<>();
+    for (int elapsed = 0; elapsed < duration; elapsed += interval){
+      canvasDatas.add(getRGBSum(createImageFromBytes(saveScreenshotPNG(webDriver, rect))));
+    }
+    HashSet<Long> temp = new HashSet<>(canvasDatas);
+    if (temp.size() != canvasDatas.size()) {
+      if (temp.size() < 3) {
+        if (temp.size() == 1 && temp.contains(0L)) {
+          return VideoQuality.BLANK.toString();
+        }
+        return VideoQuality.FREEZE.toString();
+      }
+      return VideoQuality.JERKY.toString();
+    }
+    return VideoQuality.VIDEO.toString();
+  }
+
+  private static long getRGBSum(BufferedImage image) {
+    int sumRBG = 0;
+    for (int i = 0; i < image.getWidth(); i ++) {
+      for (int j = 0; j < image.getHeight(); j ++) {
+        sumRBG += image.getRGB(i, j);
+      }
+    }
+    return sumRBG;
+  }
 
   private static long getCanvasData(WebDriver webDriver, Object indexOrId, int delay) {
     try {
@@ -598,6 +645,17 @@ public class TestUtils {
     } catch (KiteInteractionException e) {
       return 0;
     }
+  }
+
+  public static String videoCheckByBytes(WebDriver webDriver) throws KiteTestException {
+    return videoCheckByBytes(webDriver, null);
+  }
+
+  public static String videoCheckByBytes(WebDriver webDriver, Rectangle rect) throws KiteTestException {
+    byte[] image1 = saveScreenshotPNG(webDriver, rect);
+    waitAround(ONE_SECOND_INTERVAL);
+    byte[] image2 = saveScreenshotPNG(webDriver, rect);
+    return ImageComparator.compareImageByBytes(image1, image2);
   }
   
   /**
