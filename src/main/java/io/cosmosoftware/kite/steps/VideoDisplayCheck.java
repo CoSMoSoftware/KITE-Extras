@@ -17,7 +17,7 @@ import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 
 public class VideoDisplayCheck extends TestStep {
-  protected final Object videoIndexOrId;
+  protected Object videoIndexOrId;
   protected final String videoName;
   protected final BasePage page;
   protected String customMessage;
@@ -159,5 +159,9 @@ public class VideoDisplayCheck extends TestStep {
 
   public void setRectangle(Rectangle rectangle) {
     this.rectangle = rectangle;
+  }
+
+  public void setVideoIndexOrId(Object videoIndexOrId) {
+    this.videoIndexOrId = videoIndexOrId;
   }
 }
