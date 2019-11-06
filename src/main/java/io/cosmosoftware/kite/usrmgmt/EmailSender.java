@@ -96,4 +96,12 @@ public class EmailSender {
     return "smtpServer = " + email.getSmtpServer();
   }
   
+  public boolean sendOnlyOnFailure() {
+    return this.email.getOnlyOnFailure();
+  }
+
+  public boolean sendJsonResults() {
+    return this.email.getSendJsonResults();
+  }
+  
 }
