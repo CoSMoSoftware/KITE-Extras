@@ -699,7 +699,7 @@ public class TestUtils {
     try {
       String fileUrl = jsonObject.getString(key, "");
       if (!fileUrl.equals("")) {
-        String fileStr = System.getProperty("java.io.tmpdir") + key + ".json";
+        String fileStr = System.getProperty("java.io.tmpdir") + File.separator + key + ".json";
         System.setProperty(key, fileUrl);
         if (fileUrl.contains("file://")) {
           downloadFile(fileUrl, fileStr);
@@ -729,7 +729,7 @@ public class TestUtils {
     JsonReader jsonReader = null;
     JsonObject jsonObject = null;
     try {
-      String fileStr = System.getProperty("java.io.tmpdir") + "tmpfile.json";
+      String fileStr = System.getProperty("java.io.tmpdir") + File.separator + "tmpfile.json";
       if (jsonFile.contains("file://")) {
         downloadFile(jsonFile, fileStr);
       } else {
