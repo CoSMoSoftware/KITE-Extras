@@ -53,6 +53,8 @@ public class Email extends KiteEntity {
   private String name;
   private String subject;
   private String text;
+  private Boolean onlyOnFailure = false;
+  private Boolean sendJsonResults = false;
   
   /**
    * Instantiates a new grid.
@@ -86,13 +88,13 @@ public class Email extends KiteEntity {
       JsonArray jsonArray = jsonObject.getJsonArray(missingKey);
       for (int i = 0; i < jsonArray.size(); i++) {
         this.to.add(jsonArray.getString(i));
-      }    
-
+      }
       this.subject = jsonObject.getString("subject", "Email from KITE");
-      this.text =
-        jsonObject.getString(
+      this.text = jsonObject.getString(
           "text", "\r\nThis is an automatically generated email from KITE.\r\n\r\n");
-
+      this.onlyOnFailure = jsonObject.getBoolean("onlyOnFailure", onlyOnFailure);
+      this.sendJsonResults = jsonObject.getBoolean("sendJsonResults", sendJsonResults);
+      
     } catch (NullPointerException e) {
       logger.error("Error in EmailSender json config, the key " + missingKey + " is missing.\r\n" + getStackTrace(e));
       throw e;
@@ -289,6 +291,24 @@ public class Email extends KiteEntity {
   public void setText(String text) {
     this.text = text;
   }
+
+
+  public Boolean getOnlyOnFailure() {
+    return onlyOnFailure != null ? onlyOnFailure : false;
+  }
+
+  public void setOnlyOnFailure(Boolean onlyOnFailure) {
+    this.onlyOnFailure = onlyOnFailure;
+  }
+
+  public Boolean getSendJsonResults() {
+    return sendJsonResults != null ? sendJsonResults : false;
+  }
+
+  public void setSendJsonResults(Boolean sendJsonResults) {
+    this.sendJsonResults = sendJsonResults;
+  }
+  
   
   @Transient
   public String getToAsString() {
@@ -298,5 +318,8 @@ public class Email extends KiteEntity {
     }
     return toStr;
   }
+  
+  
+  
   
 }

@@ -104,7 +104,7 @@ public class AllureStepReport extends ReportEntity {
     return this.status.equals(Status.FAILED);
   }
 
-  protected Status getActualStatus() {
+  public Status getActualStatus() {
     synchronized (steps) {
       for (AllureStepReport stepReport : this.steps) {
         Status temp = stepReport.getStatus();
