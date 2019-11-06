@@ -8,14 +8,19 @@ import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.usrmgmt.TypeRole;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.imageio.ImageIO;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.logging.LogEntries;
@@ -193,15 +198,31 @@ public class ReportUtils {
     return writer.toString();
   }
 
-  public static byte[] saveScreenshotPNG(WebDriver driver) throws KiteTestException {
+  public static byte[] saveScreenshotPNG(WebDriver driver, Rectangle cropZone) throws KiteTestException {
     try {
-      return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+      if (cropZone != null) {
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        BufferedImage img = ImageIO.read(screenshot);
+        BufferedImage croppedImg =
+            img.getSubimage(cropZone.getX(), cropZone.getY(), cropZone.getWidth(), cropZone.getHeight());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write( croppedImg, "png", baos );
+        baos.flush();
+        byte[] imageInByte = baos.toByteArray();
+        baos.close();
+        return imageInByte;
+      } else {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+      }
     } catch (Exception e) {
       throw new KiteTestException("Failed to take screenshot: " + e.getLocalizedMessage(),
           Status.BROKEN, e, true);
     }
   }
 
+  public static byte[] saveScreenshotPNG(WebDriver driver) throws KiteTestException {
+    return saveScreenshotPNG(driver, null);
+  }
   /**
    * Timestamp string.
    *

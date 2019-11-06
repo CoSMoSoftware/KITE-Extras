@@ -5,6 +5,7 @@ import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT;
 import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
 import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
 import static io.cosmosoftware.kite.util.TestUtils.videoCheck;
+import static io.cosmosoftware.kite.util.TestUtils.videoCheckByBytes;
 
 import io.cosmosoftware.kite.entities.VideoQuality;
 import io.cosmosoftware.kite.exception.KiteTestException;
@@ -12,6 +13,7 @@ import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.pages.BasePage;
 import io.cosmosoftware.kite.report.Status;
 import java.util.List;
+import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.WebElement;
 
 public class VideoDisplayCheck extends TestStep {
@@ -21,7 +23,9 @@ public class VideoDisplayCheck extends TestStep {
   protected String customMessage;
   protected int interval = ONE_SECOND_INTERVAL;
   protected int duration = SHORT_TIMEOUT/2;
+  protected boolean byteComparing = false;
   protected boolean allowFreeze = false;
+  protected Rectangle rectangle;
 
   /**
    * Instantiates a new Test step.
@@ -70,11 +74,20 @@ public class VideoDisplayCheck extends TestStep {
   protected void step() throws KiteTestException {
     preliminaryCheck();
     String videoCheck = mainCheck();
-    reporter.screenshotAttachment(report,
-        getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
-    reporter.textAttachment(report, getVideoName() , videoCheck, "plain");
+    this.takeScreenshot();
+    reporter.textAttachment(report, getVideoName(), videoCheck, "plain");
     if (resultNotOK(videoCheck)) {
       throw new KiteTestException(customMessage == null ? getVideoName() + " did not display correctly" : customMessage, Status.FAILED);
+    }
+  }
+
+  protected void takeScreenshot() throws KiteTestException {
+    if (this.byteComparing) {
+      reporter.screenshotAttachment(report,
+          getVideoName() + timestamp(), saveScreenshotPNG(webDriver, rectangle));
+    } else {
+      reporter.screenshotAttachment(report,
+          getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
     }
   }
 
@@ -112,9 +125,15 @@ public class VideoDisplayCheck extends TestStep {
     this.allowFreeze = allowFreeze;
   }
 
-  protected String mainCheck() {
-    return videoCheck(webDriver, videoIndexOrId, interval, duration);
+  protected String mainCheck() throws KiteTestException {
+    if (!this.byteComparing) {
+      return videoCheck(webDriver, videoIndexOrId, interval, duration);
+    } else {
+      return videoCheckByBytes(webDriver, this.rectangle);
+    }
   }
+
+
 
   protected void preliminaryCheck() throws KiteTestException {
     List<WebElement> videos = page.getVideos();
@@ -128,5 +147,17 @@ public class VideoDisplayCheck extends TestStep {
 
   protected void setCustomMessage(String customMessage) {
     this.customMessage = customMessage;
+  }
+
+  public void setByteComparing(boolean byteComparing) {
+    this.byteComparing = byteComparing;
+  }
+
+  public boolean compareByBytes() {
+    return this.byteComparing;
+  }
+
+  public void setRectangle(Rectangle rectangle) {
+    this.rectangle = rectangle;
   }
 }
