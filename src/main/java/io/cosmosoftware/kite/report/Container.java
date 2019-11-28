@@ -35,6 +35,10 @@ public class Container extends ReportEntity {
     this.childrenId.add(childId);
   }
 
+  public void removeChild(String childId) {
+    this.childrenId.remove(childId);
+  }
+
   public void addBeforeStep(AllureStepReport step) {
     this.befores.add(step);
   }

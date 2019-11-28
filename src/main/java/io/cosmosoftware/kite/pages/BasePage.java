@@ -29,15 +29,25 @@ public abstract class BasePage {
   protected final WebDriverWait defaultWait;
   protected final KiteLogger logger;
   protected final WebDriver webDriver;
+  protected String platform;
   protected boolean isAppium;
+  protected boolean isAndroid;
+  protected boolean isIOS;
 
 
   protected BasePage(Runner runner) {
     this.webDriver = runner.getWebDriver();
-    this.isAppium = webDriver instanceof AppiumDriver;
+    this.setPlatform(runner.getPlatform().toUpperCase());
     this.logger = runner.getLogger();
+    this.isAppium = runner.isApp();
     this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
     PageFactory.initElements(webDriver, this);
+  }
+
+  private void setPlatform(String platform) {
+    this.platform = platform;
+    this.isAndroid = platform.endsWith("ANDROID");
+    this.isIOS = platform.endsWith("IOS");
   }
 
   // Element interactions :

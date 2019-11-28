@@ -21,4 +21,8 @@ public interface Runner {
 
   String getClientName();
 
+  String getPlatform();
+
+  boolean isApp();
+
 }
