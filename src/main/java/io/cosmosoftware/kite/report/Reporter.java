@@ -468,4 +468,28 @@ public class Reporter {
   public synchronized void setStartTime(long startTime) {
     this.startTime = startTime;
   }
+
+  public synchronized int getSuccessCount() {
+    int count = 0;
+    for (AllureTestReport test : this.tests) {
+      if (test.getStatus().equals(Status.PASSED)) {
+        count ++;
+      }
+    }
+    return count;
+  }
+
+  public synchronized int getBrokenCount() {
+    int count = 0;
+    for (AllureTestReport test : this.tests) {
+      if (test.getStatus().equals(Status.BROKEN)) {
+        count ++;
+      }
+    }
+    return count;
+  }
+
+  public void removeTest(AllureTestReport report) {
+    this.tests.remove(report);
+  }
 }
