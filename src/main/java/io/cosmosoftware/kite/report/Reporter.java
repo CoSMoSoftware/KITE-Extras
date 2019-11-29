@@ -113,10 +113,11 @@ public class Reporter {
     updateContainers();
     for (AllureTestReport test : tests) {
       test.generateReport();
-      boolean isLoadTest = testConfig.getString("type", "interop").equalsIgnoreCase("load");
-      if (!isLoadTest && !test.getStatus().equals(Status.PASSED)) {
-        failedClientMatrixList.add(test.getTestClientMatrix());
-        logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
+      if (!test.getStatus().equals(Status.PASSED)) {
+        if (!test.getTestClientMatrix().isEmpty()) {
+          failedClientMatrixList.add(test.getTestClientMatrix());
+          logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
+        }
       }
     }
     generateFile(this.reportPath + "environment.properties", this.environment.toString());
