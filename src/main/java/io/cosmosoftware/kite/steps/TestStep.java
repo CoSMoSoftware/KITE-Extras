@@ -32,6 +32,7 @@ public abstract class TestStep {
   protected Status status = Status.PENDING;
   private String name = this.getClass().getSimpleName();
   private boolean stepCompleted = false;
+  private boolean screenShotOnFailure = true;
 
   private boolean optional = false;
   private boolean silent = false;
@@ -65,10 +66,12 @@ public abstract class TestStep {
       String screenshotName = "error_screenshot_" + this.getName();
       //force silent to false in case of error, so the failure appears in the report in all cases.
       silent = false;
-      try {
-        reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
-      } catch (KiteTestException ex) {
-        logger.warn("Could not attach screenshot to error of step: " + stepDescription());
+      if (screenShotOnFailure) {
+        try {
+          reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
+        } catch (KiteTestException ex) {
+          logger.warn("Could not attach screenshot to error of step: " + stepDescription());
+        }
       }
       reporter.processException(this.report, e, optional);
     }
@@ -322,5 +325,8 @@ public abstract class TestStep {
       parentStepReport.addStepReport(this.getStepReport());
     }
   }
-  
+
+  public void setScreenShotOnFailure(boolean screenShotOnFailure) {
+    this.screenShotOnFailure = screenShotOnFailure;
+  }
 }
