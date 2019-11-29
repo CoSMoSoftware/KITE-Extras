@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Status {
 
+  PENDING("pending"),
   FAILED("failed"),
   BROKEN("broken"),
   PASSED("passed"),

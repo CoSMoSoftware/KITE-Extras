@@ -29,7 +29,7 @@ public abstract class TestStep {
   protected final KiteLogger logger;
   protected final Reporter reporter;
   protected AllureStepReport report;
-
+  protected Status status = Status.PENDING;
   private String name = this.getClass().getSimpleName();
   private boolean stepCompleted = false;
 
@@ -60,7 +60,6 @@ public abstract class TestStep {
    */
   public void execute() {
     try {
-      logger.info(currentStepPhase.getShortName()  + stepDescription());
       step();
     } catch (Exception e) {
       String screenshotName = "error_screenshot_" + this.getName();
@@ -73,6 +72,16 @@ public abstract class TestStep {
       }
       reporter.processException(this.report, e, optional);
     }
+    this.status = this.report.getStatus();
+    logger.info(getStatusString() + currentStepPhase.getShortName()  + stepDescription() );
+  }
+
+  public String getStatusString() {
+    return " [" + status + "] ";
+  }
+
+  public Status getStatus() {
+    return status;
   }
 
   /**
@@ -139,8 +148,8 @@ public abstract class TestStep {
    * @return the client id
    */
   public String getClientID() {    
-    return currentStepPhase.getShortName() + getLogHeader(webDriver) 
-      + (this.clientName != null && this.clientName.length() > 0 ? (" - " + this.clientName) : "");
+    return currentStepPhase.getShortName() + getLogHeader(this.webDriver)
+        + (this.clientName != null && this.clientName.length() > 0 ? (" - " + this.clientName) : "");
   }
 
   /**
@@ -299,6 +308,15 @@ public abstract class TestStep {
     } else {
       this.execute();
     }
+    this.finish();
+    if (!this.isSilent()) {
+      parentStepReport.addStepReport(this.getStepReport());
+    }
+  }
+
+  public void skipTestStep (StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
+    this.init(stepPhase);
+    this.skip();
     this.finish();
     if (!this.isSilent()) {
       parentStepReport.addStepReport(this.getStepReport());
