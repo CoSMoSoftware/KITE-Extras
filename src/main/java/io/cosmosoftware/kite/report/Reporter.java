@@ -114,8 +114,10 @@ public class Reporter {
     for (AllureTestReport test : tests) {
       test.generateReport();
       if (!test.getStatus().equals(Status.PASSED)) {
-        failedClientMatrixList.add(test.getTestClientMatrix());
-        logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
+        if (!test.getTestClientMatrix().isEmpty()) {
+          failedClientMatrixList.add(test.getTestClientMatrix());
+          logger.warn("Adding " + test.getTestClientMatrix() + " to retry list..");
+        }
       }
     }
     generateFile(this.reportPath + "environment.properties", this.environment.toString());

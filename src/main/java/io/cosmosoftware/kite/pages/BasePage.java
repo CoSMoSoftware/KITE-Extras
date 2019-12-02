@@ -40,8 +40,12 @@ public abstract class BasePage {
     this.setPlatform(runner.getPlatform().toUpperCase());
     this.logger = runner.getLogger();
     this.isAppium = runner.isApp();
-    this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
-    PageFactory.initElements(webDriver, this);
+    if (this.webDriver != null) {
+      this.defaultWait = new WebDriverWait(this.webDriver, EXTENDED_TIMEOUT_IN_SECONDS);
+      PageFactory.initElements(webDriver, this);
+    } else {
+      this.defaultWait = null;
+    }
   }
 
   private void setPlatform(String platform) {

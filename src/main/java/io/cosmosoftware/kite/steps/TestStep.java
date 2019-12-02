@@ -29,9 +29,10 @@ public abstract class TestStep {
   protected final KiteLogger logger;
   protected final Reporter reporter;
   protected AllureStepReport report;
-
+  protected Status status = Status.PENDING;
   private String name = this.getClass().getSimpleName();
   private boolean stepCompleted = false;
+  private boolean screenShotOnFailure = true;
 
   private boolean optional = false;
   private boolean silent = false;
@@ -60,19 +61,30 @@ public abstract class TestStep {
    */
   public void execute() {
     try {
-      logger.info(currentStepPhase.getShortName()  + stepDescription());
       step();
     } catch (Exception e) {
       String screenshotName = "error_screenshot_" + this.getName();
       //force silent to false in case of error, so the failure appears in the report in all cases.
       silent = false;
-      try {
-        reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
-      } catch (KiteTestException ex) {
-        logger.warn("Could not attach screenshot to error of step: " + stepDescription());
+      if (screenShotOnFailure) {
+        try {
+          reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
+        } catch (KiteTestException ex) {
+          logger.warn("Could not attach screenshot to error of step: " + stepDescription());
+        }
       }
       reporter.processException(this.report, e, optional);
     }
+    this.status = this.report.getStatus();
+    logger.info(getStatusString() + currentStepPhase.getShortName()  + stepDescription() );
+  }
+
+  public String getStatusString() {
+    return " [" + status + "] ";
+  }
+
+  public Status getStatus() {
+    return status;
   }
 
   /**
@@ -139,8 +151,8 @@ public abstract class TestStep {
    * @return the client id
    */
   public String getClientID() {    
-    return currentStepPhase.getShortName() + getLogHeader(webDriver) 
-      + (this.clientName != null && this.clientName.length() > 0 ? (" - " + this.clientName) : "");
+    return currentStepPhase.getShortName() + getLogHeader(this.webDriver)
+        + (this.clientName != null && this.clientName.length() > 0 ? (" - " + this.clientName) : "");
   }
 
   /**
@@ -282,7 +294,7 @@ public abstract class TestStep {
    */
   public void processTestStep(StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
     if (loadTest && !stepPhase.shouldProcess(this)) {
-      logger.info("Skipping " + this.getClassName() + " (only execute in " + this.getStepPhase() + ")");
+      logger.debug("Skipping " + this.getClassName() + " (only execute in " + this.getStepPhase() + ")");
       return;
     }
     this.init(stepPhase);
@@ -304,5 +316,17 @@ public abstract class TestStep {
       parentStepReport.addStepReport(this.getStepReport());
     }
   }
-  
+
+  public void skipTestStep (StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
+    this.init(stepPhase);
+    this.skip();
+    this.finish();
+    if (!this.isSilent()) {
+      parentStepReport.addStepReport(this.getStepReport());
+    }
+  }
+
+  public void setScreenShotOnFailure(boolean screenShotOnFailure) {
+    this.screenShotOnFailure = screenShotOnFailure;
+  }
 }

@@ -156,18 +156,22 @@ public class ReportUtils {
    * @return the logHeader
    */
   private static String getLogHeader(WebDriver webDriver, int index, TypeRole typeRole) {
-    Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
-    String str = (isElectron(webDriver) ? "elec_" :
-        getBrowserName(capabilities) + getBrowserVersion(capabilities) + "_");
-    str += getPlatform(capabilities) + "-";
-    if (typeRole != null) {
-      str += typeRole.getShortName();
+    String str = "";
+    if (webDriver != null) {
+      Capabilities capabilities = ((RemoteWebDriver) webDriver).getCapabilities();
+      str= (isElectron(webDriver) ? "elec_" :
+          getBrowserName(capabilities) + getBrowserVersion(capabilities) + "_");
+      str += getPlatform(capabilities) + "-";
+      if (typeRole != null) {
+        str += typeRole.getShortName();
+      } else {
+        str += "" + (index == -1 ? ((RemoteWebDriver) webDriver).getSessionId().toString()
+            .substring(0, 5) : index);
+      }
     } else {
-      str += "" + (index == -1 ? ((RemoteWebDriver) webDriver).getSessionId().toString()
-          .substring(0, 5) : index);
+      str = "unknown(no Web Driver)";
     }
     return str;
-
   }
 
   /**

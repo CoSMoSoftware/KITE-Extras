@@ -121,18 +121,20 @@ public class WebDriverUtils {
    */
   public static void closeDrivers(List<WebDriver> webDriverList) {
     if (!webDriverList.isEmpty()) {
-      logger.info("closeDrivers: closing down " + webDriverList.size() + " webDrivers");
+      logger.info("Closing down webDrivers");
       for (WebDriver webDriver : webDriverList) {
-        try {
-          // Open about:config in case of fennec (Firefox for Android) and close.
-          if (((RemoteWebDriver) webDriver).getCapabilities().getBrowserName()
-              .equalsIgnoreCase("fennec")) {
-            webDriver.get("about:config");
-            webDriver.close();
+        if (webDriver != null) {
+          try {
+            // Open about:config in case of fennec (Firefox for Android) and close.
+            if (((RemoteWebDriver) webDriver).getCapabilities().getBrowserName()
+                .equalsIgnoreCase("fennec")) {
+              webDriver.get("about:config");
+              webDriver.close();
+            }
+            webDriver.quit();
+          } catch (Exception e) {
+            logger.error("Exception while closing/quitting the WebDriver", e);
           }
-          webDriver.quit();
-        } catch (Exception e) {
-          logger.error("Exception while closing/quitting the WebDriver", e);
         }
       }
       // prevent this get called more than once

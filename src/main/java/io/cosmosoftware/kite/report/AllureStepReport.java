@@ -21,6 +21,7 @@ public class AllureStepReport extends ReportEntity {
 
   private final List<CustomAttachment> attachments;
   private final List<AllureStepReport> steps;
+  private AllureStepReport parent;
   private String description = "N/C";
   private String clientId = "N/C";
   private StatusDetails details;
@@ -74,6 +75,7 @@ public class AllureStepReport extends ReportEntity {
   }
 
   public synchronized void addStepReport(AllureStepReport step) {
+    step.setParent(this);
     this.steps.add(step);
     // in theory, this is only tru after the steps that can be ignored happen
     // and will be fault if the successor step can't be ignore
@@ -90,6 +92,10 @@ public class AllureStepReport extends ReportEntity {
         this.status = step.getStatus();
       }
     }
+  }
+
+  public void setParent(AllureStepReport parent) {
+    this.parent = parent;
   }
 
   public boolean broken() {
@@ -136,6 +142,9 @@ public class AllureStepReport extends ReportEntity {
     // prevent overwriting details
     if (this.details == null || this.details.getCode() == 0) {
       this.details = details;
+      if (this.parent != null) {
+        this.parent.setDetails(details);
+      }
     }
     // reporter.textAttachment(this, "statusDetail", details.toJson().toString(), "json");
   }
@@ -203,6 +212,9 @@ public class AllureStepReport extends ReportEntity {
   public synchronized void setStatus(Status status) {
     this.status = status;
     this.setStopTimestamp();
+    if (this.parent != null && !status.equals(Status.SKIPPED)) {
+      this.parent.setStatus(status);
+    }
   }
 
   public List<AllureStepReport> getSteps() {
