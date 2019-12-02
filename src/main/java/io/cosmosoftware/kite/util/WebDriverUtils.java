@@ -121,7 +121,7 @@ public class WebDriverUtils {
    */
   public static void closeDrivers(List<WebDriver> webDriverList) {
     if (!webDriverList.isEmpty()) {
-      logger.info("Closing down spawn webDrivers");
+      logger.info("Closing down webDrivers");
       for (WebDriver webDriver : webDriverList) {
         if (webDriver != null) {
           try {

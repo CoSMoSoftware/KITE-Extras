@@ -21,6 +21,7 @@ public class StayInMeetingStep extends TestStep {
 
   @Override
   protected void step() throws KiteTestException {
+    logger.info(stepDescription());
     waitAround(meetingDuration * 1000);
   }
 
