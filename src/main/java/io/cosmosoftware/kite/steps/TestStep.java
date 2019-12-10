@@ -36,6 +36,7 @@ public abstract class TestStep {
 
   private boolean optional = false;
   private boolean silent = false;
+  private boolean neverSkip = false;
 
   private StepPhase stepPhase = DEFAULT;
   private StepPhase currentStepPhase = DEFAULT;
@@ -302,7 +303,7 @@ public abstract class TestStep {
       if (!parentStepReport.failed() && !parentStepReport.broken()) {
         this.execute();
       } else {
-        if (parentStepReport.canBeIgnore()) {
+        if (parentStepReport.canBeIgnore() || this.neverSkip) {
           this.execute();
         } else {
           this.skip();
@@ -313,20 +314,30 @@ public abstract class TestStep {
     }
     this.finish();
     if (!this.isSilent()) {
-      parentStepReport.addStepReport(this.getStepReport());
+      addToParentStep(parentStepReport);
     }
   }
 
   public void skipTestStep (StepPhase stepPhase, AllureStepReport parentStepReport, boolean loadTest) {
     this.init(stepPhase);
-    this.skip();
+    this.skip(); // this is skipped by force, so no consideration for neverSkip
     this.finish();
     if (!this.isSilent()) {
-      parentStepReport.addStepReport(this.getStepReport());
+      addToParentStep(parentStepReport);
     }
   }
 
   public void setScreenShotOnFailure(boolean screenShotOnFailure) {
     this.screenShotOnFailure = screenShotOnFailure;
+  }
+
+  public void setNeverSkip(boolean neverSkip) {
+    this.neverSkip = neverSkip;
+  }
+
+  private void addToParentStep (AllureStepReport parentStepReport) {
+    if (parentStepReport != null) {
+      parentStepReport.addStepReport(this.getStepReport());
+    }
   }
 }

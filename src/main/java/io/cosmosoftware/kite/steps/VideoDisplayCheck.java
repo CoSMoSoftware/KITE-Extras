@@ -25,6 +25,7 @@ public class VideoDisplayCheck extends TestStep {
   protected int duration = SHORT_TIMEOUT/2;
   protected boolean byteComparing = false;
   protected boolean allowFreeze = false;
+  protected boolean takeScreenshot = true;
   protected Rectangle rectangle;
 
   /**
@@ -82,12 +83,14 @@ public class VideoDisplayCheck extends TestStep {
   }
 
   protected void takeScreenshot() throws KiteTestException {
-    if (this.byteComparing) {
-      reporter.screenshotAttachment(report,
-          getVideoName() + timestamp(), saveScreenshotPNG(webDriver, rectangle));
-    } else {
-      reporter.screenshotAttachment(report,
-          getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
+    if (takeScreenshot) {
+      if (this.byteComparing) {
+        reporter.screenshotAttachment(report,
+            getVideoName() + timestamp(), saveScreenshotPNG(webDriver, rectangle));
+      } else {
+        reporter.screenshotAttachment(report,
+            getVideoName() + timestamp(), saveScreenshotPNG(webDriver));
+      }
     }
   }
 
@@ -163,5 +166,9 @@ public class VideoDisplayCheck extends TestStep {
 
   public void setVideoIndexOrId(Object videoIndexOrId) {
     this.videoIndexOrId = videoIndexOrId;
+  }
+
+  public void setTakeScreenshot(boolean takeScreenshot) {
+    this.takeScreenshot = takeScreenshot;
   }
 }
