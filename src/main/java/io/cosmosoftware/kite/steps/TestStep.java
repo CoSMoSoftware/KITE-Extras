@@ -44,6 +44,7 @@ public abstract class TestStep {
 
   private LinkedHashMap<String, String> csvResult = null;
 
+  private TestStep dependOn;
   /**
    * Instantiates a new Test step.
    *
@@ -64,11 +65,11 @@ public abstract class TestStep {
     try {
       step();
     } catch (Exception e) {
-      String screenshotName = "error_screenshot_" + this.getName();
       //force silent to false in case of error, so the failure appears in the report in all cases.
       silent = false;
       if (screenShotOnFailure) {
         try {
+          String screenshotName = "error_screenshot_" + this.getName();
           reporter.screenshotAttachment(this.report, screenshotName, saveScreenshotPNG(webDriver));
         } catch (KiteTestException ex) {
           logger.warn("Could not attach screenshot to error of step: " + stepDescription());
@@ -299,18 +300,24 @@ public abstract class TestStep {
       return;
     }
     this.init(stepPhase);
-    if (parentStepReport != null) {
-      if (!parentStepReport.failed() && !parentStepReport.broken()) {
-        this.execute();
-      } else {
-        if (parentStepReport.canBeIgnore() || this.neverSkip) {
+    if (this.canProceed()) {
+      if (parentStepReport != null) {
+        if (!parentStepReport.failed() && !parentStepReport.broken()) {
           this.execute();
         } else {
-          this.skip();
+          if (parentStepReport.canBeIgnore() || this.neverSkip) {
+            this.execute();
+          } else {
+            logger.debug("parent step failed, and can't be ignored, skipping " + this.name);
+            this.skip();
+          }
         }
+      } else {
+        this.execute();
       }
     } else {
-      this.execute();
+      logger.debug("Condition step was not met, skipping " + this.name);
+      this.skip();
     }
     this.finish();
     if (!this.isSilent()) {
@@ -339,5 +346,16 @@ public abstract class TestStep {
     if (parentStepReport != null) {
       parentStepReport.addStepReport(this.getStepReport());
     }
+  }
+
+  public void setDependOn(TestStep dependOn) {
+    this.dependOn = dependOn;
+  }
+
+  public boolean canProceed() {
+    if (this.dependOn == null) {
+      return true;
+    }
+    return this.dependOn.getStatus().equals(Status.PASSED);
   }
 }

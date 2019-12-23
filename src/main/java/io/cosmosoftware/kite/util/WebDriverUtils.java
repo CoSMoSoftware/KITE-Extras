@@ -466,6 +466,14 @@ public class WebDriverUtils {
     }
   }
 
+  public static void poke(WebDriver webDriver) {
+    try {
+      webDriver.findElements(By.id("nam"));
+    } catch (Exception e) {
+      // ignore
+    }
+  }
+
   /**
    * Resizes the windows to the screen's available width and height
    */

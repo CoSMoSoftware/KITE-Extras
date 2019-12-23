@@ -12,6 +12,7 @@ import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.WebDriverUtils;
 import java.util.List;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,8 +22,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static io.cosmosoftware.kite.entities.Timeouts.EXTENDED_TIMEOUT_IN_SECONDS;
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
+import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT_IN_SECONDS;
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 import static io.cosmosoftware.kite.util.WebDriverUtils.clickElement;
+import static io.cosmosoftware.kite.util.WebDriverUtils.isMobileApp;
 
 public abstract class BasePage {
 
@@ -33,6 +36,7 @@ public abstract class BasePage {
   protected boolean isAppium;
   protected boolean isAndroid;
   protected boolean isIOS;
+  protected String currentUrl = null;
 
 
   protected BasePage(Runner runner) {
@@ -203,4 +207,22 @@ public abstract class BasePage {
     return  null;
   }
 
+  public void reload() {
+    if (this.currentUrl == null) {
+      this.currentUrl = this.webDriver.getCurrentUrl();
+    }
+    this.loadPage(currentUrl, SHORT_TIMEOUT_IN_SECONDS);
+  }
+
+  public void loadPage(String url, int timeoutInSeconds) {
+    this.webDriver.get(url);
+    if (!isMobileApp(webDriver)) {
+      WebDriverWait driverWait = new WebDriverWait(this.webDriver, timeoutInSeconds);
+      driverWait.until(driver ->
+          ((JavascriptExecutor) driver)
+              .executeScript("return document.readyState")
+              .equals("complete"));
+    }
+    this.currentUrl = url;
+  }
 }

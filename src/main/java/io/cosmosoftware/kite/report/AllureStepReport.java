@@ -79,17 +79,18 @@ public class AllureStepReport extends ReportEntity {
     this.steps.add(step);
     // in theory, this is only tru after the steps that can be ignored happen
     // and will be fault if the successor step can't be ignore
-    this.ignore = step.canBeIgnore();
-    if (this.status.equals(Status.PASSED) && !step.getStatus().equals(Status.SKIPPED)) {
-      // prevent overwriting failed/broken status
-      // step should not has status "skipped" if sub steps gets skipped on failure
-      this.status = step.getStatus();
-      if (step.getDetails() != null) {
-        this.setDetails(step.getDetails());
-      }
-    } else {
-      if (step.status.equals(Status.PASSED)) {
+    if (!step.canBeIgnore()) {
+      if (this.status.equals(Status.PASSED) && !step.getStatus().equals(Status.SKIPPED)) {
+        // prevent overwriting failed/broken status
+        // step should not has status "skipped" if sub steps gets skipped on failure
         this.status = step.getStatus();
+        if (step.getDetails() != null) {
+          this.setDetails(step.getDetails());
+        }
+      } else {
+        if (step.status.equals(Status.PASSED)) {
+          this.status = step.getStatus();
+        }
       }
     }
   }
@@ -111,15 +112,17 @@ public class AllureStepReport extends ReportEntity {
   }
 
   public Status getActualStatus() {
-    synchronized (steps) {
-      for (AllureStepReport stepReport : this.steps) {
-        Status temp = stepReport.getStatus();
-        if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
-          return temp;
-        }
-      }
+    if (getFirstFailedSubStep() != null) {
+      return getFirstFailedSubStep().getStatus();
     }
     return this.status;
+  }
+
+  public StatusDetails getActualDetail() {
+    if (getFirstFailedSubStep() != null) {
+      return getFirstFailedSubStep().getDetails();
+    }
+    return this.details;
   }
 
   public List<CustomAttachment> getAttachments() {
@@ -191,11 +194,12 @@ public class AllureStepReport extends ReportEntity {
         .add("attachments", attArray);
 
     if (details != null) {
-      builder.add("statusDetails", details.toJson());
+      builder.add("statusDetails", getActualDetail().toJson());
     }
 
     return builder;
   }
+
 
   public String getName() {
     return name;
@@ -212,8 +216,10 @@ public class AllureStepReport extends ReportEntity {
   public synchronized void setStatus(Status status) {
     this.status = status;
     this.setStopTimestamp();
-    if (this.parent != null && !status.equals(Status.SKIPPED)) {
-      this.parent.setStatus(status);
+    if (this.parent != null && !status.equals(Status.SKIPPED) && !this.canBeIgnore()) {
+      if (! (this.parent instanceof AllureTestReport)) {
+        this.parent.setStatus(status);
+      }
     }
   }
 
@@ -236,4 +242,15 @@ public class AllureStepReport extends ReportEntity {
     return statusDetails;
   }
 
+  protected AllureStepReport getFirstFailedSubStep() {
+    synchronized (steps) {
+      for (AllureStepReport stepReport : this.steps) {
+        Status temp = stepReport.getStatus();
+        if (temp.equals(Status.FAILED) || temp.equals(Status.BROKEN)) {
+          return stepReport;
+        }
+      }
+    }
+    return null;
+  }
 }
