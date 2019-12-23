@@ -60,6 +60,7 @@ public class AllureTestReport extends AllureStepReport {
     return super.getJsonBuilder()
         .add("uuid", this.uuid)
         .add("fullName", fullName)
+        .add("status", this.getActualStatus().toString())
         .add("historyId", historyId)
         .add("links", linkArray)
         .add("labels", labels.toJson())
