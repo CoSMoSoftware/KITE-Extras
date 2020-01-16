@@ -68,6 +68,7 @@ public class AllureTestReport extends AllureStepReport {
   }
 
   public void generateReport() {
+    this.fixWrongStatusDetails();
     String fileName = this.reporter.getReportPath() + this.uuid + "-result.json";
     printJsonTofile(this.toString(), fileName);
   }
@@ -82,5 +83,16 @@ public class AllureTestReport extends AllureStepReport {
 
   public List<Integer> getTestClientMatrix() {
     return testClientMatrix;
+  }
+
+  private void fixWrongStatusDetails() {
+    if (!status.equals(Status.PASSED) && details.getMessage().equals("The test has passed successfully!")) {
+      for (AllureStepReport step : steps) {
+        if (!step.getStatus().equals(Status.PASSED)) {
+          this.details = step.getDetails();
+          break;
+        }
+      }
+    }
   }
 }

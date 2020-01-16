@@ -62,6 +62,10 @@ public class StatusDetails {
     return builder;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
   public JsonObject toJson() {
     return getJsonBuilder().build();
   }
