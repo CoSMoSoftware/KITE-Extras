@@ -35,6 +35,7 @@ public abstract class TestStep {
   private boolean screenShotOnFailure = true;
 
   private boolean optional = false;
+  private boolean ignoreBroken = false;
   private boolean silent = false;
   private boolean neverSkip = false;
 
@@ -321,7 +322,13 @@ public abstract class TestStep {
     }
     this.finish();
     if (!this.isSilent()) {
-      addToParentStep(parentStepReport);
+        if (this.report.getStatus().equals(Status.BROKEN)) {
+          if (!this.ignoreBroken()) {
+            addToParentStep(parentStepReport);
+          }
+        } else {
+          addToParentStep(parentStepReport);
+        }
     }
   }
 
@@ -357,5 +364,13 @@ public abstract class TestStep {
       return true;
     }
     return this.dependOn.getStatus().equals(Status.PASSED);
+  }
+
+  public void setIgnoreBroken(boolean ignoreBroken) {
+    this.ignoreBroken = ignoreBroken;
+  }
+
+  public boolean ignoreBroken() {
+    return ignoreBroken;
   }
 }

@@ -16,6 +16,8 @@ import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.steps.StepPhase;
 import io.cosmosoftware.kite.steps.TestStep;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -610,20 +612,54 @@ public class TestUtils {
   public static String videoQualityCheck(WebDriver webDriver, Rectangle rect, int interval, int duration)
       throws KiteTestException {
     List<Long> canvasDatas = new ArrayList<>();
+    List<Long> diffDatas = new ArrayList<>();
+    BufferedImage image1 = null;
     for (int elapsed = 0; elapsed < duration; elapsed += interval){
-      canvasDatas.add(getRGBSum(createImageFromBytes(saveScreenshotPNG(webDriver, rect))));
+      BufferedImage image2 = createImageFromBytes(saveScreenshotPNG(webDriver, rect));
+      diffDatas.add(getDiff(image1, image2));
+      image1 = deepCopy(image2);
+      canvasDatas.add(getRGBSum(image2));
     }
     HashSet<Long> temp = new HashSet<>(canvasDatas);
+    if (temp.size() == 1 && temp.contains(0L)) {
+      return VideoQuality.BLANK.toString();
+    }
+    temp = new HashSet<>(diffDatas);
     if (temp.size() != canvasDatas.size()) {
       if (temp.size() < 3) {
-        if (temp.size() == 1 && temp.contains(0L)) {
-          return VideoQuality.BLANK.toString();
-        }
         return VideoQuality.FREEZE.toString();
       }
       return VideoQuality.JERKY.toString();
     }
     return VideoQuality.VIDEO.toString();
+  }
+
+  private static long getDiff(BufferedImage image1, BufferedImage image2) {
+    if (image1 == null && image2 ==null) {
+      return 0;
+    }
+    if (image1 == null) {
+      return getRGBSum( image2);
+    }
+
+    if (image2 == null) {
+      return getRGBSum(image1);
+    }
+
+    long diff = 0;
+    for (int i = 0; i < image1.getWidth(); i ++) {
+      for (int j = 0; j < image1.getHeight(); j++) {
+        diff += Math.abs(image1.getRGB(i, j) - image2.getRGB(i, j));
+      }
+    }
+    return diff;
+  }
+
+  private static BufferedImage deepCopy(BufferedImage bi) {
+    ColorModel cm = bi.getColorModel();
+    boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+    WritableRaster raster = bi.copyData(null);
+    return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
   }
 
   private static long getRGBSum(BufferedImage image) {

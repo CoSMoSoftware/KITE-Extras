@@ -129,7 +129,7 @@ public class SSHManager implements Callable<SSHManager> {
                 + (this.index + 1)
                 + "/"
                 + this.count
-                + ")' on \" + this.hostIpOrName + \" : "
+                + ")' on " + this.hostIpOrName + " : "
                 + this.commandLine);
       } else {
         logger.debug(
