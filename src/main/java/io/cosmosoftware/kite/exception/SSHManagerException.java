@@ -11,9 +11,7 @@ import io.cosmosoftware.kite.manager.SSHManager;
  */
 public class SSHManagerException extends Exception {
 
-  /**
-   * The Constant serialVersionUID.
-   */
+  /** The Constant serialVersionUID. */
   private static final long serialVersionUID = 1L;
 
   /**
