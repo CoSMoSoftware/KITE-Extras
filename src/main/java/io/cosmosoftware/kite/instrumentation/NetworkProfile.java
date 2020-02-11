@@ -42,7 +42,7 @@ public class NetworkProfile extends KiteEntity implements JsonBuilder, SampleDat
     super();
   }
 
-  public NetworkProfile(JsonObject jsonObject) throws Exception {
+  public NetworkProfile(JsonObject jsonObject) {
     this.name = jsonObject.getString("name");
     this.delay =  jsonObject.getInt("delay", 0);
     this.packetloss = jsonObject.getInt("packetloss", 0);
@@ -53,7 +53,7 @@ public class NetworkProfile extends KiteEntity implements JsonBuilder, SampleDat
     this.cleanUpCommand = jsonObject.getString("cleanUpCommand", null);
   }
 
-  protected String defaultCommand(String nit) throws KiteTestException {
+  public String defaultCommand(String nit) {
     String egress_command = ""; // command for traffic going out
     String ingress_command = ""; // command for traffic going in
     String commandStr =
@@ -82,7 +82,7 @@ public class NetworkProfile extends KiteEntity implements JsonBuilder, SampleDat
     }
     commandStr += egress_command + "|| true && " + ingress_command;
     if (egress_command.equals("") && ingress_command.equals("")) {
-      throw new KiteTestException("No command to run.", Status.BROKEN);
+      return null;
     }
     return commandStr;
   }
