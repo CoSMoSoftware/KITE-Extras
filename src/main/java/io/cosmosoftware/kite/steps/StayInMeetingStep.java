@@ -7,7 +7,9 @@ package io.cosmosoftware.kite.steps;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 
+import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
+import static io.cosmosoftware.kite.util.WebDriverUtils.poke;
 
 public class StayInMeetingStep extends TestStep {
 
@@ -20,9 +22,12 @@ public class StayInMeetingStep extends TestStep {
   }
 
   @Override
-  protected void step() throws KiteTestException {
+  protected void step() {
     logger.info(stepDescription());
-    waitAround(meetingDuration * 1000);
+    for (int waitTime = 0; waitTime < meetingDuration; waitTime++) {
+      waitAround(ONE_SECOND_INTERVAL);
+      poke(this.webDriver);
+    }
   }
 
   @Override

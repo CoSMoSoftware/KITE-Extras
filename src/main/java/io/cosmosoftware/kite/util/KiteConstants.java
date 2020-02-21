@@ -80,7 +80,7 @@ public class KiteConstants {
   /**
    * The retry wait.
    */
-  final public static int SSH_RETRY_WAIT = 10000; // milliseconds
+  final public static int SSH_RETRY_WAIT = 2000; // milliseconds
 
   /**
    * The Constant AMAZON_API_CALL_DELAY.
