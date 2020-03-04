@@ -161,7 +161,7 @@ public class SSHManager implements Callable<SSHManager> {
       channel = session.openChannel("exec");
       ((ChannelExec) channel).setCommand(command);
       ((ChannelExec) channel).setErrStream(System.err);
-      logger.info("Running: " + this.commandLine);
+      logger.debug("Running: " + this.commandLine);
       channel.connect();
 
       inputStream = channel.getInputStream();
@@ -177,11 +177,11 @@ public class SSHManager implements Callable<SSHManager> {
           }
           String string = new String(tmp, 0, i);
           this.commandResult.append(string);
-          logger.info("stdout: \n" + string);
+          logger.debug("stdout: \n" + string);
         }
         if (channel.isClosed()) {
           this.exitStatus = channel.getExitStatus();
-          logger.info("exit-status: " + this.exitStatus);
+          logger.debug("exit-status: " + this.exitStatus);
           break;
         }
       }

@@ -110,6 +110,10 @@ public class KiteConstants {
 
   final public static String ETH1 = "eth13";
   final public static String ETH2 = "eth14";
-  
+
+  public static final String VPC_IPV4_CIDR_BLOCK = "192.168.0.0/16";
+  public static final String ANYWHERE_IPV4 = "0.0.0.0/0";
+  public static final String ANYWHERE_IPV6 = "::/0";
+  public static final String ANY_TRAFFIC_ANYWHERE = "AllTrafficAnywhere";
 
 }

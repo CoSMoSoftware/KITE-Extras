@@ -701,7 +701,7 @@ public class TestUtils {
    */
   public static void waitAround(int durationInMillisecond) {
     try {
-      logger.debug("sleeping " + durationInMillisecond + "ms.");
+//      logger.debug("sleeping " + durationInMillisecond + "ms.");
       Thread.sleep(durationInMillisecond);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

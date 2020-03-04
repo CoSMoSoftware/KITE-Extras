@@ -43,9 +43,9 @@ public class CSVHelper {
       toMap(json, "");
     }
     if (logger.isDebugEnabled()) {
-      logger.debug("jsonToHashMap() dump");
+//      logger.debug("jsonToHashMap() dump");
       for (String key : keyValMap.keySet()) {
-        logger.debug("keyList[" + key + "] = " + keyValMap.get(key));
+//        logger.debug("keyList[" + key + "] = " + keyValMap.get(key));
       }
     }
     return keyValMap;
@@ -183,7 +183,7 @@ public class CSVHelper {
       }
       pw.println(valuesLine(map));
     } catch (Exception e) {
-      logger.error("\r\n" + ReportUtils.getStackTrace(e));
+//      logger.error("\r\n" + ReportUtils.getStackTrace(e));
     }
     initialized = true;
   }
