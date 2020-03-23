@@ -701,7 +701,7 @@ public class TestUtils {
    */
   public static void waitAround(int durationInMillisecond) {
     try {
-      logger.debug("sleeping " + durationInMillisecond + "ms.");
+//      logger.debug("sleeping " + durationInMillisecond + "ms.");
       Thread.sleep(durationInMillisecond);
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
@@ -714,8 +714,9 @@ public class TestUtils {
    * @return the corrected file path
    */
   public static String filePath(String filePath) {
-    return filePath.contains("~") ? filePath.replaceAll(
-        "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
+    return filePath.contains("~")
+        ? filePath.replaceAll("~", "/"
+          + System.getProperty("user.home").replaceAll("\\\\", "/"))
         : filePath;
   }
 

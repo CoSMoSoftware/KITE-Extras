@@ -74,6 +74,7 @@ public class Reporter {
   private synchronized void addAttachment(AllureStepReport report, CustomAttachment attachment) {
     report.addAttachment(attachment);
     this.attachments.add(attachment);
+    attachment.saveToFile(reportPath);
   }
 
   /**
@@ -130,9 +131,9 @@ public class Reporter {
       logger.warn("Done! All test cases have passed!");
     }
 
-    for (CustomAttachment attachment : attachments) {
-      attachment.saveToFile(reportPath);
-    }
+//    for (CustomAttachment attachment : attachments) {
+//      attachment.saveToFile(reportPath);
+//    }
     if (this.csvReport) {
       closeCSVWriter();
     }
@@ -177,9 +178,11 @@ public class Reporter {
           + this.timestamp + ".csv";
       csvWriterMap.put(attachmentName, new CSVHelper(CSVFileName));
     }
-    csvWriterMap.get(attachmentName)
-        .println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/",
-            report.getClientId());
+    if (!report.getStatus().equals(Status.BROKEN)) {
+      csvWriterMap.get(attachmentName)
+          .println(attachment.getJsonText(), this.reportPath + "csv-report/" + testName + "/",
+              report.getClientId());
+    }
   }
 
   private synchronized void closeCSVWriter() {
