@@ -714,8 +714,9 @@ public class TestUtils {
    * @return the corrected file path
    */
   public static String filePath(String filePath) {
-    return filePath.contains("~") ? filePath.replaceAll(
-        "~", "/" + System.getProperty("user.home").replaceAll("\\\\", "/"))
+    return filePath.contains("~")
+        ? filePath.replaceAll("~", "/"
+          + System.getProperty("user.home").replaceAll("\\\\", "/"))
         : filePath;
   }
 
