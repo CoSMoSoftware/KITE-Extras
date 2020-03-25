@@ -43,5 +43,8 @@ public enum OsType {
   /**
    * The android.
    */
-  ANDROID
+  ANDROID;
+
+  public boolean isUbuntu() { return this.equals(UBUNTU) || this.equals(DEBIAN) || this.equals(CENTOS); }
+  public boolean isWindows() { return this.equals(WINDOWS7) || this.equals(WINDOWS8) || this.equals(WINDOWS10); }
 }
