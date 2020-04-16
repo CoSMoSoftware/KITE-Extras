@@ -326,7 +326,7 @@ public class ReportUtils {
       }
       File[] children = fileToZip.listFiles();
       for (File childFile : children) {
-        zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
+        zipFile(childFile, childFile.getName(), zipOut);
       }
       return;
     }
