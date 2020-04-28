@@ -86,13 +86,16 @@ public class AllureTestReport extends AllureStepReport {
   }
 
   private void fixWrongStatusDetails() {
-    if (!status.equals(Status.PASSED) && details.getMessage().equals("The test has passed successfully!")) {
+//    if (!status.equals(Status.PASSED) && details.getMessage().equals("The test has passed successfully!")) {
       for (AllureStepReport step : steps) {
         if (!step.getStatus().equals(Status.PASSED)) {
-          this.details = step.getDetails();
-          break;
+          if (!step.getDetails().getMessage().contains("passed successfully")) {
+            this.details = step.getDetails();
+            break;
+          }
         }
       }
-    }
+//    }
   }
+
 }

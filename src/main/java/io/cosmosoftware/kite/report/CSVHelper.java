@@ -167,9 +167,7 @@ public class CSVHelper {
         pw = new PrintWriter(fout, true);
       }
       Map<String, String> map = new LinkedHashMap<>();
-      if (clientId != null) {
-        map.put("clientId", clientId);
-      }
+      map.put("clientId", clientId != null ? clientId : "N/C");
       if (o instanceof LinkedHashMap) {
         map.putAll((LinkedHashMap) o);
       } else if (o instanceof JsonObject) {
@@ -181,9 +179,12 @@ public class CSVHelper {
       if (!initialized) {
         pw.println(keysLine(map));
       }
-      pw.println(valuesLine(map));
+      pw.println(valuesLine(map)
+          .replaceAll("\\[", "(")
+          .replaceAll("]", "(")
+      );
     } catch (Exception e) {
-//      logger.error("\r\n" + ReportUtils.getStackTrace(e));
+      logger.error("\r\n" + ReportUtils.getStackTrace(e));
     }
     initialized = true;
   }
