@@ -77,8 +77,8 @@ public class AllureStepReport extends ReportEntity {
   public synchronized void addStepReport(AllureStepReport step) {
     step.setParent(this);
     this.steps.add(step);
-    // in theory, this is only tru after the steps that can be ignored happen
-    // and will be fault if the successor step can't be ignore
+    // in theory, this is only true after the steps that can be ignored happen
+    // and will be false if the successor step can't be ignore
     if (!step.canBeIgnore()) {
       if (this.status.equals(Status.PASSED) && !step.getStatus().equals(Status.SKIPPED)) {
         // prevent overwriting failed/broken status
