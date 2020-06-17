@@ -4,6 +4,8 @@
 
 package io.cosmosoftware.kite.report;
 
+import static io.cosmosoftware.kite.util.TestUtils.createDirs;
+
 import io.cosmosoftware.kite.util.ReportUtils;
 
 import javax.json.*;
@@ -13,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
+import org.apache.commons.io.FileUtils;
 
 // XXX todo:  move to KITE engine, then extend this for individual tests
 
@@ -159,10 +162,7 @@ public class CSVHelper {
   public synchronized void println(Object o, String path, String clientId) {
     try {
       if (!initialized) {
-        File dir = new File(path);
-        if (!dir.isDirectory()) {
-          dir.mkdirs();
-        }
+        createDirs(path);
         fout = new FileOutputStream(path + filename);
         pw = new PrintWriter(fout, true);
       }

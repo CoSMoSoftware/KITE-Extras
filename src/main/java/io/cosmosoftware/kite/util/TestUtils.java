@@ -60,8 +60,13 @@ public class TestUtils {
   public static void createDirs(String dirName) {
     dirName = verifyPathFormat(dirName);
     File dir = new File(dirName);
+    logger.debug("Trying to create dir: " + dir.getAbsolutePath());
     if (!dir.exists()) {
-      dir.mkdirs();
+      try {
+        FileUtils.forceMkdir(dir);
+      } catch (IOException e) {
+        logger.error("Could not create directory: " + dirName);
+      }
     }
   }
 

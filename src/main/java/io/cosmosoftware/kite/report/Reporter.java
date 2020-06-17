@@ -322,13 +322,15 @@ public class Reporter {
       this.reportPath = verifyPathFormat(reportPath);
     }
     logger.info("Creating report folder if not exist at :" + this.reportPath);
+    createDirs(this.reportPath);
+
   }
 
   /**
    * Update containers.
    */
   public synchronized void updateContainers() {
-    createDirs(this.reportPath);
+//    createDirs(this.reportPath);
     createDirs(this.retryPath);
     for (Container container : containers) {
       String fileName = this.reportPath + container.getUuid() + "-container.json";
