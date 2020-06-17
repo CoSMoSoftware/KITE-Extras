@@ -59,7 +59,7 @@ public class StartGetStatsSDKStep extends TestStep {
     this.init();
     logger.info("Attempting to load GetStats script");
     for (String pc : this.pcList) {
-      loadGetStats(logstashUrl, sfu, pc, testName, testId, userNameCommand, roomNameCommand, statsPublishingInterval);
+      logger.info("loadGetStats -> " + loadGetStats(logstashUrl, sfu, pc, testName, testId, userNameCommand, roomNameCommand, statsPublishingInterval));
     }
     waitAround(10000);
   }
@@ -75,9 +75,8 @@ public class StartGetStatsSDKStep extends TestStep {
       int statsPublishingInterval
   ) throws KiteTestException {
     String getStatString = getStatsSdkString(logstashUrl, sfu, pc, testName, testId, userNameCommand, roomNameCommand, statsPublishingInterval);
-    logger.debug("String ready, executing Javascript script" + getStatString);
-    String result = (String) executeJsScript(webDriver, getStatString);
-    return result;
+    logger.debug("String ready, executing Javascript script: " + getStatString);
+    return (String) executeJsScript(webDriver, getStatString);
   }
   
 
