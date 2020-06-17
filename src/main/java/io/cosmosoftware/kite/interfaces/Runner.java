@@ -25,6 +25,8 @@ public interface Runner {
 
   String getPlatform();
 
+  String getNetworkProfile();
+
   boolean isApp();
 
 }
