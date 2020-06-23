@@ -230,10 +230,8 @@ public class JSActionScript {
 
   public static String getStatsSdkString(
       String logstashUrl,
-      String sfu,
       String pc,
       String testName,
-      String testId,
       String userNameCommand,
       String roomNameCommand,
       int statsPublishingInterval
@@ -242,23 +240,20 @@ public class JSActionScript {
         + "this.receiverUrl = '';"
         + "this.userId = '';"
         + "this.roomId = '';"
-        + "this.sfu = '';"
+//        + "this.sfu = '';"
         + "this.pcObject = null;"
         + "this.alwaysSendEverything = true;"
         + "this.lastStatsObjValues = {};"
         + "this.publishing = null;"
         + "this.testName = '';"
-        + "this.testId = '';"
         + "}"
         + ""
-        + "GetStats.prototype.init = function (receiverUrl, userId, roomId, sfu, pcObject, testName, testId, alwaysSendEverything = true) {"
+        + "GetStats.prototype.init = function (receiverUrl, userId, roomId, pcObject, testName, alwaysSendEverything = true) {"
         + "this.receiverUrl = receiverUrl;"
         + "this.userId = userId;"
         + "this.roomId = roomId;"
-        + "this.sfu = sfu;"
         + "this.pcObject = pcObject;"
         + "this.testName = testName;"
-        + "this.testId = testId;"
         + "this.alwaysSendEverything = alwaysSendEverything;"
         + "};"
         + ""
@@ -270,6 +265,7 @@ public class JSActionScript {
         + "};"
         + ""
         + "GetStats.prototype.stopPublishing = function () {"
+        + "console.log('Stop publishing for: ', this.pcObject);"
         + "clearInterval(this.publishing);"
         + "};"
         + ""
@@ -322,9 +318,7 @@ public class JSActionScript {
         + "body = {"
         + "'userId': this.userId,"
         + "'roomId': this.roomId,"
-        + "'sfu': this.sfu,"
         + "'testName': this.testName,"
-        + "'testId': this.testId,"
         + "'stats': statsObj"
         + "};"
         + "return new Promise((resolve, reject) => {"
@@ -344,18 +338,18 @@ public class JSActionScript {
         + "})"
         + "};"
         + ""
-        + "function sendStats(pc, testName, testId) {"
+        + "function sendStats(pc, userId, roomId, testName) {"
         + "window.testStats = new GetStats();"
         + "testStats.init(\""
-        + logstashUrl + "\", "+ userNameCommand + ", " + roomNameCommand + ", \"" + sfu + "\", "
-        + pc + ", \""+ testName + "\", \"" + testId + "\");"
-        + "testStats.startPublishing(15000);"
-        + "console.log('SendStats started', Date());"
+        + logstashUrl + "\", "+ userNameCommand + ", " + roomNameCommand + "," + pc + ", \""+ testName + "\");"
+        + "testStats.startPublishing(" + statsPublishingInterval +");"
+        + "console.log('SendStats started for ' + " + userNameCommand + " + ' (every " + statsPublishingInterval + "ms) at ->' , Date());"
+        + "console.log('To stop publishing, call testStats.stopPublishing()');"
         + "} "
         + ""
         + "setTimeout(function () {"
         + "if (" + pc + ") {"
-        + "sendStats(" + pc + ", 'KiteMillicastTest', 'Millicast');"
+        + "sendStats(" + pc + ", " + userNameCommand + ", "  + roomNameCommand + ", '"  + testName + "');"
         + "}"
         + "}, " + statsPublishingInterval + ");";
   }

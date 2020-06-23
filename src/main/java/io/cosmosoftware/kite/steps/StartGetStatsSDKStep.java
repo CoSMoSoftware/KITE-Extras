@@ -19,7 +19,7 @@ public class StartGetStatsSDKStep extends TestStep {
   private final String testName;
   private String testId;
   private String logstashUrl;
-  private String sfu;
+//  private String sfu;
   private int statsPublishingInterval;
   private String userNameCommand;
   private String roomNameCommand;
@@ -42,7 +42,6 @@ public class StartGetStatsSDKStep extends TestStep {
     this.testId =  getStatsSdk.getString("testId", testName + "_"
         + new SimpleDateFormat("yyyyMMdd_hhmmss").format(new Date()) ) ;
     this.logstashUrl = getStatsSdk.getString("logstashUrl");
-    this.sfu = getStatsSdk.getString("sfu", "unknown-sfu");
     this.statsPublishingInterval = getStatsSdk.getInt("statsPublishingInterval", 30000);
     this.userNameCommand = getStatsSdk.getString("userNameCommand",
         "\"" + (this.report.getClientId() == null ? "unknown" : report.getClientId()) + "\"");
@@ -51,31 +50,29 @@ public class StartGetStatsSDKStep extends TestStep {
 
   @Override
   public String stepDescription() {
-    return "Loading GetStats Script for " + testId;
+    return "Loading GetStats Script for client";
   }
 
   @Override
   protected void step() throws KiteTestException {
     this.init();
-    logger.info("Attempting to load GetStats script");
+    logger.info("Attempting to load GetStats script " + this.userNameCommand + " (every " + this.statsPublishingInterval + "ms)");
     for (String pc : this.pcList) {
-      logger.info("loadGetStats -> " + loadGetStats(logstashUrl, sfu, pc, testName, testId, userNameCommand, roomNameCommand, statsPublishingInterval));
+      loadGetStats(logstashUrl,  pc, testName, userNameCommand, roomNameCommand, statsPublishingInterval);
     }
     waitAround(10000);
   }
 
   private String loadGetStats(
       String logstashUrl,
-      String sfu,
       String pc,
       String testName,
-      String testId,
       String userNameCommand,
       String roomNameCommand,
       int statsPublishingInterval
   ) throws KiteTestException {
-    String getStatString = getStatsSdkString(logstashUrl, sfu, pc, testName, testId, userNameCommand, roomNameCommand, statsPublishingInterval);
-    logger.debug("String ready, executing Javascript script: " + getStatString);
+    String getStatString = getStatsSdkString(logstashUrl, pc, testName, userNameCommand, roomNameCommand, statsPublishingInterval);
+    logger.debug("String ready, executing getstats script for " + pc + ": " + getStatString);
     return (String) executeJsScript(webDriver, getStatString);
   }
   
