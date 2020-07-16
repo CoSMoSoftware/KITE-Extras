@@ -22,6 +22,7 @@ public class StartGetStatsSDKStep extends TestStep {
 //  private String sfu;
   private int statsPublishingInterval;
   private String userNameCommand;
+  private String customizedUserId;
   private String roomNameCommand;
   private List<String> pcList = new ArrayList<>();
 
@@ -43,9 +44,10 @@ public class StartGetStatsSDKStep extends TestStep {
         + new SimpleDateFormat("yyyyMMdd_hhmmss").format(new Date()) ) ;
     this.logstashUrl = getStatsSdk.getString("logstashUrl");
     this.statsPublishingInterval = getStatsSdk.getInt("statsPublishingInterval", 30000);
-    this.userNameCommand = getStatsSdk.getString("userNameCommand",
-        "\"" + (this.report.getClientId() == null ? "unknown" : report.getClientId()) + "\"");
+    this.userNameCommand = getStatsSdk.getString("userNameCommand", null);
     this.roomNameCommand = getStatsSdk.getString("roomNameCommand", "\"unknown-room\"");
+    this.customizedUserId = (this.customizedUserId != null ? this.customizedUserId : "")
+        + (this.report.getClientId() == null ? "unknown" : report.getClientId());
   }
 
   @Override
@@ -56,9 +58,20 @@ public class StartGetStatsSDKStep extends TestStep {
   @Override
   protected void step() throws KiteTestException {
     this.init();
-    logger.info("Attempting to load GetStats script " + this.userNameCommand + " (every " + this.statsPublishingInterval + "ms)");
+    logger.debug("Attempting to load GetStats script " + this.customizedUserId + " (every " + this.statsPublishingInterval + "ms)");
+    if (this.userNameCommand == null) {
+      this.userNameCommand = "\""
+          + this.customizedUserId
+          + "\"";
+    }
     for (String pc : this.pcList) {
-      loadGetStats(logstashUrl,  pc, testName, userNameCommand, roomNameCommand, statsPublishingInterval);
+      String userName = this.userNameCommand;
+      if (userName.startsWith("\"")) {
+        userName = userName.substring(0, userName.length() - 2)
+            + "[" + pc + "]"
+            + "\"";
+      }
+      loadGetStats(logstashUrl,  pc, testName,  userName , roomNameCommand, statsPublishingInterval);
     }
     waitAround(10000);
   }
@@ -75,6 +88,8 @@ public class StartGetStatsSDKStep extends TestStep {
     logger.debug("String ready, executing getstats script for " + pc + ": " + getStatString);
     return (String) executeJsScript(webDriver, getStatString);
   }
-  
 
+  public void setCustomizedUserId(String customizedUserId) {
+    this.customizedUserId = customizedUserId;
+  }
 }
