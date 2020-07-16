@@ -23,7 +23,6 @@ public class StayInMeetingStep extends TestStep {
 
   @Override
   protected void step() {
-    logger.info(stepDescription());
     for (int waitTime = 0; waitTime < meetingDuration; waitTime++) {
       waitAround(ONE_SECOND_INTERVAL);
       poke(this.webDriver);

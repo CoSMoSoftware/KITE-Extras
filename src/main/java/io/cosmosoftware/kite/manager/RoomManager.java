@@ -51,17 +51,20 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
    * @return the base url
    */
   public synchronized String getRoomUrl(boolean random) {
-    if (userCount == maxCapacity) {
-      logger.warn("User count is at max capacity for the current room, " +
-              "if you are putting more users than expected, please reconfigure. " +
-              "Either use random room id or preconfigured room list " +
-              "(ignore this warning if it's already the case).");
-      userCount = 0;
-      randomizedId = randomizeId();
-    }
-    userCount ++;
-    if (random) {
-      return roomUrl + randomizedId;
+
+    if (roomUrl != null) {
+      if (userCount == maxCapacity) {
+        logger.warn("User count is at max capacity for the current room, " +
+                "if you are putting more users than expected, please reconfigure. " +
+                "Either use random room id or preconfigured room list " +
+                "(ignore this warning if it's already the case).");
+        userCount = 0;
+        randomizedId = randomizeId();
+      }
+      userCount++;
+      if (random) {
+        return roomUrl + randomizedId;
+      }
     }
     return roomUrl;
   }
@@ -114,4 +117,5 @@ public class RoomManager extends ConcurrentHashMap<String, MeetingStatus> {
   public void setRoomUrl(String roomUrl) {
     this.roomUrl = roomUrl;
   }
+
 }
