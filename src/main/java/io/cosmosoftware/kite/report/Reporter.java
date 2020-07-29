@@ -354,7 +354,7 @@ public class Reporter {
     Category category2 = new FailedCategory("Connection Issues");
     category2.setMessageRegex("[cC]onnection");
     Category category3 = new FailedCategory("WebDriver Spawning Issues");
-    category3.setMessageRegex("Exception while populating web drivers");
+    category3.setMessageRegex("KiteGridException");
     Category category4 = new FailedCategory("Page Loading Issues");
     category4.setMessageRegex("Error opening page");
     Category category5 = new FailedCategory("UI Element Not Visible");
@@ -423,9 +423,15 @@ public class Reporter {
         && !failedClientMatrixList.isEmpty()) {
       JsonObject configFileObject = readJsonFile(configFilePath);
       JsonObjectBuilder builder = Json.createObjectBuilder();
-      builder.add("name", configFileObject.get("name"));
-      builder.add("grids", configFileObject.get("grids"));
-      builder.add("clients", configFileObject.get("clients"));
+      if (configFileObject.get("name")!=null) {
+        builder.add("name", configFileObject.get("name"));
+      }
+      if (configFileObject.get("grids")!=null) {
+        builder.add("grids", configFileObject.get("grids"));
+      }
+      if (configFileObject.get("clients")!=null) {
+        builder.add("clients", configFileObject.get("clients"));
+      }
       if (configFileObject.get("cloud")!=null) {
         builder.add("cloud", configFileObject.get("cloud"));
       }
