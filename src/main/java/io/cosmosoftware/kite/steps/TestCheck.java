@@ -24,15 +24,6 @@ public abstract class TestCheck extends TestStep {
   protected int checkInterval = ONE_SECOND_INTERVAL;
 
   /**
-   * Instantiates a new Test check.
-   *
-   * @param runner the runner
-   */
-  public TestCheck(Runner runner) {
-    super(runner);
-  }
-
-  /**
    * Gets check interval.
    *
    * @return the check interval
