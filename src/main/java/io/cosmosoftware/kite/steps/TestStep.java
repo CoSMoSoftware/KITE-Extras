@@ -25,9 +25,10 @@ import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
  */
 public abstract class TestStep {
 
-  protected final WebDriver webDriver;
-  protected final KiteLogger logger;
-  protected final Reporter reporter;
+  protected WebDriver webDriver;
+  protected KiteLogger logger;
+  protected Reporter reporter;
+  protected Runner runner;
   protected AllureStepReport report;
   protected Status status = Status.PENDING;
   private String name = this.getClass().getSimpleName();
@@ -41,7 +42,7 @@ public abstract class TestStep {
 
   private StepPhase stepPhase = DEFAULT;
   private StepPhase currentStepPhase = DEFAULT;
-  private final String clientName;
+  private String clientName;
 
   private LinkedHashMap<String, String> csvResult = null;
 
@@ -52,6 +53,18 @@ public abstract class TestStep {
    * @param runner the runner
    */
   public TestStep(Runner runner) {
+    this.setRunner(runner);
+  }
+
+  /**
+   * Instantiates a new Test step.
+   *
+   */
+  public TestStep() {
+  }
+
+  public void setRunner(Runner runner) {
+    this.runner = runner;
     this.webDriver = runner.getWebDriver();
     this.stepPhase = runner.getStepPhase();
     this.reporter = runner.getReporter();
