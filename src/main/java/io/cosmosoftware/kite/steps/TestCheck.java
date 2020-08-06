@@ -14,6 +14,9 @@ import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
  */
 public abstract class TestCheck extends TestStep {
 
+  public TestCheck(Runner runner) {
+    super(runner);
+  }
   /**
    * The Check timeout.
    */
