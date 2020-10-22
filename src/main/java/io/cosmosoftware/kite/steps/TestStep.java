@@ -91,6 +91,9 @@ public abstract class TestStep {
       }
       reporter.processException(this.report, e, optional);
     }
+    if (!this.getClass().equals(GetSystemInfoStep.class)) {
+      new GetSystemInfoStep(this.runner).processTestStep(this.stepPhase, this.report, false);
+    }
     this.status = this.report.getStatus();
     logger.info(getStatusString() + currentStepPhase.getShortName()  + stepDescription() );
   }
