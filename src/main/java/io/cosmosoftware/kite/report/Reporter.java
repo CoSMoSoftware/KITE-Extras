@@ -37,6 +37,7 @@ public class Reporter {
   private final String DEFAULT_REPORT_FOLDER =
       System.getProperty("user.dir") + "/kite-allure-reports/";
   private final Map<String, CSVHelper> csvWriterMap = new HashMap();
+  private final Map<String, TestStepTracker> stepTrackerMap = new HashMap();
   private final String testName;
   protected KiteLogger logger = KiteLogger.getLogger(this.getClass().getName());
   private boolean csvReport = false;
@@ -56,7 +57,7 @@ public class Reporter {
    * Instantiates a new Reporter.
    */
   public Reporter(String testName) {
-    this.testName = testName;
+    this.testName = testName.replace(" ", "-");
   }
 
   public void setCsvReport(boolean csvReport) {
@@ -112,6 +113,7 @@ public class Reporter {
    */
   public synchronized void generateReportFiles() {
     updateContainers();
+//    printStepTrackingResult();
     for (AllureTestReport test : tests) {
       test.generateReport();
       if (!test.getStatus().equals(Status.PASSED)) {
@@ -138,6 +140,56 @@ public class Reporter {
       closeCSVWriter();
     }
     // zipFile(this.reportPath, this.reportPath + "report.zip");
+  }
+
+  public JsonObject getStepTrackingInfo() {
+    JsonObjectBuilder jsonResult = Json.createObjectBuilder();
+    for (String key : this.stepTrackerMap.keySet()) {
+      jsonResult.add(key, this.stepTrackerMap.get(key).toJson());
+    }
+    return jsonResult.build();
+  }
+
+  public void printStepTrackingResult() {
+    this.updateTestStepTracking();
+    logger.info("Printing out step tracking overview");
+    new CSVHelper("test-step-overview.csv").println(getStepTrackingInfo(),
+        this.reportPath + "csv-report/" + testName + "/", timestamp());
+    for (String key : this.stepTrackerMap.keySet()) {
+      new CSVHelper(key + ".csv").println(this.stepTrackerMap.get(key).toJson(),
+          this.reportPath + "csv-report/" + testName + "/step-overview/", timestamp());
+    }
+//    printJsonTofile(getStepTrackingInfo().toString(),
+//        this.reportPath + this.testConfig.getString("name") + "-" + timestamp + "/test-step-overview.json" );
+  }
+
+  private void updateTestStepTracking() {
+    this.stepTrackerMap.clear();
+    for (AllureTestReport test : tests) {
+      for (AllureStepReport stepReport : test.steps) {
+        String stepName = stepReport.getName();
+        if (stepName.contains("Creating webDriver for runner")) {
+          stepName = "Creating webDriver for runner";
+        }
+        if (stepName.contains(":")) {
+          stepName = stepName.split(":")[1].trim();
+        }
+        stepName = stepName.replace("\"", "");
+        if (!this.stepTrackerMap.containsKey(stepName)) {
+          this.stepTrackerMap.put(stepName, new TestStepTracker());
+        }
+        if (stepReport.getStatus().equals(Status.PASSED)) {
+          this.stepTrackerMap.get(stepName).addSuccess();
+        } else {
+          this.stepTrackerMap.get(stepName).addFailure();
+        }
+      }
+    }
+  }
+
+  public Map<String, TestStepTracker> getStepTrackerMap() {
+    this.updateTestStepTracking();
+    return stepTrackerMap;
   }
 
   /**
