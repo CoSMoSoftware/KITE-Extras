@@ -44,6 +44,7 @@ import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.imgprocessing.ImageComparator.createImageFromBytes;
 import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 import static io.cosmosoftware.kite.util.ReportUtils.saveScreenshotPNG;
+import static io.cosmosoftware.kite.util.TestUtils.readJsonString;
 
 /**
  * The type Test utils.
@@ -940,6 +941,9 @@ public class TestUtils {
    * @return the json object
    */
   public static JsonObject readJsonString(String objectString) {
+    if (objectString == null) {
+      return Json.createObjectBuilder().build();
+    }
     InputStream inputStream = IOUtils.toInputStream(objectString, Charset.forName("UTF-16"));
     return readJsonStream(inputStream);
   }
@@ -998,5 +1002,40 @@ public class TestUtils {
     logger.debug("kiteServerCommand response:\r\n" + result);
     return result;
   }
-  
+
+  public static JsonObject curl(String urlString) {
+    String res = null;
+    HttpURLConnection con = null;
+    BufferedReader in = null;
+    try {
+      URL url = new URL(urlString);
+      con = (HttpURLConnection) url.openConnection();
+      con.setRequestMethod("GET");
+      con.connect();
+      if (con.getResponseCode() != 200) {
+        in = new BufferedReader(
+            new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+          content.append(inputLine);
+        }
+        res = content.toString();
+      }
+    } catch (IOException e) {
+      logger.debug("Could not get response from: " + urlString);
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {
+          logger.warn("Could not close input stream: " + e.getLocalizedMessage());
+        }
+      }
+      if (con != null) {
+        con.disconnect();
+      }
+    }
+    return readJsonString(res);
+  }
 }

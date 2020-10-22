@@ -257,18 +257,18 @@ public class ReportUtils {
   public static String consoleLogs(WebDriver webDriver) {
     String log = "";
     Set<String> logTypes = webDriver.manage().logs().getAvailableLogTypes();
-    if (logTypes.contains(LogType.BROWSER)) {
+//    if (logTypes.contains(LogType.BROWSER)) {
       List<LogEntry> logEntries = webDriver.manage().logs().get(LogType.BROWSER).getAll();
-      for (LogEntry entry : logEntries) {
-        log += entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
+      logger.debug("webDriver.manage().logs().get(LogType.BROWSER).getAll()");
+      logger.debug(logEntries);
+      if (logEntries.isEmpty()) {
+        log += getBrowserName(webDriver)
+            + " does not support getting console logs, it's only possible on Chrome.";
+      } else {
+        for (LogEntry entry : logEntries) {
+          log += entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
+        }
       }
-    } else {
-      log += getBrowserName(webDriver)
-          + " does not support getting console logs, it's only possible on Chrome.";
-      for (String s:logTypes) {
-        logger.debug("logTypes: " + s);
-      }
-    }
     return log;
   }
 

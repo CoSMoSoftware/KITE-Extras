@@ -27,6 +27,8 @@ public interface Runner {
 
   String getNetworkProfile();
 
+  String getPublicIpAddress();
+
   boolean isApp();
 
 }
