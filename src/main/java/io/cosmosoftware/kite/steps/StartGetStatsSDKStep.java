@@ -46,8 +46,7 @@ public class StartGetStatsSDKStep extends TestStep {
     this.statsPublishingInterval = getStatsSdk.getInt("statsPublishingInterval", 30000);
     this.userNameCommand = getStatsSdk.getString("userNameCommand", null);
     this.roomNameCommand = getStatsSdk.getString("roomNameCommand", "\"unknown-room\"");
-    this.customizedUserId = (this.customizedUserId != null ? this.customizedUserId : "")
-        + (this.report.getClientId() == null ? "unknown" : report.getClientId());
+    this.customizedUserId = this.customizedUserId != null ? this.customizedUserId : "";
   }
 
   @Override
