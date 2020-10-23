@@ -51,10 +51,10 @@ public class Account extends Entity {
    */
   public Account(JsonObject jsonObject) {
     this.jsonObject = jsonObject;
-    this.username = jsonObject.getString("username");
-    this.credential = jsonObject.getString("credential");
-    this.password = jsonObject.getString("password");
-    this.email = jsonObject.getString("email");
+    this.username = jsonObject.getString("username", null);
+    this.credential = jsonObject.getString("credential", null);
+    this.password = jsonObject.getString("password", null);
+    this.email = jsonObject.getString("email", null);
   }
 
   /**
