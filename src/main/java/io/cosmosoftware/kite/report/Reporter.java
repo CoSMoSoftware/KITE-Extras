@@ -140,6 +140,7 @@ public class Reporter {
       closeCSVWriter();
     }
     // zipFile(this.reportPath, this.reportPath + "report.zip");
+    this.reset();
   }
 
   public JsonObject getStepTrackingInfo() {
@@ -518,6 +519,10 @@ public class Reporter {
     this.testConfig = testConfig;
   }
 
+  public JsonObject getTestConfig() {
+    return testConfig;
+  }
+
   public synchronized long getStartTime() {
     return startTime;
   }
@@ -556,5 +561,14 @@ public class Reporter {
 
   public void removeTest(AllureTestReport report) {
     this.tests.remove(report);
+  }
+
+
+  public void reset() {
+    this.environment = new Environment();
+    this.attachments.clear();
+    this.tests.clear();
+    this.containers.clear();
+    this.categories.clear();
   }
 }

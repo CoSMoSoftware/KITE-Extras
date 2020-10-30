@@ -389,4 +389,13 @@ public abstract class TestStep {
   public boolean ignoreBroken() {
     return ignoreBroken;
   }
+
+  public void setReporter(Reporter reporter) {
+    this.reporter = reporter;
+  }
+
+  public Reporter getReporter() {
+    return reporter;
+  }
+
 }
