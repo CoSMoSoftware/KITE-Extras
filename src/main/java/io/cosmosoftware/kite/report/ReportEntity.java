@@ -44,6 +44,10 @@ public class ReportEntity {
     this.stop = stop;
   }
 
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
   public String getUuid() {
     return uuid;
   }
