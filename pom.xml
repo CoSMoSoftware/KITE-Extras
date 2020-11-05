@@ -151,6 +151,11 @@
       <artifactId>javax.mail</artifactId>
       <version>${javax.mail.version}</version>
     </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${apache.commons.io.version}</version>
+    </dependency>
   </dependencies>
   <groupId>io.cosmosoftware.kite</groupId>
 
@@ -185,6 +190,7 @@
     <kite.tess4j.version>4.0.2</kite.tess4j.version>
     <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <kite.user-agent.version>1.21</kite.user-agent.version>
+    <apache.commons.io.version>2.6</apache.commons.io.version>
     <javax.mail.version>1.6.2</javax.mail.version>
 
     <!-- Automation framework dependencies -->
@@ -198,6 +204,7 @@
 
   </properties>
 
-  <version>0.1.74</version>
+
+  <version>0.1.75</version>
 
 </project>
