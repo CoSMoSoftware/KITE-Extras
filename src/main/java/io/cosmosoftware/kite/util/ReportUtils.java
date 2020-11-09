@@ -277,8 +277,8 @@ public class ReportUtils {
    * @param sourceFile  path to source file
    * @throws KiteTestException  if there's IOException
    */
-  public static void zipFile(String sourceFile) {
-    zipFile(sourceFile, null);
+  public static String zipFile(String sourceFile) {
+    return zipFile(sourceFile, null, false);
   }
 
   /**
@@ -287,15 +287,31 @@ public class ReportUtils {
    * @param desFile .zip file name
    * @throws KiteTestException  if there's IOException
    */
-  public static void zipFile(String sourceFile, String desFile){
+  public static String zipFile(String sourceFile, String desFile) {
+    return zipFile(sourceFile, desFile, false);
+  }
+
+  /**
+   * Zips a folder to a .zip file
+   * @param sourceFile  path to source file
+   * @param desFile .zip file name
+   * @param size add file size to the name
+   * @throws KiteTestException  if there's IOException
+   */
+  public static String zipFile(String sourceFile, String desFile, boolean size){
     FileOutputStream fos= null;
     ZipOutputStream zipOut= null;
     desFile = desFile == null ? sourceFile : desFile;
-    desFile = desFile.endsWith(".zip") ? desFile : desFile + ".zip";
     try {
+      File fileToZip = new File(sourceFile);
+      if(size) {
+        desFile += "-size." +  FileUtils.sizeOfDirectory(fileToZip) + ".zip";
+      } else {
+        desFile = desFile.endsWith(".zip") ? desFile : desFile + ".zip";
+      }
+
       fos = new FileOutputStream(desFile);
       zipOut = new ZipOutputStream(fos);
-      File fileToZip = new File(sourceFile);
       zipFile(fileToZip, fileToZip.getName(), zipOut);
     } catch (IOException e) {
       logger.error("Could not zip file/folder: " + sourceFile + " \n" + e.getMessage());
@@ -310,6 +326,7 @@ public class ReportUtils {
         logger.error("Could not close stream after zipping file");
       }
     }
+    return desFile;
   }
 
   private static void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
