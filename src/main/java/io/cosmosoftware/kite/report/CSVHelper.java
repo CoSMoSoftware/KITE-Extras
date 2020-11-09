@@ -23,7 +23,7 @@ public class CSVHelper {
 
   private static final KiteLogger logger = KiteLogger.getLogger(CSVHelper.class.getName());
   private static Map<String, String> keyValMap = new LinkedHashMap<String, String>();
-
+  private static String keyLine = "";
   private String filename;
   private FileOutputStream fout = null;
   private boolean initialized = false;
@@ -176,9 +176,16 @@ public class CSVHelper {
         pw.println(o.toString());
         return;
       }
+      String tmpKeyLine = keysLine(map);
       if (!initialized) {
-        pw.println(keysLine(map));
+        keyLine = tmpKeyLine;
+        pw.println(tmpKeyLine);
+      } else {
+        if (tmpKeyLine.length() > keyLine.length()) {
+          keyLine = tmpKeyLine;
+        }
       }
+
       pw.println(valuesLine(map)
           .replaceAll("\\[", "(")
           .replaceAll("]", "(")
