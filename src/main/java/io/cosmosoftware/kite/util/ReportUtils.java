@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.OutputType;
@@ -257,16 +261,12 @@ public class ReportUtils {
   public static String consoleLogs(WebDriver webDriver) {
     String log = "";
     Set<String> logTypes = webDriver.manage().logs().getAvailableLogTypes();
-//    if (logTypes.contains(LogType.BROWSER)) {
       List<LogEntry> logEntries = webDriver.manage().logs().get(LogType.BROWSER).getAll();
-      logger.debug("webDriver.manage().logs().get(LogType.BROWSER).getAll()");
-      logger.debug(logEntries);
       if (logEntries.isEmpty()) {
-        log += getBrowserName(webDriver)
-            + " does not support getting console logs, it's only possible on Chrome.";
+        log += "The log was empty, either an error has happened, or this browser is not supported";
       } else {
         for (LogEntry entry : logEntries) {
-          log += entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
+          log += entry.getTimestamp() + ":" +  entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
         }
       }
     return log;

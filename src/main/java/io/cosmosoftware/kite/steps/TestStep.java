@@ -34,6 +34,7 @@ public abstract class TestStep {
   private String name = this.getClass().getSimpleName();
   private boolean stepCompleted = false;
   private boolean screenShotOnFailure = true;
+  private boolean getConsoleLog = true;
 
   private boolean optional = false;
   private boolean ignoreBroken = false;
@@ -91,8 +92,11 @@ public abstract class TestStep {
       }
       reporter.processException(this.report, e, optional);
     }
-    if (!this.getClass().equals(GetSystemInfoStep.class)) {
-      new GetSystemInfoStep(this.runner).processTestStep(this.stepPhase, this.report, false);
+//    if (!this.getClass().equals(GetSystemInfoStep.class)) {
+//      new GetSystemInfoStep(this.runner).processTestStep(this.stepPhase, this.report, this.stepPhase.equals(DEFAULT));
+//    }
+    if (!this.getClass().equals(ConsoleLogStep.class) && this.getConsoleLog) {
+      new ConsoleLogStep(this.runner).processTestStep(this.stepPhase, this.report, this.stepPhase.equals(DEFAULT));
     }
     this.status = this.report.getStatus();
     logger.info(getStatusString() + currentStepPhase.getShortName()  + stepDescription() );
@@ -398,4 +402,11 @@ public abstract class TestStep {
     return reporter;
   }
 
+  public void setGetConsoleLog(boolean getConsoleLog) {
+    this.getConsoleLog = getConsoleLog;
+  }
+
+  public boolean getConsoleLog() {
+    return getConsoleLog;
+  }
 }

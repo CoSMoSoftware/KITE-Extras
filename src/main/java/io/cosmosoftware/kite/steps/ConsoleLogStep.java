@@ -4,9 +4,13 @@
 
 package io.cosmosoftware.kite.steps;
 
+import static io.cosmosoftware.kite.util.ReportUtils.timestamp;
+
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.util.ReportUtils;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 public class ConsoleLogStep extends TestStep {
 
@@ -14,12 +18,18 @@ public class ConsoleLogStep extends TestStep {
     super(runner);
     setStepPhase(StepPhase.ALL);
     setOptional(true);
+    setIgnoreBroken(true);
+    setScreenShotOnFailure(false);
+    setSilent(true);
   }
 
   @Override
   protected void step() throws KiteTestException {
-    reporter.textAttachment(report, "Console Logs",
-        ReportUtils.consoleLogs(webDriver), "plain");
+    String log = ReportUtils.consoleLogs(this.webDriver);
+    JsonObject jsonLog = Json.createObjectBuilder()
+        .add("Timestamp", timestamp())
+        .add("Console Log", log).build();
+    this.reporter.jsonAttachment(this.report, "Console Logs", jsonLog);
   }
 
   @Override
