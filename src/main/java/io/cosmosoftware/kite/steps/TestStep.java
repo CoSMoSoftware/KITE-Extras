@@ -99,7 +99,9 @@ public abstract class TestStep {
       new ConsoleLogStep(this.runner).processTestStep(this.stepPhase, this.report, this.stepPhase.equals(DEFAULT));
     }
     this.status = this.report.getStatus();
-    logger.info(getStatusString() + currentStepPhase.getShortName()  + stepDescription() );
+    if (!this.isSilent()) {
+      logger.info(getStatusString() + currentStepPhase.getShortName() + stepDescription());
+    }
   }
 
   public String getStatusString() {

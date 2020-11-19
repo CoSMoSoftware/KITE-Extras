@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
@@ -260,15 +261,19 @@ public class ReportUtils {
    */
   public static String consoleLogs(WebDriver webDriver) {
     String log = "";
-    Set<String> logTypes = webDriver.manage().logs().getAvailableLogTypes();
-      List<LogEntry> logEntries = webDriver.manage().logs().get(LogType.BROWSER).getAll();
-      if (logEntries.isEmpty()) {
-        log += "The log was empty, either an error has happened, or this browser is not supported";
-      } else {
-        for (LogEntry entry : logEntries) {
-          log += entry.getTimestamp() + ":" +  entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
-        }
+    List<LogEntry> logEntries;
+    try {
+      logEntries = webDriver.manage().logs().get(LogType.BROWSER).getAll();
+    } catch (Exception e) {
+      logEntries = new ArrayList<>();
+    }
+    if (logEntries.isEmpty()) {
+      log += "The log was empty, either an error has happened, or this browser is not supported";
+    } else {
+      for (LogEntry entry : logEntries) {
+        log += entry.getTimestamp() + ":" +  entry.getLevel() + " " + entry.getMessage().replaceAll("'", "") + "\r\n";
       }
+    }
     return log;
   }
 
