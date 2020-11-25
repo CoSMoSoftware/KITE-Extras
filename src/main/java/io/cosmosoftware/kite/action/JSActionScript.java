@@ -354,4 +354,9 @@ public class JSActionScript {
         + "}, " + statsPublishingInterval + ");";
   }
 
+  public static String getIceConnectionStateScript(String pc) {
+    return "var retValue;"
+        + "try {retValue = " + pc +".iceConnectionState;} catch (exception) {} "
+        + "if (retValue) {return retValue;} else {return 'unknown';}";
+  }
 }

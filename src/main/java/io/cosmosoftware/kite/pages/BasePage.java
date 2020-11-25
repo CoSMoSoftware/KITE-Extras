@@ -9,6 +9,7 @@ import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.interfaces.Runner;
 import io.cosmosoftware.kite.report.KiteLogger;
+import io.cosmosoftware.kite.report.Status;
 import io.cosmosoftware.kite.util.WebDriverUtils;
 import java.util.List;
 import org.openqa.selenium.By;
@@ -20,9 +21,11 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static io.cosmosoftware.kite.action.JSActionScript.getIceConnectionStateScript;
 import static io.cosmosoftware.kite.entities.Timeouts.EXTENDED_TIMEOUT_IN_SECONDS;
 import static io.cosmosoftware.kite.entities.Timeouts.ONE_SECOND_INTERVAL;
 import static io.cosmosoftware.kite.entities.Timeouts.SHORT_TIMEOUT_IN_SECONDS;
+import static io.cosmosoftware.kite.util.TestUtils.executeJsScript;
 import static io.cosmosoftware.kite.util.TestUtils.waitAround;
 import static io.cosmosoftware.kite.util.WebDriverUtils.clickElement;
 import static io.cosmosoftware.kite.util.WebDriverUtils.isMobileApp;
@@ -224,5 +227,14 @@ public abstract class BasePage {
               .equals("complete"));
     }
     this.currentUrl = url;
+  }
+
+  public String getIceConnectionState(String pc) throws KiteInteractionException {
+    try {
+      return (String) executeJsScript(webDriver,
+          getIceConnectionStateScript(pc));
+    } catch (Exception e) {
+      throw new KiteInteractionException("Could not get ice connection from peer connection: " + e.getLocalizedMessage());
+    }
   }
 }

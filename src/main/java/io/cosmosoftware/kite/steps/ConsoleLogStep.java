@@ -24,12 +24,17 @@ public class ConsoleLogStep extends TestStep {
   }
 
   @Override
-  protected void step() throws KiteTestException {
-    String log = ReportUtils.consoleLogs(this.webDriver);
-    JsonObject jsonLog = Json.createObjectBuilder()
-        .add("Timestamp", timestamp())
-        .add("Console Log", log).build();
-    this.reporter.jsonAttachment(this.report, "Console Logs", jsonLog);
+  protected void step()  {
+    try {
+      String log = ReportUtils.consoleLogs(this.webDriver);
+      JsonObject jsonLog = Json.createObjectBuilder()
+          .add("Timestamp", timestamp())
+          .add("Console Log", log).build();
+      this.reporter.jsonAttachment(this.report, "Console Logs", jsonLog);
+    } catch (Exception e) {
+      // ignore
+      String message = e.getMessage();
+    }
   }
 
   @Override
