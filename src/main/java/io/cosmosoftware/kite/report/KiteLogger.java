@@ -4,7 +4,11 @@
 
 package io.cosmosoftware.kite.report;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 import org.apache.log4j.Appender;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -14,6 +18,7 @@ public class KiteLogger {
 
   private final Logger logger;
   private String prefix = "";
+  private List<Appender> appenders = new ArrayList<>();
 
   private KiteLogger(Logger logger, String prefix) {
     this.logger = logger;
@@ -29,7 +34,7 @@ public class KiteLogger {
   }
 
   public static KiteLogger getLogger(KiteLogger kiteLogger, String prefix) {
-    return new KiteLogger(kiteLogger.logger.getLogger(kiteLogger.getName()),
+    return new KiteLogger(Logger.getLogger(kiteLogger.getName()),
         String.valueOf(prefix));
   }
 
@@ -95,7 +100,31 @@ public class KiteLogger {
   }
 
   public synchronized void addAppender(Appender appender) {
+    this.appenders.add(appender);
     this.logger.addAppender(appender);
+  }
+
+  public synchronized void clearAppender() {
+    for (Appender appender : this.appenders) {
+      this.logger.removeAppender(appender);
+    }
+  }
+
+  public synchronized void removeAppenders() {
+    this.logger.removeAllAppenders();
+  }
+
+  public synchronized Enumeration getAppender() {
+    return this.logger.getAllAppenders();
+  }
+
+  public synchronized void turnOff() {
+    this.logger.setLevel(Level.OFF);
+  }
+
+
+  public synchronized void turnOn() {
+    this.logger.setLevel(Level.INFO);
   }
 
   public final String getName() {
