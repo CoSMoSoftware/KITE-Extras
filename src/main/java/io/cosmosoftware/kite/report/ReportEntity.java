@@ -99,4 +99,8 @@ public class ReportEntity {
       reporter.addTest((AllureTestReport) this);
     }
   }
+
+  public Reporter getReporter() {
+    return reporter;
+  }
 }

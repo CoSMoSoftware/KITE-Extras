@@ -33,7 +33,6 @@ public class ConsoleLogStep extends TestStep {
       this.reporter.jsonAttachment(this.report, "Console Logs", jsonLog);
     } catch (Exception e) {
       // ignore
-      String message = e.getMessage();
     }
   }
 
