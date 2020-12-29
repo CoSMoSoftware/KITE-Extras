@@ -66,9 +66,13 @@ public class StartGetStatsSDKStep extends TestStep {
     for (String pc : this.pcList) {
       String userName = this.userNameCommand;
       if (userName.startsWith("\"")) {
-        userName = userName.substring(0, userName.length() - 2)
-            + "[" + pc + "]"
-            + "\"";
+        if(userName.length() == 2) {
+          userName = "\"[" + pc + "]\"";
+        } else {
+          userName = userName.substring(0, userName.length() - 2)
+                  + "[" + pc + "]"
+                  + "\"";
+        }
       }
       loadGetStats(logstashUrl,  pc, testName,  userName , roomNameCommand, statsPublishingInterval);
     }
