@@ -168,7 +168,7 @@
     <kite.activation.version>1.1.1</kite.activation.version>
     <kite.appium.version>6.1.0</kite.appium.version>
     <kite.browscap-java.version>1.2.7</kite.browscap-java.version>
-    <kite.common-io.version>2.6</kite.common-io.version>
+    <kite.common-io.version>2.7</kite.common-io.version>
     <kite.dataformat-xml.version>2.8.5</kite.dataformat-xml.version>
     <!-- Report related dependencies -->
     <kite.guava.version>25.1-jre</kite.guava.version>
@@ -190,7 +190,7 @@
     <kite.tess4j.version>4.0.2</kite.tess4j.version>
     <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <kite.user-agent.version>1.21</kite.user-agent.version>
-    <apache.commons.io.version>2.6</apache.commons.io.version>
+    <apache.commons.io.version>2.7</apache.commons.io.version>
     <javax.mail.version>1.6.2</javax.mail.version>
 
     <!-- Automation framework dependencies -->
