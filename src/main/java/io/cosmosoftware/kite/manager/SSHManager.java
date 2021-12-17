@@ -12,7 +12,7 @@ import io.cosmosoftware.kite.exception.SSHManagerException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.KiteConstants;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.MDC;
+import org.apache.logging.log4j.MDC;
 
 import java.io.IOException;
 import java.io.InputStream;

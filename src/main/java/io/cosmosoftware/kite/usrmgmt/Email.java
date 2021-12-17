@@ -6,7 +6,7 @@ package io.cosmosoftware.kite.usrmgmt;
 
 
 import io.cosmosoftware.kite.config.KiteEntity;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 

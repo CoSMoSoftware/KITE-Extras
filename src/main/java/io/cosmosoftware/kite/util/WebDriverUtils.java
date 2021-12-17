@@ -21,8 +21,11 @@ import io.appium.java_client.MobileDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.Activity;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.ios.IOSElement;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
+import io.cosmosoftware.kite.entities.Platform;
 import io.cosmosoftware.kite.exception.KiteInteractionException;
 import io.cosmosoftware.kite.exception.KiteTestException;
 import io.cosmosoftware.kite.report.KiteLogger;
@@ -835,4 +838,80 @@ public class WebDriverUtils {
               + ((RemoteWebDriver)webDriver).getSessionId(), Status.BROKEN);
     }
   }
+
+  public static void acceptChromeMobileTerms(WebDriver webDriver, Platform platform) {
+    if(platform.equals(Platform.IOS)) {
+
+    } else {
+      ((AndroidDriver) webDriver).findElementByClassName("android.widget.Button").click();
+      waitAround(ONE_SECOND_INTERVAL*2);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.Button").get(0)).click();
+      waitAround(ONE_SECOND_INTERVAL);
+    }
+  }
+
+  public static void addBookmarletChromeMobile(WebDriver webDriver, Platform platform, String name, String command) {
+    if(platform.equals(Platform.IOS)) {
+      ((IOSDriver) webDriver).findElementById("kToolbarToolsMenuButtonIdentifier").click(); // menu
+      ((IOSDriver) webDriver).findElementById("kToolsMenuAddToBookmarks").click(); // add bookmark
+      ((IOSDriver) webDriver).findElementById("kToolbarToolsMenuButtonIdentifier").click(); // menu
+      ((IOSDriver) webDriver).findElementById("kToolsMenuBookmarksId").click(); // bookmark menu
+      ((IOSDriver) webDriver).findElementById("Mobile bookmarks").click(); // go to folder bookmark
+      ((IOSDriver) webDriver).findElementById("kBookmarkHomeTrailingButtonIdentifier").click(); // click edit bookmark
+      ((IOSDriver) webDriver).findElementById("Live Viewer").click(); // click on millicast bookmark
+      ((IOSDriver) webDriver).findElementById("kBookmarkHomeCenterButtonIdentifier").click(); //click on more
+      ((IOSDriver) webDriver).findElementById("Edit Bookmark").click(); // edit the bookmark
+      ((IOSDriver) webDriver).findElementById("Title Field_textField").clear();
+      ((IOSDriver) webDriver).findElementById("Title Field_textField").sendKeys("stash Stats");
+      ((IOSDriver) webDriver).findElementById("URL Field_textField").clear();
+      ((IOSDriver) webDriver).findElementById("URL Field_textField").clear(); // Needs a second clear
+      ((IOSDriver) webDriver).findElementById("URL Field_textField").sendKeys("javascript:(function () { var script = document.createElement('script'); script.src=\"//cdn.jsdelivr.net/npm/eruda\"; document.body.appendChild(script); script.onload = function () { eruda.init() } })(); ");
+      ((IOSDriver) webDriver).findElementById("kBookmarkEditNavigationBarDoneButtonIdentifier").click(); // done
+      ((IOSDriver) webDriver).findElementById("kBookmarkHomeNavigationBarDoneButtonIdentifier").click(); // 2nd done
+
+    } else {
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.LinearLayout").get(1)).click(); // tools button
+      waitAround(ONE_SECOND_INTERVAL*2);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.ImageButton").get(1)).click(); // add bookmark
+      waitAround(ONE_SECOND_INTERVAL*2);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.LinearLayout").get(1)).click(); // tools button
+      waitAround(ONE_SECOND_INTERVAL*2);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.ImageButton").get(1)).click(); // bookmarks list
+      waitAround(ONE_SECOND_INTERVAL*2);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.EditText").get(0)).sendKeys(name);
+      waitAround(ONE_SECOND_INTERVAL);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.EditText").get(1)).sendKeys(command);
+      waitAround(ONE_SECOND_INTERVAL);
+      ((AndroidDriver) webDriver).findElementByClassName("android.widget.ImageButton").click(); // go back
+    }
+  }
+
+  public static void selectBookmarletMobile(WebDriver webDriver, Platform platform, String name) {
+    if(platform.equals(Platform.IOS)) {
+      ((IOSDriver) webDriver).findElementById("Address and search bar").click();
+      ((IOSDriver) webDriver).findElementById("Address").sendKeys(name);
+      waitAround(3000);
+      ((IOSElement)((IOSDriver) webDriver).findElementsByClassName("XCUIElementTypeCell").get(((IOSDriver) webDriver).findElementsByClassName("XCUIElementTypeCell").size()-1)).click();
+    } else {
+      ((AndroidDriver) webDriver).findElementByClassName("android.widget.EditText").click();
+      waitAround(ONE_SECOND_INTERVAL);
+      ((AndroidDriver) webDriver).findElementByClassName("android.widget.EditText").sendKeys(name);
+      waitAround(ONE_SECOND_INTERVAL*5);
+      ((WebElement)((AndroidDriver) webDriver).findElementsByClassName("android.widget.ImageView").get(((AndroidDriver) webDriver).findElementsByClassName("android.widget.ImageView").size()-2)).click();
+      waitAround(ONE_SECOND_INTERVAL);
+      ((AndroidDriver) webDriver).getKeyboard().pressKey(Keys.ENTER);
+    }
+  }
+
+  public static void scroll_ios(IOSDriver webDriver, double start_xd,double start_yd,double end_xd,double end_yd) {
+    TouchAction touch = new TouchAction(webDriver);
+    Dimension dimension = webDriver.manage().window().getSize();
+    int start_x = (int) (dimension.width * start_xd);
+    int start_y = (int) (dimension.height * start_yd);
+    int end_x = (int) (dimension.width * end_xd);
+    int end_y = (int) (dimension.height * end_yd);
+    touch.longPress(PointOption.point(start_x, start_y)).waitAction(WaitOptions.waitOptions(Duration.ofSeconds(1))).moveTo(PointOption.point(end_x, end_y)).release().perform();
+  }
+
+
 }
