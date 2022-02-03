@@ -191,7 +191,7 @@
     <kite.json.version>1.1.2</kite.json.version>
     <kite.junit-jupiter-api.version>5.0.0</kite.junit-jupiter-api.version>
     <kite.junit.version>4.12</kite.junit.version>
-    <kite.log4j.version>2.17.0</kite.log4j.version>
+    <kite.log4j.version>2.17.1</kite.log4j.version>
     <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.org.json.version>20180130</kite.org.json.version>
     <kite.pojosontheweb.version>1.0.1</kite.pojosontheweb.version>
