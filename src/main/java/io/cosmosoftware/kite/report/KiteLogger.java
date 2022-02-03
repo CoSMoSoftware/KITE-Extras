@@ -5,14 +5,11 @@
 package io.cosmosoftware.kite.report;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.log4j.spi.Configurator;
-import org.apache.logging.log4j.Appender;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
 
 /**
  * Logger for KITE allowing adding a prefix to differentiate logs from the different clients.
@@ -102,34 +99,46 @@ public class KiteLogger {
     return logger.isDebugEnabled();
   }
 
-  public synchronized void addAppender(Appender appender) {
-    this.appenders.add(appender);
-    this.logger.addAppender(appender);
-  }
-
-  public synchronized void clearAppender() {
-    for (Appender appender : this.appenders) {
-      this.logger.removeAppender(appender);
-    }
-  }
-
-  public synchronized void removeAppenders() {
-    this.logger.removeAllAppenders();
-  }
-
-  public synchronized Enumeration getAppender() {
-    return this.logger.getAllAppenders();
-  }
-
-  public synchronized void turnOff() {
-    Configurator()
-    this.logger.setLevel(Level.OFF);
-  }
-
-
-  public synchronized void turnOn() {
-    this.logger.setLevel(Level.INFO);
-  }
+//  public synchronized void addAppender(Appender appender) {
+//    final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+//    final Configuration config = ctx.getConfiguration();
+//    final Layout layout = PatternLayout.createDefaultLayout(config);
+//
+//    appender.start();
+//    config.addAppender(appender);
+//    AppenderRef ref = AppenderRef.createAppenderRef("File", null, null);
+//    AppenderRef[] refs = new AppenderRef[] {ref};
+//    LoggerConfig loggerConfig = LoggerConfig.createLogger("false", Level.valueOf("info"), "org.apache.logging.log4j",
+//            "true", refs, null, config, null );
+//    loggerConfig.addAppender(appender, null, null);
+//    config.addLogger("org.apache.logging.log4j", loggerConfig);
+//    ctx.updateLoggers();
+//    this.appenders.add(appender);
+//  }
+//
+//  public synchronized void clearAppender() {
+//    for (Appender appender : this.appenders) {
+//      this.logger.removeAppender(appender);
+//    }
+//  }
+//
+//  public synchronized void removeAppenders() {
+//    this.logger.removeAllAppenders();
+//  }
+//
+//  public synchronized Enumeration getAppender() {
+//    return this.logger.getAllAppenders();
+//  }
+//
+//  public synchronized void turnOff() {
+//    Configurator()
+//    this.logger.setLevel(Level.OFF);
+//  }
+//
+//
+//  public synchronized void turnOn() {
+//    this.logger.setLevel(Level.INFO);
+//  }
 
   public final String getName() {
     return logger.getName();

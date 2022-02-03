@@ -6,6 +6,7 @@ package io.cosmosoftware.kite.usrmgmt;
 
 
 import io.cosmosoftware.kite.config.KiteEntity;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -26,7 +27,7 @@ import static io.cosmosoftware.kite.util.ReportUtils.getStackTrace;
 public class Email extends KiteEntity {
 
 
-  private final Logger logger = Logger.getLogger(this.getClass().getName());
+  private final Logger logger = LogManager.getLogger(this.getClass().getName());
 
   /**
    * The Constant TABLE_NAME.
