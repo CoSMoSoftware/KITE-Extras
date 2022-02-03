@@ -5,11 +5,11 @@
 package io.cosmosoftware.kite.report;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
 
 /**
  * Logger for KITE allowing adding a prefix to differentiate logs from the different clients.
@@ -30,16 +30,16 @@ public class KiteLogger {
   }
 
   public static KiteLogger getLogger(String name, String prefix) {
-    return new KiteLogger(Logger.getLogger(name), String.valueOf(prefix));
+    return new KiteLogger(LogManager.getLogger(name), String.valueOf(prefix));
   }
 
   public static KiteLogger getLogger(KiteLogger kiteLogger, String prefix) {
-    return new KiteLogger(Logger.getLogger(kiteLogger.getName()),
+    return new KiteLogger(LogManager.getLogger(kiteLogger.getName()),
         String.valueOf(prefix));
   }
 
   public static KiteLogger getLogger(String name) {
-    return new KiteLogger(Logger.getLogger(name));
+    return new KiteLogger(LogManager.getLogger(name));
   }
 
   public void setPrefix(String prefix) {
@@ -97,34 +97,6 @@ public class KiteLogger {
 
   public boolean isDebugEnabled() {
     return logger.isDebugEnabled();
-  }
-
-  public synchronized void addAppender(Appender appender) {
-    this.appenders.add(appender);
-    this.logger.addAppender(appender);
-  }
-
-  public synchronized void clearAppender() {
-    for (Appender appender : this.appenders) {
-      this.logger.removeAppender(appender);
-    }
-  }
-
-  public synchronized void removeAppenders() {
-    this.logger.removeAllAppenders();
-  }
-
-  public synchronized Enumeration getAppender() {
-    return this.logger.getAllAppenders();
-  }
-
-  public synchronized void turnOff() {
-    this.logger.setLevel(Level.OFF);
-  }
-
-
-  public synchronized void turnOn() {
-    this.logger.setLevel(Level.INFO);
   }
 
   public final String getName() {

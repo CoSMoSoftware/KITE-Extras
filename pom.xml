@@ -19,10 +19,15 @@
   </build>
   <dependencies>
     <dependency>
-      <artifactId>log4j</artifactId>
-      <groupId>log4j</groupId>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
       <version>${kite.log4j.version}</version>
     </dependency>
+<!--    <dependency>-->
+<!--      <artifactId>log4j</artifactId>-->
+<!--      <groupId>log4j</groupId>-->
+<!--      <version>${kite.log4j.version}</version>-->
+<!--    </dependency>-->
     <dependency>
       <artifactId>jackson-dataformat-xml</artifactId>
       <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -171,7 +176,7 @@
 
     <!-- Core dependencies -->
     <kite.activation.version>1.1.1</kite.activation.version>
-    <kite.appium.version>7.5.1</kite.appium.version>
+    <kite.appium.version>7.6.0</kite.appium.version>
     <kite.browscap-java.version>1.2.7</kite.browscap-java.version>
     <kite.common-io.version>2.6</kite.common-io.version>
     <kite.dataformat-xml.version>2.8.5</kite.dataformat-xml.version>
@@ -186,13 +191,13 @@
     <kite.json.version>1.1.2</kite.json.version>
     <kite.junit-jupiter-api.version>5.0.0</kite.junit-jupiter-api.version>
     <kite.junit.version>4.12</kite.junit.version>
-    <kite.log4j.version>1.2.17</kite.log4j.version>
+    <kite.log4j.version>2.17.0</kite.log4j.version>
     <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
     <kite.org.json.version>20180130</kite.org.json.version>
     <kite.pojosontheweb.version>1.0.1</kite.pojosontheweb.version>
     <kite.quartz.version>2.3.0</kite.quartz.version>
     <kite.selenium.version>3.141.59</kite.selenium.version>
-    <kite.tess4j.version>4.0.2</kite.tess4j.version>
+    <kite.tess4j.version>5.1.1</kite.tess4j.version>
     <kite.test.mvn.compiler.version>3.6.1</kite.test.mvn.compiler.version>
     <kite.user-agent.version>1.21</kite.user-agent.version>
     <apache.commons.io.version>2.6</apache.commons.io.version>
@@ -209,6 +214,6 @@
 
   </properties>
 
-  <version>0.1.80</version>
+  <version>0.1.82</version>
 
 </project>

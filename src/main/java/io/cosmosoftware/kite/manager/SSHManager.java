@@ -12,7 +12,7 @@ import io.cosmosoftware.kite.exception.SSHManagerException;
 import io.cosmosoftware.kite.report.KiteLogger;
 import io.cosmosoftware.kite.util.KiteConstants;
 import io.cosmosoftware.kite.util.TestUtils;
-import org.apache.log4j.MDC;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,7 +140,7 @@ public class SSHManager implements Callable<SSHManager> {
   }
 
   private SSHManager sendCommand() throws InterruptedException, SSHManagerException {
-    MDC.put(KiteConstants.MDC_TAG_NAME, this.hostIpOrName);
+    ThreadContext.push(KiteConstants.MDC_TAG_NAME, this.hostIpOrName);
     Session session = null;
     Channel channel = null;
     InputStream inputStream = null;
@@ -265,7 +265,7 @@ public class SSHManager implements Callable<SSHManager> {
    */
   @Override
   protected void finalize() throws Throwable {
-    MDC.remove("tag");
+    ThreadContext.remove("tag");
   }
 
   /**
