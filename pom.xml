@@ -193,7 +193,7 @@
     <kite.junit.version>4.12</kite.junit.version>
     <kite.log4j.version>2.17.0</kite.log4j.version>
     <kite.mvn.compiler.version>3.6.1</kite.mvn.compiler.version>
-    <kite.org.json.version>20180130</kite.org.json.version>
+    <kite.org.json.version>20230227</kite.org.json.version>
     <kite.pojosontheweb.version>1.0.1</kite.pojosontheweb.version>
     <kite.quartz.version>2.3.0</kite.quartz.version>
     <kite.selenium.version>3.141.59</kite.selenium.version>
